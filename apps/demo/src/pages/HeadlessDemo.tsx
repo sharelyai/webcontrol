@@ -1,0 +1,85 @@
+import React from 'react';
+import { useSpaceMessages, useSendMessage, SharelyProvider } from '@sharely/services';
+import { Button, Input } from '@sharely/ui-shared';
+
+function HeadlessDemo() {
+  const [spaceId] = React.useState('');
+  const [groupId, setGroupId] = React.useState('');
+  const [messageContent, setMessageContent] = React.useState('');
+  const [status, setStatus] = React.useState('idle');
+
+  return (
+    <SharelyProvider>
+      <HeadlessDemoInner
+        spaceId={spaceId}
+        groupId={groupId}
+        setGroupId={setGroupId}
+        messageContent={messageContent}
+        setMessageContent={setMessageContent}
+        status={status}
+        setStatus={setStatus}
+      />
+    </SharelyProvider>
+  );
+}
+
+interface HeadlessDemoInnerProps {
+  spaceId: string;
+  groupId: string;
+  setGroupId: (id: string) => void;
+  messageContent: string;
+  setMessageContent: (content: string) => void;
+  status: string;
+  setStatus: (status: string) => void;
+}
+
+function HeadlessDemoInner({ spaceId, groupId, setGroupId, messageContent, setMessageContent, status, setStatus }: HeadlessDemoInnerProps) {
+  const { messages } = useSpaceMessages({ spaceId, groupId, enabled: !!groupId });
+  const { sendMessageAction } = useSendMessage();
+
+  const handleSendMessage = () => {
+    sendMessageAction({
+      message: messageContent,
+      spaceId,
+      currentGroupId: groupId,
+      setCurrentGroupId: setGroupId,
+      setMessage: setMessageContent,
+      setStatusMessage: setStatus,
+    });
+    setMessageContent('');
+  };
+
+  return (
+    <div style={{ padding: '20px' }}>
+      <h2>Headless Hooks Demo</h2>
+      <p>This demo uses only the headless hooks from <code>@sharely/services</code> to build a custom UI.</p>
+      <div style={{ height: '500px', width: '400px', border: '1px solid #ccc', margin: '20px auto', display: 'flex', flexDirection: 'column' }}>
+        <div style={{ flex: 1, overflowY: 'auto', padding: '10px' }}>
+          {messages.map((msg: any, index: number) => (
+            <div key={index} style={{ textAlign: msg.type === 'USER' ? 'right' : 'left', margin: '5px 0' }}>
+              <span style={{
+                background: msg.type === 'USER' ? '#e0f7fa' : '#f0f0f0',
+                padding: '8px 12px',
+                borderRadius: '15px',
+                display: 'inline-block'
+              }}>
+                {msg.message}
+              </span>
+            </div>
+          ))}
+        </div>
+        <div style={{ display: 'flex', padding: '10px', borderTop: '1px solid #eee' }}>
+          <Input
+            value={messageContent}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setMessageContent(e.target.value)}
+            placeholder="Type a message..."
+            disabled={status === 'pending'}
+          />
+          <Button onClick={handleSendMessage} disabled={status === 'pending' || !messageContent.trim()}>Send</Button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default HeadlessDemo;

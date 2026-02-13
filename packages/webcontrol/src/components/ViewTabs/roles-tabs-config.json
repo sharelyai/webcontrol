@@ -1,0 +1,1645 @@
+{
+  "version": "1.0",
+  "lastUpdated": "2025-11-18T12:00:00Z",
+  "defaultBehavior": {
+    "browse": {
+      "show": true
+    },
+    "search": {
+      "show": true
+    },
+    "chat": {
+      "show": true
+    }
+  },
+  "workspaces": [
+    {
+      "workspaceId": "df2a9def-d632-4bf3-9799-263d6e33b332",
+      "workspaceName": "BSF Prod Workspace 2",
+      "environment": "production",
+      "roles": [
+        {
+          "customerRoleId": "1",
+          "displayName": "Teaching Leader",
+          "abbreviation": "TL",
+          "tabs": {
+            "browse": {
+              "show": true
+            },
+            "search": {
+              "show": true
+            },
+            "chat": {
+              "show": true
+            }
+          }
+        },
+        {
+          "customerRoleId": "2",
+          "displayName": "Substitute Teaching Leader",
+          "abbreviation": "STL",
+          "tabs": {
+            "browse": {
+              "show": true
+            },
+            "search": {
+              "show": true
+            },
+            "chat": {
+              "show": true
+            }
+          }
+        },
+        {
+          "customerRoleId": "3",
+          "displayName": "Class Administrator",
+          "abbreviation": "CA",
+          "tabs": {
+            "browse": {
+              "show": false,
+              "comingSoon": true
+            },
+            "search": {
+              "show": true
+            },
+            "chat": {
+              "show": true
+            }
+          }
+        },
+        {
+          "customerRoleId": "11",
+          "displayName": "Administrative Leader",
+          "abbreviation": "AL",
+          "tabs": {
+            "browse": {
+              "show": false,
+              "comingSoon": true
+            },
+            "search": {
+              "show": true
+            },
+            "chat": {
+              "show": true
+            }
+          }
+        },
+        {
+          "customerRoleId": "14",
+          "displayName": "Group Leader",
+          "abbreviation": "GL",
+          "tabs": {
+            "browse": {
+              "show": false,
+              "comingSoon": true
+            },
+            "search": {
+              "show": true
+            },
+            "chat": {
+              "show": true
+            }
+          }
+        },
+        {
+          "customerRoleId": "19",
+          "displayName": "Board Member",
+          "abbreviation": "BM",
+          "tabs": {
+            "browse": {
+              "show": false,
+              "comingSoon": true
+            },
+            "search": {
+              "show": true
+            },
+            "chat": {
+              "show": true
+            }
+          }
+        },
+        {
+          "customerRoleId": "20",
+          "displayName": "Regional Director",
+          "abbreviation": "RD",
+          "tabs": {
+            "browse": {
+              "show": false
+            },
+            "search": {
+              "show": true
+            },
+            "chat": {
+              "show": true
+            }
+          }
+        },
+        {
+          "customerRoleId": "21",
+          "displayName": "Member",
+          "abbreviation": "M",
+          "tabs": {
+            "browse": {
+              "show": false,
+              "comingSoon": true
+            },
+            "search": {
+              "show": true
+            },
+            "chat": {
+              "show": true
+            }
+          }
+        },
+        {
+          "customerRoleId": "22",
+          "displayName": "Account Holder",
+          "abbreviation": "AH",
+          "tabs": {
+            "browse": {
+              "show": false
+            },
+            "search": {
+              "show": true
+            },
+            "chat": {
+              "show": true
+            }
+          }
+        },
+        {
+          "customerRoleId": "24",
+          "displayName": "Treasurer",
+          "abbreviation": "TR",
+          "tabs": {
+            "browse": {
+              "show": false
+            },
+            "search": {
+              "show": true
+            },
+            "chat": {
+              "show": true
+            }
+          }
+        },
+        {
+          "customerRoleId": "25",
+          "displayName": "Assistant Treasurer",
+          "abbreviation": "AsstTR",
+          "tabs": {
+            "browse": {
+              "show": false
+            },
+            "search": {
+              "show": true
+            },
+            "chat": {
+              "show": true
+            }
+          }
+        },
+        {
+          "customerRoleId": "26",
+          "displayName": "Distance Online Trainer",
+          "abbreviation": "DOT",
+          "tabs": {
+            "browse": {
+              "show": true
+            },
+            "search": {
+              "show": true
+            },
+            "chat": {
+              "show": true
+            }
+          }
+        },
+        {
+          "customerRoleId": "27",
+          "displayName": "Distance Assistant Online Trainer",
+          "abbreviation": "DAOT",
+          "tabs": {
+            "browse": {
+              "show": false,
+              "comingSoon": true
+            },
+            "search": {
+              "show": true
+            },
+            "chat": {
+              "show": true
+            }
+          }
+        },
+        {
+          "customerRoleId": "29",
+          "displayName": "Children's Leader PS",
+          "abbreviation": "CL-PS",
+          "tabs": {
+            "browse": {
+              "show": false,
+              "comingSoon": true
+            },
+            "search": {
+              "show": true
+            },
+            "chat": {
+              "show": true
+            }
+          }
+        },
+        {
+          "customerRoleId": "30",
+          "displayName": "Children's Leader SP",
+          "abbreviation": "CL-SP",
+          "tabs": {
+            "browse": {
+              "show": false,
+              "comingSoon": true
+            },
+            "search": {
+              "show": true
+            },
+            "chat": {
+              "show": true
+            }
+          }
+        },
+        {
+          "customerRoleId": "31",
+          "displayName": "Asst Children's Supervisor PS",
+          "abbreviation": "AsstCS-PS",
+          "tabs": {
+            "browse": {
+              "show": false,
+              "comingSoon": true
+            },
+            "search": {
+              "show": true
+            },
+            "chat": {
+              "show": true
+            }
+          }
+        },
+        {
+          "customerRoleId": "32",
+          "displayName": "Asst Children's Supervisor SP",
+          "abbreviation": "AsstCS-SP",
+          "tabs": {
+            "browse": {
+              "show": false,
+              "comingSoon": true
+            },
+            "search": {
+              "show": true
+            },
+            "chat": {
+              "show": true
+            }
+          }
+        },
+        {
+          "customerRoleId": "33",
+          "displayName": "Children's Supervisor PS",
+          "abbreviation": "CS-PS",
+          "tabs": {
+            "browse": {
+              "show": false,
+              "comingSoon": true
+            },
+            "search": {
+              "show": true
+            },
+            "chat": {
+              "show": true
+            }
+          }
+        },
+        {
+          "customerRoleId": "34",
+          "displayName": "Children's Supervisor SP",
+          "abbreviation": "CS-SP",
+          "tabs": {
+            "browse": {
+              "show": false,
+              "comingSoon": true
+            },
+            "search": {
+              "show": true
+            },
+            "chat": {
+              "show": true
+            }
+          }
+        },
+        {
+          "customerRoleId": "35",
+          "displayName": "Area Personnel",
+          "abbreviation": "AP",
+          "tabs": {
+            "browse": {
+              "show": false,
+              "comingSoon": true
+            },
+            "search": {
+              "show": true
+            },
+            "chat": {
+              "show": true
+            }
+          }
+        },
+        {
+          "customerRoleId": "36",
+          "displayName": "Lecture Uploader",
+          "abbreviation": "LU",
+          "tabs": {
+            "browse": {
+              "show": false
+            },
+            "search": {
+              "show": true
+            },
+            "chat": {
+              "show": true
+            }
+          }
+        },
+        {
+          "customerRoleId": "38",
+          "displayName": "Student",
+          "abbreviation": "ST",
+          "tabs": {
+            "browse": {
+              "show": false
+            },
+            "search": {
+              "show": true
+            },
+            "chat": {
+              "show": true
+            }
+          }
+        },
+        {
+          "customerRoleId": "39",
+          "displayName": "Field Trainer",
+          "abbreviation": "FT",
+          "tabs": {
+            "browse": {
+              "show": false
+            },
+            "search": {
+              "show": true
+            },
+            "chat": {
+              "show": true
+            }
+          }
+        },
+        {
+          "customerRoleId": "40",
+          "displayName": "Staff Interviewer",
+          "abbreviation": "SI",
+          "tabs": {
+            "browse": {
+              "show": false
+            },
+            "search": {
+              "show": true
+            },
+            "chat": {
+              "show": true
+            }
+          }
+        },
+        {
+          "customerRoleId": "41",
+          "displayName": "Staff Coach",
+          "abbreviation": "SC",
+          "tabs": {
+            "browse": {
+              "show": false
+            },
+            "search": {
+              "show": true
+            },
+            "chat": {
+              "show": true
+            }
+          }
+        },
+        {
+          "customerRoleId": "42",
+          "displayName": "Application Reviewer",
+          "abbreviation": "AR",
+          "tabs": {
+            "browse": {
+              "show": false
+            },
+            "search": {
+              "show": true
+            },
+            "chat": {
+              "show": true
+            }
+          }
+        },
+        {
+          "customerRoleId": "43",
+          "displayName": "AP - Teacher / Trainer",
+          "abbreviation": "APT",
+          "tabs": {
+            "browse": {
+              "show": false,
+              "comingSoon": true
+            },
+            "search": {
+              "show": true
+            },
+            "chat": {
+              "show": true
+            }
+          }
+        },
+        {
+          "customerRoleId": "44",
+          "displayName": "AP - Children's",
+          "abbreviation": "APC",
+          "tabs": {
+            "browse": {
+              "show": false,
+              "comingSoon": true
+            },
+            "search": {
+              "show": true
+            },
+            "chat": {
+              "show": true
+            }
+          }
+        },
+        {
+          "customerRoleId": "45",
+          "displayName": "AP - Administration",
+          "abbreviation": "APA",
+          "tabs": {
+            "browse": {
+              "show": false,
+              "comingSoon": true
+            },
+            "search": {
+              "show": true
+            },
+            "chat": {
+              "show": true
+            }
+          }
+        },
+        {
+          "customerRoleId": "71",
+          "displayName": "Tech Support",
+          "abbreviation": "TS",
+          "tabs": {
+            "browse": {
+              "show": false
+            },
+            "search": {
+              "show": true
+            },
+            "chat": {
+              "show": true
+            }
+          }
+        },
+        {
+          "customerRoleId": "81",
+          "displayName": "Country Account Manager",
+          "abbreviation": "CAM",
+          "tabs": {
+            "browse": {
+              "show": false
+            },
+            "search": {
+              "show": true
+            },
+            "chat": {
+              "show": true
+            }
+          }
+        },
+        {
+          "customerRoleId": "83",
+          "displayName": "Auditor",
+          "abbreviation": "AUD",
+          "tabs": {
+            "browse": {
+              "show": false
+            },
+            "search": {
+              "show": true
+            },
+            "chat": {
+              "show": true
+            }
+          }
+        },
+        {
+          "customerRoleId": "85",
+          "displayName": "HQ - Resource Uploader",
+          "abbreviation": "HQRU",
+          "tabs": {
+            "browse": {
+              "show": false
+            },
+            "search": {
+              "show": true
+            },
+            "chat": {
+              "show": true
+            }
+          }
+        },
+        {
+          "customerRoleId": "91",
+          "displayName": "HQ - Finance",
+          "abbreviation": "HQFIN",
+          "tabs": {
+            "browse": {
+              "show": false
+            },
+            "search": {
+              "show": true
+            },
+            "chat": {
+              "show": true
+            }
+          }
+        },
+        {
+          "customerRoleId": "92",
+          "displayName": "HQ - Content Creation",
+          "abbreviation": "HQCC",
+          "tabs": {
+            "browse": {
+              "show": false
+            },
+            "search": {
+              "show": true
+            },
+            "chat": {
+              "show": true
+            }
+          }
+        },
+        {
+          "customerRoleId": "93",
+          "displayName": "HQ - Field Administrator",
+          "abbreviation": "HQFA",
+          "tabs": {
+            "browse": {
+              "show": false
+            },
+            "search": {
+              "show": true
+            },
+            "chat": {
+              "show": true
+            }
+          }
+        },
+        {
+          "customerRoleId": "95",
+          "displayName": "BSF System Administrator",
+          "abbreviation": "BSA",
+          "tabs": {
+            "browse": {
+              "show": false
+            },
+            "search": {
+              "show": true
+            },
+            "chat": {
+              "show": true
+            }
+          }
+        },
+        {
+          "customerRoleId": "96",
+          "displayName": "System Administrator",
+          "abbreviation": "SA",
+          "tabs": {
+            "browse": {
+              "show": false
+            },
+            "search": {
+              "show": true
+            },
+            "chat": {
+              "show": true
+            }
+          }
+        },
+        {
+          "customerRoleId": "97",
+          "displayName": "Help Desk Agent",
+          "abbreviation": "HD",
+          "tabs": {
+            "browse": {
+              "show": false
+            },
+            "search": {
+              "show": true
+            },
+            "chat": {
+              "show": true
+            }
+          }
+        },
+        {
+          "customerRoleId": "99",
+          "displayName": "HQ Staff",
+          "abbreviation": "HQ",
+          "tabs": {
+            "browse": {
+              "show": false
+            },
+            "search": {
+              "show": true
+            },
+            "chat": {
+              "show": true
+            }
+          }
+        },
+        {
+          "customerRoleId": "100",
+          "displayName": "Online Member",
+          "abbreviation": "OM",
+          "tabs": {
+            "browse": {
+              "show": false
+            },
+            "search": {
+              "show": true
+            },
+            "chat": {
+              "show": true
+            }
+          }
+        },
+        {
+          "customerRoleId": "200",
+          "displayName": "Online Group Member",
+          "abbreviation": "OGM",
+          "tabs": {
+            "browse": {
+              "show": false
+            },
+            "search": {
+              "show": true
+            },
+            "chat": {
+              "show": true
+            }
+          }
+        },
+        {
+          "customerRoleId": "300",
+          "displayName": "Online Group Leader",
+          "abbreviation": "OGL",
+          "tabs": {
+            "browse": {
+              "show": false,
+              "comingSoon": true
+            },
+            "search": {
+              "show": true
+            },
+            "chat": {
+              "show": true
+            }
+          }
+        },
+        {
+          "customerRoleId": "400",
+          "displayName": "Assistant Online Trainer",
+          "abbreviation": "AOT",
+          "tabs": {
+            "browse": {
+              "show": false,
+              "comingSoon": true
+            },
+            "search": {
+              "show": true
+            },
+            "chat": {
+              "show": true
+            }
+          }
+        },
+        {
+          "customerRoleId": "500",
+          "displayName": "Online Trainer",
+          "abbreviation": "OT",
+          "tabs": {
+            "browse": {
+              "show": false,
+              "comingSoon": true
+            },
+            "search": {
+              "show": true
+            },
+            "chat": {
+              "show": true
+            }
+          }
+        },
+        {
+          "customerRoleId": "600",
+          "displayName": "Online Area Personnel",
+          "abbreviation": "OAP",
+          "tabs": {
+            "browse": {
+              "show": false,
+              "comingSoon": true
+            },
+            "search": {
+              "show": true
+            },
+            "chat": {
+              "show": true
+            }
+          }
+        },
+        {
+          "customerRoleId": "700",
+          "displayName": "Online Regional Director",
+          "abbreviation": "ORD",
+          "tabs": {
+            "browse": {
+              "show": false
+            },
+            "search": {
+              "show": true
+            },
+            "chat": {
+              "show": true
+            }
+          }
+        },
+        {
+          "customerRoleId": "750",
+          "displayName": "Online View Only",
+          "abbreviation": "HQAdmVO",
+          "tabs": {
+            "browse": {
+              "show": false
+            },
+            "search": {
+              "show": true
+            },
+            "chat": {
+              "show": true
+            }
+          }
+        },
+        {
+          "customerRoleId": "800",
+          "displayName": "HQ Admin",
+          "abbreviation": "HQAdm",
+          "tabs": {
+            "browse": {
+              "show": false
+            },
+            "search": {
+              "show": true
+            },
+            "chat": {
+              "show": true
+            }
+          }
+        }
+      ]
+    },
+    {
+      "workspaceId": "550e8400-e29b-41d4-a716-446655440000",
+      "workspaceName": "BSF Development",
+      "environment": "develop",
+      "roles": [
+        {
+          "customerRoleId": "1",
+          "displayName": "Teaching Leader",
+          "abbreviation": "TL",
+          "tabs": {
+            "browse": {
+              "show": true
+            },
+            "search": {
+              "show": true
+            },
+            "chat": {
+              "show": true
+            }
+          }
+        },
+        {
+          "customerRoleId": "2",
+          "displayName": "Substitute Teaching Leader",
+          "abbreviation": "STL",
+          "tabs": {
+            "browse": {
+              "show": true
+            },
+            "search": {
+              "show": true
+            },
+            "chat": {
+              "show": true
+            }
+          }
+        },
+        {
+          "customerRoleId": "3",
+          "displayName": "Class Administrator",
+          "abbreviation": "CA",
+          "tabs": {
+            "browse": {
+              "show": true
+            },
+            "search": {
+              "show": true
+            },
+            "chat": {
+              "show": true
+            }
+          }
+        },
+        {
+          "customerRoleId": "11",
+          "displayName": "Administrative Leader",
+          "abbreviation": "AL",
+          "tabs": {
+            "browse": {
+              "show": true
+            },
+            "search": {
+              "show": true
+            },
+            "chat": {
+              "show": true
+            }
+          }
+        },
+        {
+          "customerRoleId": "14",
+          "displayName": "Group Leader",
+          "abbreviation": "GL",
+          "tabs": {
+            "browse": {
+              "show": true
+            },
+            "search": {
+              "show": true
+            },
+            "chat": {
+              "show": true
+            }
+          }
+        },
+        {
+          "customerRoleId": "19",
+          "displayName": "Board Member",
+          "abbreviation": "BM",
+          "tabs": {
+            "browse": {
+              "show": false,
+              "comingSoon": true
+            },
+            "search": {
+              "show": true
+            },
+            "chat": {
+              "show": true
+            }
+          }
+        },
+        {
+          "customerRoleId": "20",
+          "displayName": "Regional Director",
+          "abbreviation": "RD",
+          "tabs": {
+            "browse": {
+              "show": false,
+              "comingSoon": true
+            },
+            "search": {
+              "show": true
+            },
+            "chat": {
+              "show": true
+            }
+          }
+        },
+        {
+          "customerRoleId": "21",
+          "displayName": "Member",
+          "abbreviation": "M",
+          "tabs": {
+            "browse": {
+              "show": true
+            },
+            "search": {
+              "show": true
+            },
+            "chat": {
+              "show": true
+            }
+          }
+        },
+        {
+          "customerRoleId": "22",
+          "displayName": "Account Holder",
+          "abbreviation": "AH",
+          "tabs": {
+            "browse": {
+              "show": false,
+              "comingSoon": true
+            },
+            "search": {
+              "show": true
+            },
+            "chat": {
+              "show": true
+            }
+          }
+        },
+        {
+          "customerRoleId": "24",
+          "displayName": "Treasurer",
+          "abbreviation": "TR",
+          "tabs": {
+            "browse": {
+              "show": false,
+              "comingSoon": true
+            },
+            "search": {
+              "show": true
+            },
+            "chat": {
+              "show": true
+            }
+          }
+        },
+        {
+          "customerRoleId": "25",
+          "displayName": "Assistant Treasurer",
+          "abbreviation": "AsstTR",
+          "tabs": {
+            "browse": {
+              "show": false,
+              "comingSoon": true
+            },
+            "search": {
+              "show": true
+            },
+            "chat": {
+              "show": true
+            }
+          }
+        },
+        {
+          "customerRoleId": "26",
+          "displayName": "Distance Online Trainer",
+          "abbreviation": "DOT",
+          "tabs": {
+            "browse": {
+              "show": true
+            },
+            "search": {
+              "show": true
+            },
+            "chat": {
+              "show": true
+            }
+          }
+        },
+        {
+          "customerRoleId": "27",
+          "displayName": "Distance Assistant Online Trainer",
+          "abbreviation": "DAOT",
+          "tabs": {
+            "browse": {
+              "show": true
+            },
+            "search": {
+              "show": true
+            },
+            "chat": {
+              "show": true
+            }
+          }
+        },
+        {
+          "customerRoleId": "29",
+          "displayName": "Children's Leader PS",
+          "abbreviation": "CL-PS",
+          "tabs": {
+            "browse": {
+              "show": true
+            },
+            "search": {
+              "show": true
+            },
+            "chat": {
+              "show": true
+            }
+          }
+        },
+        {
+          "customerRoleId": "30",
+          "displayName": "Children's Leader SP",
+          "abbreviation": "CL-SP",
+          "tabs": {
+            "browse": {
+              "show": true
+            },
+            "search": {
+              "show": true
+            },
+            "chat": {
+              "show": true
+            }
+          }
+        },
+        {
+          "customerRoleId": "31",
+          "displayName": "Asst Children's Supervisor PS",
+          "abbreviation": "AsstCS-PS",
+          "tabs": {
+            "browse": {
+              "show": true
+            },
+            "search": {
+              "show": true
+            },
+            "chat": {
+              "show": true
+            }
+          }
+        },
+        {
+          "customerRoleId": "32",
+          "displayName": "Asst Children's Supervisor SP",
+          "abbreviation": "AsstCS-SP",
+          "tabs": {
+            "browse": {
+              "show": true
+            },
+            "search": {
+              "show": true
+            },
+            "chat": {
+              "show": true
+            }
+          }
+        },
+        {
+          "customerRoleId": "33",
+          "displayName": "Children's Supervisor PS",
+          "abbreviation": "CS-PS",
+          "tabs": {
+            "browse": {
+              "show": true
+            },
+            "search": {
+              "show": true
+            },
+            "chat": {
+              "show": true
+            }
+          }
+        },
+        {
+          "customerRoleId": "34",
+          "displayName": "Children's Supervisor SP",
+          "abbreviation": "CS-SP",
+          "tabs": {
+            "browse": {
+              "show": true
+            },
+            "search": {
+              "show": true
+            },
+            "chat": {
+              "show": true
+            }
+          }
+        },
+        {
+          "customerRoleId": "35",
+          "displayName": "Area Personnel",
+          "abbreviation": "AP",
+          "tabs": {
+            "browse": {
+              "show": true
+            },
+            "search": {
+              "show": true
+            },
+            "chat": {
+              "show": true
+            }
+          }
+        },
+        {
+          "customerRoleId": "36",
+          "displayName": "Lecture Uploader",
+          "abbreviation": "LU",
+          "tabs": {
+            "browse": {
+              "show": false,
+              "comingSoon": true
+            },
+            "search": {
+              "show": true
+            },
+            "chat": {
+              "show": true
+            }
+          }
+        },
+        {
+          "customerRoleId": "38",
+          "displayName": "Student",
+          "abbreviation": "ST",
+          "tabs": {
+            "browse": {
+              "show": false,
+              "comingSoon": true
+            },
+            "search": {
+              "show": true
+            },
+            "chat": {
+              "show": true
+            }
+          }
+        },
+        {
+          "customerRoleId": "39",
+          "displayName": "Field Trainer",
+          "abbreviation": "FT",
+          "tabs": {
+            "browse": {
+              "show": false,
+              "comingSoon": true
+            },
+            "search": {
+              "show": true
+            },
+            "chat": {
+              "show": true
+            }
+          }
+        },
+        {
+          "customerRoleId": "40",
+          "displayName": "Staff Interviewer",
+          "abbreviation": "SI",
+          "tabs": {
+            "browse": {
+              "show": false,
+              "comingSoon": true
+            },
+            "search": {
+              "show": true
+            },
+            "chat": {
+              "show": true
+            }
+          }
+        },
+        {
+          "customerRoleId": "41",
+          "displayName": "Staff Coach",
+          "abbreviation": "SC",
+          "tabs": {
+            "browse": {
+              "show": false,
+              "comingSoon": true
+            },
+            "search": {
+              "show": true
+            },
+            "chat": {
+              "show": true
+            }
+          }
+        },
+        {
+          "customerRoleId": "42",
+          "displayName": "Application Reviewer",
+          "abbreviation": "AR",
+          "tabs": {
+            "browse": {
+              "show": false,
+              "comingSoon": true
+            },
+            "search": {
+              "show": true
+            },
+            "chat": {
+              "show": true
+            }
+          }
+        },
+        {
+          "customerRoleId": "43",
+          "displayName": "AP - Teacher / Trainer",
+          "abbreviation": "APT",
+          "tabs": {
+            "browse": {
+              "show": true
+            },
+            "search": {
+              "show": true
+            },
+            "chat": {
+              "show": true
+            }
+          }
+        },
+        {
+          "customerRoleId": "44",
+          "displayName": "AP - Children's",
+          "abbreviation": "APC",
+          "tabs": {
+            "browse": {
+              "show": true
+            },
+            "search": {
+              "show": true
+            },
+            "chat": {
+              "show": true
+            }
+          }
+        },
+        {
+          "customerRoleId": "45",
+          "displayName": "AP - Administration",
+          "abbreviation": "APA",
+          "tabs": {
+            "browse": {
+              "show": true
+            },
+            "search": {
+              "show": true
+            },
+            "chat": {
+              "show": true
+            }
+          }
+        },
+        {
+          "customerRoleId": "71",
+          "displayName": "Tech Support",
+          "abbreviation": "TS",
+          "tabs": {
+            "browse": {
+              "show": false,
+              "comingSoon": true
+            },
+            "search": {
+              "show": true
+            },
+            "chat": {
+              "show": true
+            }
+          }
+        },
+        {
+          "customerRoleId": "81",
+          "displayName": "Country Account Manager",
+          "abbreviation": "CAM",
+          "tabs": {
+            "browse": {
+              "show": false,
+              "comingSoon": true
+            },
+            "search": {
+              "show": true
+            },
+            "chat": {
+              "show": true
+            }
+          }
+        },
+        {
+          "customerRoleId": "83",
+          "displayName": "Auditor",
+          "abbreviation": "AUD",
+          "tabs": {
+            "browse": {
+              "show": false,
+              "comingSoon": true
+            },
+            "search": {
+              "show": true
+            },
+            "chat": {
+              "show": true
+            }
+          }
+        },
+        {
+          "customerRoleId": "85",
+          "displayName": "HQ - Resource Uploader",
+          "abbreviation": "HQRU",
+          "tabs": {
+            "browse": {
+              "show": false,
+              "comingSoon": true
+            },
+            "search": {
+              "show": true
+            },
+            "chat": {
+              "show": true
+            }
+          }
+        },
+        {
+          "customerRoleId": "91",
+          "displayName": "HQ - Finance",
+          "abbreviation": "HQFIN",
+          "tabs": {
+            "browse": {
+              "show": false,
+              "comingSoon": true
+            },
+            "search": {
+              "show": true
+            },
+            "chat": {
+              "show": true
+            }
+          }
+        },
+        {
+          "customerRoleId": "92",
+          "displayName": "HQ - Content Creation",
+          "abbreviation": "HQCC",
+          "tabs": {
+            "browse": {
+              "show": false,
+              "comingSoon": true
+            },
+            "search": {
+              "show": true
+            },
+            "chat": {
+              "show": true
+            }
+          }
+        },
+        {
+          "customerRoleId": "93",
+          "displayName": "HQ - Field Administrator",
+          "abbreviation": "HQFA",
+          "tabs": {
+            "browse": {
+              "show": false,
+              "comingSoon": true
+            },
+            "search": {
+              "show": true
+            },
+            "chat": {
+              "show": true
+            }
+          }
+        },
+        {
+          "customerRoleId": "95",
+          "displayName": "BSF System Administrator",
+          "abbreviation": "BSA",
+          "tabs": {
+            "browse": {
+              "show": false,
+              "comingSoon": true
+            },
+            "search": {
+              "show": true
+            },
+            "chat": {
+              "show": true
+            }
+          }
+        },
+        {
+          "customerRoleId": "96",
+          "displayName": "System Administrator",
+          "abbreviation": "SA",
+          "tabs": {
+            "browse": {
+              "show": false,
+              "comingSoon": true
+            },
+            "search": {
+              "show": true
+            },
+            "chat": {
+              "show": true
+            }
+          }
+        },
+        {
+          "customerRoleId": "97",
+          "displayName": "Help Desk Agent",
+          "abbreviation": "HD",
+          "tabs": {
+            "browse": {
+              "show": false,
+              "comingSoon": true
+            },
+            "search": {
+              "show": true
+            },
+            "chat": {
+              "show": true
+            }
+          }
+        },
+        {
+          "customerRoleId": "99",
+          "displayName": "HQ Staff",
+          "abbreviation": "HQ",
+          "tabs": {
+            "browse": {
+              "show": false,
+              "comingSoon": true
+            },
+            "search": {
+              "show": true
+            },
+            "chat": {
+              "show": true
+            }
+          }
+        },
+        {
+          "customerRoleId": "100",
+          "displayName": "Online Member",
+          "abbreviation": "OM",
+          "tabs": {
+            "browse": {
+              "show": false,
+              "comingSoon": true
+            },
+            "search": {
+              "show": true
+            },
+            "chat": {
+              "show": true
+            }
+          }
+        },
+        {
+          "customerRoleId": "200",
+          "displayName": "Online Group Member",
+          "abbreviation": "OGM",
+          "tabs": {
+            "browse": {
+              "show": true
+            },
+            "search": {
+              "show": true
+            },
+            "chat": {
+              "show": true
+            }
+          }
+        },
+        {
+          "customerRoleId": "300",
+          "displayName": "Online Group Leader",
+          "abbreviation": "OGL",
+          "tabs": {
+            "browse": {
+              "show": true
+            },
+            "search": {
+              "show": true
+            },
+            "chat": {
+              "show": true
+            }
+          }
+        },
+        {
+          "customerRoleId": "400",
+          "displayName": "Assistant Online Trainer",
+          "abbreviation": "AOT",
+          "tabs": {
+            "browse": {
+              "show": true
+            },
+            "search": {
+              "show": true
+            },
+            "chat": {
+              "show": true
+            }
+          }
+        },
+        {
+          "customerRoleId": "500",
+          "displayName": "Online Trainer",
+          "abbreviation": "OT",
+          "tabs": {
+            "browse": {
+              "show": true
+            },
+            "search": {
+              "show": true
+            },
+            "chat": {
+              "show": true
+            }
+          }
+        },
+        {
+          "customerRoleId": "600",
+          "displayName": "Online Area Personnel",
+          "abbreviation": "OAP",
+          "tabs": {
+            "browse": {
+              "show": true
+            },
+            "search": {
+              "show": true
+            },
+            "chat": {
+              "show": true
+            }
+          }
+        },
+        {
+          "customerRoleId": "700",
+          "displayName": "Online Regional Director",
+          "abbreviation": "ORD",
+          "tabs": {
+            "browse": {
+              "show": false,
+              "comingSoon": true
+            },
+            "search": {
+              "show": true
+            },
+            "chat": {
+              "show": true
+            }
+          }
+        },
+        {
+          "customerRoleId": "750",
+          "displayName": "Online View Only",
+          "abbreviation": "HQAdmVO",
+          "tabs": {
+            "browse": {
+              "show": false,
+              "comingSoon": true
+            },
+            "search": {
+              "show": true
+            },
+            "chat": {
+              "show": true
+            }
+          }
+        },
+        {
+          "customerRoleId": "800",
+          "displayName": "HQ Admin",
+          "abbreviation": "HQAdm",
+          "tabs": {
+            "browse": {
+              "show": false,
+              "comingSoon": true
+            },
+            "search": {
+              "show": true
+            },
+            "chat": {
+              "show": true
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
