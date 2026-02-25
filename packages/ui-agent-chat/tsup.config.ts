@@ -8,7 +8,7 @@ export default defineConfig({
   clean: true,
   treeshake: true,
   sourcemap: true,
-  external: ['react', 'react-dom', 'styled-components', '@sharely/services', '@sharely/ui-shared'],
+  external: ['react', 'react-dom', 'styled-components', '@sharely/services', '@sharely/ui-shared', '@floating-ui/react'],
   esbuildOptions(options) {
     options.banner = {
       js: '"use client";',

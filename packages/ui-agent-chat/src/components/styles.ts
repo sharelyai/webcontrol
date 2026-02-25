@@ -657,3 +657,350 @@ export const ToolCallsContainer = styled.div`
   flex-direction: column;
   gap: 8px;
 `;
+
+// SourceChips Styles
+
+export const SourceChipsContainer = styled.div`
+  ${({ theme }) => css`
+    display: flex;
+    flex-direction: column;
+    background: ${theme.colors.athensGray};
+    border-radius: 8px;
+    border: 1px solid ${theme.colors.athensGray2};
+    overflow: hidden;
+  `}
+`;
+
+export const SourceChipsHeader = styled.button<{ $collapsed?: boolean }>`
+  ${({ theme, $collapsed }) => css`
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 12px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    text-align: left;
+    transition: background-color 0.15s;
+
+    &:hover {
+      background: ${theme.colors.athensGray2};
+    }
+
+    > svg {
+      width: 16px;
+      height: 16px;
+      color: ${theme.colors.fiord};
+      flex-shrink: 0;
+    }
+
+    h4 {
+      margin: 0;
+      font-size: ${theme.fonts.sm};
+      font-weight: 500;
+      color: ${theme.colors.fiord};
+      flex: 1;
+    }
+
+    > span {
+      font-size: ${theme.fonts.xs};
+      color: ${theme.colors.gullGray};
+    }
+
+    ${$collapsed &&
+    css`
+      border-radius: 8px;
+    `}
+  `}
+`;
+
+export const SourceChipsContent = styled.div`
+  ${({ theme }) => css`
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 0 12px 12px 12px;
+    border-top: 1px solid ${theme.colors.athensGray2};
+    padding-top: 12px;
+  `}
+`;
+
+export const SourceChip = styled.div<{ $expanded?: boolean }>`
+  ${({ theme, $expanded }) => css`
+    background: ${theme.colors.white};
+    border: 1px solid ${theme.colors.athensGray2};
+    border-radius: 8px;
+    overflow: hidden;
+    transition: box-shadow 0.15s;
+
+    ${$expanded &&
+    css`
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    `}
+  `}
+`;
+
+export const SourceChipHeader = styled.button`
+  ${({ theme }) => css`
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 12px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    text-align: left;
+
+    &:hover {
+      background: ${theme.colors.athensGray};
+    }
+  `}
+`;
+
+export const SourceTypeIcon = styled.span<{ $type: string }>`
+  ${({ theme, $type }) => css`
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 4px;
+    flex-shrink: 0;
+
+    svg {
+      width: 14px;
+      height: 14px;
+    }
+
+    ${$type === "knowledge" &&
+    css`
+      background: ${theme.colors.athensGray2};
+      color: ${theme.colors.fiord};
+    `}
+
+    ${$type === "document" &&
+    css`
+      background: ${theme.colors.athensGray2};
+      color: ${theme.colors.fiord};
+    `}
+
+    ${$type === "atom" &&
+    css`
+      background: ${theme.colors.selago};
+      color: ${theme.colors.mediumPurple};
+    `}
+
+    ${$type === "taxonomy" &&
+    css`
+      background: ${theme.colors.foam};
+      color: ${theme.colors.mountainMeadow};
+    `}
+
+    ${$type === "role" &&
+    css`
+      background: ${theme.colors.provincialPink};
+      color: ${theme.colors.flamingo};
+    `}
+
+    ${$type === "url" &&
+    css`
+      background: ${theme.colors.lightSkyBlue};
+      color: ${theme.colors.royalBlue};
+    `}
+  `}
+`;
+
+export const SourceChipTitle = styled.span`
+  ${({ theme }) => css`
+    flex: 1;
+    font-size: ${theme.fonts.sm};
+    font-weight: 500;
+    color: ${theme.colors.fiord};
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  `}
+`;
+
+export const SourceChipScore = styled.span`
+  ${({ theme }) => css`
+    font-size: ${theme.fonts.xs};
+    font-weight: 600;
+    color: ${theme.colors.mountainMeadow};
+    background: ${theme.colors.foam};
+    padding: 2px 6px;
+    border-radius: 4px;
+  `}
+`;
+
+export const SourceChipExpandIcon = styled.span<{ $expanded?: boolean }>`
+  ${({ theme, $expanded }) => css`
+    display: flex;
+    align-items: center;
+    color: ${theme.colors.gullGray};
+    transition: transform 0.2s;
+
+    svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    ${$expanded &&
+    css`
+      transform: rotate(180deg);
+    `}
+  `}
+`;
+
+export const SourceChipContent = styled.div`
+  ${({ theme }) => css`
+    padding: 12px;
+    border-top: 1px solid ${theme.colors.athensGray2};
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  `}
+`;
+
+export const SourceChipRow = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+`;
+
+export const SourceChipLabel = styled.span`
+  ${({ theme }) => css`
+    font-size: ${theme.fonts.xs};
+    font-weight: 600;
+    color: ${theme.colors.paleSky};
+    text-transform: uppercase;
+  `}
+`;
+
+export const SourceChipValue = styled.span`
+  ${({ theme }) => css`
+    font-size: ${theme.fonts.sm};
+    color: ${theme.colors.ebony};
+    word-break: break-word;
+  `}
+`;
+
+export const SourceChipExcerpt = styled.p`
+  ${({ theme }) => css`
+    margin: 0;
+    font-size: ${theme.fonts.xs};
+    color: ${theme.colors.shuttleGray};
+    line-height: 1.5;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+  `}
+`;
+
+export const SourceChipLink = styled.a`
+  ${({ theme }) => css`
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: ${theme.fonts.xs};
+    color: ${theme.colors.royalBlue};
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+
+    svg {
+      width: 12px;
+      height: 12px;
+    }
+  `}
+`;
+
+export const SourceChipTypeBadge = styled.span<{ $type: string }>`
+  ${({ theme, $type }) => css`
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: capitalize;
+
+    svg {
+      width: 12px;
+      height: 12px;
+    }
+
+    ${$type === "knowledge" &&
+    css`
+      background: ${theme.colors.athensGray2};
+      color: ${theme.colors.fiord};
+    `}
+
+    ${$type === "document" &&
+    css`
+      background: ${theme.colors.athensGray2};
+      color: ${theme.colors.fiord};
+    `}
+
+    ${$type === "atom" &&
+    css`
+      background: ${theme.colors.selago};
+      color: ${theme.colors.mediumPurple};
+    `}
+
+    ${$type === "taxonomy" &&
+    css`
+      background: ${theme.colors.foam};
+      color: ${theme.colors.mountainMeadow};
+    `}
+
+    ${$type === "role" &&
+    css`
+      background: ${theme.colors.provincialPink};
+      color: ${theme.colors.flamingo};
+    `}
+
+    ${$type === "url" &&
+    css`
+      background: ${theme.colors.lightSkyBlue};
+      color: ${theme.colors.royalBlue};
+    `}
+  `}
+`;
+
+export const SourceChipOpenButton = styled.button`
+  ${({ theme }) => css`
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    width: 100%;
+    padding: 8px 12px;
+    background-color: var(--web-control-styles-main_color);
+    color: ${theme.colors.white};
+    border: none;
+    border-radius: 6px;
+    font-size: ${theme.fonts.xs};
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.15s;
+    margin-top: 4px;
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    svg {
+      width: 14px;
+      height: 14px;
+    }
+  `}
+`;

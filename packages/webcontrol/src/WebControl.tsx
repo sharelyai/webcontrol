@@ -34,12 +34,11 @@ import {
 import { ChatPanel } from "@sharely/ui-chat";
 import { SearchPanel } from "@sharely/ui-search";
 import { BrowsePanel } from "@sharely/ui-browse";
-import { AgentChatPanel } from "@sharely/ui-agent-chat";
-
 import { Wrapper } from "./styles";
 import { AuthModal } from "./components/AuthModal";
 import { ViewTabs } from "./components/ViewTabs";
 import { ChatHistory } from "./components/ChatHistory";
+import { AgentView } from "./components/AgentView";
 
 export interface WebControlProps {
   workspaceId?: string;
@@ -381,7 +380,7 @@ const WebControlInner = (props: WebControlProps) => {
               <>
                 {currentView === constants.CHAT_VIEW && (
                   config?.agentMode
-                    ? <AgentChatPanel spaceId={currentInformation?.spaceId || ''} />
+                    ? <AgentView spaceId={currentInformation?.spaceId || ''} />
                     : <ChatPanel
                         spaceId={currentInformation?.spaceId || ''}
                         status={status}

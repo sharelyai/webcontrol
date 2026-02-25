@@ -17,3 +17,4 @@ export * from './useKnowledgeResources';
 export * from './useSpace';
 export * from './useAgentChat';
 export * from './useAgentThreads';
+export * from './useSourceDownload';

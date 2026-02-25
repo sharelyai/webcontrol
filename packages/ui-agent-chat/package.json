@@ -32,6 +32,7 @@
   "dependencies": {
     "@sharely/services": "workspace:*",
     "@sharely/ui-shared": "workspace:*",
+    "@floating-ui/react": "^0.26.0",
     "react-markdown": "^9.0.0"
   },
   "devDependencies": {

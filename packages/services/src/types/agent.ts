@@ -45,10 +45,19 @@ export interface ToolCall {
 
 export interface Source {
   id: string;
-  type: "knowledge" | "document" | "url";
+  type: "knowledge" | "atom" | "taxonomy" | "role" | "document" | "url";
   title: string;
   url?: string;
   snippet?: string;
+  excerpt?: string;
+  metadata?: {
+    knowledgeType?: string;
+    filename?: string;
+    similarity?: number;
+    atomType?: string;
+    pageNumber?: number;
+    knowledgeId?: string;
+  };
 }
 
 export interface TokenUsage {
