@@ -2,6 +2,7 @@ import { createSpacesApi } from './spaces';
 import { createGoalsApi } from './goals';
 import { createKnowledgeApi } from './knowledge';
 import { createWorkspacesApi } from './workspaces';
+import { getGlobalEnvHeaders } from '../utils/globalEnv';
 
 export class ApiError extends Error {
   status: number;
@@ -41,6 +42,7 @@ export function createApiClient(config: ApiClientConfig): ApiClient {
     const headers: HeadersInit = {
       'Content-Type': 'application/json',
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      ...getGlobalEnvHeaders(),
       ...options?.headers,
     };
 

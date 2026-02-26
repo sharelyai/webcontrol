@@ -64,6 +64,7 @@ const defaultConfig: SharelyConfig = {
         SHOW_TAGS: false,
       },
       BROWSE: { SHOW: false },
+      AGENT: { SHOW: false },
     },
   },
 };

@@ -11,6 +11,8 @@
     "clean": "turbo run clean && rm -rf node_modules",
     "changeset": "changeset",
     "version-packages": "changeset version",
+    "dev:widget": "turbo run dev --filter=@sharely/webcontrol",
+    "dev:all": "turbo run build && turbo run dev",
     "release": "turbo run build && changeset publish"
   },
   "devDependencies": {

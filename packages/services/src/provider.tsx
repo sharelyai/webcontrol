@@ -39,7 +39,8 @@ export function SharelyProvider({ config: propConfig, children }: SharelyProvide
     const apiClient = createApiClient({
       baseUrl: mergedConfig.baseUrl || 'https://api.sharely.ai',
       getToken: () => {
-        return useGlobalStore.getState().token ?? null;
+        const state = useGlobalStore.getState();
+        return state.externalToken ?? state.token ?? null;
       },
       onError: mergedConfig.onError,
     });

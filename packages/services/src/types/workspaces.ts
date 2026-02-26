@@ -7,6 +7,7 @@ export interface Workspace {
   description?: string;
   organizationId?: string;
   organizationName?: string;
+  rbacStatus?: string;
   verificationSpace: {
     authAction: string;
     authMethod: string;

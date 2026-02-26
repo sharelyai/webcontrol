@@ -19,9 +19,12 @@ import { Markdown } from "./components/markdown";
 //   };
 // };
 
-
 const getMarkdownComponents = (customProps = {}): Components => ({
-  a: ({ node, ...props }: HTMLAttributes<HTMLAnchorElement> & { node?: any }) => { // Change MdastNode to any
+  a: ({
+    node,
+    ...props
+  }: HTMLAttributes<HTMLAnchorElement> & { node?: any }) => {
+    // Change MdastNode to any
     const nodeCustomProps = (node as any)?.data?.hProperties ?? {};
     return (
       <Markdown.Anchor
@@ -32,7 +35,9 @@ const getMarkdownComponents = (customProps = {}): Components => ({
       />
     );
   },
-  li: ({ node, ...props }: HTMLAttributes<HTMLLIElement> & { node?: any }) => <Markdown.Li node={node} {...props} {...customProps} />, // Change MdastNode to any
+  li: ({ node, ...props }: HTMLAttributes<HTMLLIElement> & { node?: any }) => (
+    <Markdown.Li node={node} {...props} {...customProps} />
+  ), // Change MdastNode to any
 });
 
 export type ReactMarkdownProps = Parameters<typeof ReactMarkdownLibrary>[0] & {

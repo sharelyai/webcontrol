@@ -11,11 +11,14 @@ export interface DisplayModeConfig {
       SHOW_TAGS?: boolean;
     };
     BROWSE: { SHOW: boolean };
+    AGENT?: { SHOW: boolean };
   };
 }
 
 export interface SharelyConfig {
   baseUrl?: string;
+  /** @deprecated Use `baseUrl` instead. Kept for backward compatibility. */
+  api?: string;
   workspaceId?: string;
   externalUserId?: string;
   closedText?: string;
@@ -32,5 +35,6 @@ export interface SharelyConfig {
   };
   agentMode?: boolean;
   agentApi?: string;
+  env?: string | null;
   onError?: (error: Error) => void;
 }

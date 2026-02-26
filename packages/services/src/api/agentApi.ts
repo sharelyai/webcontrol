@@ -13,6 +13,14 @@ export function getAgentApiUrl(): string {
 }
 
 /**
+ * Get the standard API URL from config
+ */
+export function getStandardApiUrl(): string {
+  const state = useGlobalStore.getState();
+  return state.config?.baseUrl || "";
+}
+
+/**
  * Get the current auth token
  */
 export function getAuthToken(): string | undefined {

@@ -23,6 +23,7 @@
   "AskBSFResourcesText": "Ask anything about BSF Resources",
   "BSFInDepthAnswersText": "Get in-depth answers about BSF resources, your role, policies, and lessons.",
   "ChatTabText": "Chat",
+  "AgentTabText": "Agent chat",
   "IndexAlertText": "Space sent",
   "IndexSmallChatText": "Ask AI anything",
   "IndexSaveConversationText": "Save your conversation",

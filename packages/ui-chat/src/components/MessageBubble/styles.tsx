@@ -1,56 +1,233 @@
 import styled, { css } from 'styled-components';
 
 type WrapperProps = {
-  $isUser?: boolean;
+  type?: string;
+  hasCurrentGoalSuggestionsMessage?: boolean;
+  hasGoalSuggestions?: boolean;
 };
 
 export const Wrapper: any = styled.div.withConfig({
-  shouldForwardProp: (prop) => !prop.startsWith('$'),
+  shouldForwardProp: (prop) =>
+    !['hasCurrentGoalSuggestionsMessage', 'hasGoalSuggestions'].includes(prop),
 })<WrapperProps>`
-  ${({ theme, $isUser }) => css`
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    padding: 16px 24px;
-    align-self: ${$isUser ? 'flex-end' : 'flex-start'};
-    max-width: 85%;
-
-    @media (max-width: ${theme.screens.md}) {
-      max-width: 95%;
-      padding: 12px 16px;
-    }
-
-    & > .bubble {
-      padding: 12px 16px;
-      border-radius: 12px;
-      background: ${$isUser ? theme.colors.indigo : theme.colors.whiteLilac};
-      color: ${$isUser ? theme.colors.white : theme.colors.ebony};
-      font-size: ${theme.fonts.base};
-      line-height: 1.5;
-      position: relative;
-
-      ${$isUser &&
-      css`
-        border-bottom-right-radius: 2px;
-      `}
-
-      ${!$isUser &&
-      css`
-        border-bottom-left-radius: 2px;
-      `}
-
-      & > .text {
-        word-break: break-word;
-      }
-    }
-
-    & > .info {
+  ${({ theme, type, hasGoalSuggestions }) => {
+    const isAi = type === 'AI';
+    return css`
       display: flex;
-      align-items: center;
+      align-items: flex-start;
       gap: 8px;
-      color: ${theme.colors.gullGray};
-      font-size: ${theme.fonts.xs};
-      justify-content: ${$isUser ? 'flex-end' : 'flex-start'};
-    }
-  `}
+      padding: 8px 0;
+
+      ${hasGoalSuggestions &&
+      css`
+        cursor: pointer;
+      `}
+
+      .sharelyai-webcontroller-content-message-image-ai {
+        width: 34px;
+        height: 32px;
+        align-self: flex-start;
+        background-color: ${theme.colors.white};
+        border-radius: 50%;
+        border: 1px solid ${theme.colors.whiteLilac};
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        & > img {
+          width: 100%;
+          height: 100%;
+          border-radius: 100%;
+        }
+
+        & > svg {
+          width: 20px;
+          height: 20px;
+        }
+      }
+
+      .sharelyai-webcontroller-content-message-image-user {
+        width: 34px;
+        height: 32px;
+        align-self: flex-start;
+        background-color: ${theme.colors.white};
+        border-radius: 50%;
+        border: 1px solid ${theme.colors.whiteLilac};
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        & > svg {
+          width: 20px;
+          height: 20px;
+          fill: ${theme.colors.paleSky};
+        }
+      }
+
+      .sharelyai-webcontroller-content-message {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        min-width: 0;
+
+        .sharelyai-webcontroller-content-message-header {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+
+          .sharelyai-webcontroller-content-message-name {
+            color: ${theme.colors.ebony};
+            font-size: ${theme.fonts.base};
+            font-weight: 600;
+            line-height: 24px;
+            margin: 0;
+          }
+
+          .sharelyai-webcontroller-content-message-icon {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+
+            & > svg {
+              width: 16px;
+              height: 16px;
+              fill: var(
+                --web-control-styles-main_color,
+                ${theme.colors.indigo}
+              );
+            }
+          }
+
+          .sharelyai-webcontroller-content-message-tooltip {
+            color: ${theme.colors.paleSky};
+            font-size: ${theme.fonts.xs};
+            margin: 0;
+          }
+        }
+
+        .sharelyai-webcontroller-content-message-text {
+          color: ${theme.colors.fiord};
+          font-size: ${theme.fonts.base};
+          font-style: normal;
+          font-weight: 400;
+          line-height: 28px;
+          word-break: break-word;
+        }
+
+        .sharelyai-webcontroller-content-message-footer {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          min-height: 0;
+        }
+
+        .chat-content-conversation-text-save-message {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 12px;
+          padding: 12px 16px;
+          background: var(
+            --web-control-styles-main_card_background,
+            ${theme.colors.whiteLilac2}
+          );
+          border-radius: 12px;
+          margin-top: 8px;
+
+          .left {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+
+            .title {
+              color: ${theme.colors.ebony};
+              font-size: ${theme.fonts.sm};
+              font-weight: 600;
+              margin: 0;
+            }
+
+            .description {
+              color: ${theme.colors.paleSky};
+              font-size: ${theme.fonts.xs};
+              margin: 0;
+            }
+          }
+
+          .right {
+            button {
+              background: var(
+                --web-control-styles-main_color,
+                ${theme.colors.indigo}
+              );
+              color: ${theme.colors.white};
+              border: none;
+              border-radius: 50px;
+              padding: 8px 16px;
+              font-size: ${theme.fonts.sm};
+              font-weight: 600;
+              cursor: pointer;
+              white-space: nowrap;
+            }
+          }
+        }
+
+        .sharelyai-webcontroller-message-thread-button-action {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          background: none;
+          border: none;
+          padding: 0;
+          cursor: pointer;
+          color: ${theme.colors.paleSky};
+          font-size: ${theme.fonts.xs};
+          margin-top: 4px;
+
+          &:empty {
+            display: none;
+          }
+
+          .sharelyai-webcontroller-chat-content-conversation-picture-container {
+            width: 20px;
+            height: 20px;
+
+            img,
+            div {
+              width: 20px;
+              height: 20px;
+              border-radius: 50%;
+            }
+
+            .sharelyai-webcontroller-chat-content-conversation-picture {
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              background: ${theme.colors.whiteLilac};
+
+              & > svg {
+                width: 12px;
+                height: 12px;
+                fill: ${theme.colors.paleSky};
+              }
+            }
+          }
+
+          .sharelyai-webcontroller-chat-content-conversation-picture-rest-users {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: ${theme.colors.whiteLilac};
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            color: ${theme.colors.paleSky};
+          }
+        }
+      }
+    `;
+  }}
 `;

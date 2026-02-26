@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useMemo } from "react";
 import { useFloating, offset, flip, shift } from "@floating-ui/react";
 import type { Source } from "@sharely/services";
 import { useSourceDownload } from "@sharely/services";
@@ -57,10 +57,22 @@ export function CitationBadge({
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const { downloadSource, isLoading } = useSourceDownload();
 
+  const middleware = useMemo(() => [offset(8), flip(), shift({ padding: 8 })], []);
   const { refs, floatingStyles } = useFloating({
     placement: "top",
-    middleware: [offset(8), flip(), shift({ padding: 8 })],
+    middleware,
   });
+
+  const floatingRefs = useRef(refs);
+  floatingRefs.current = refs;
+  const safeSetReference = useCallback(
+    (node: HTMLElement | null) => { floatingRefs.current.setReference(node); },
+    []
+  );
+  const safeSetFloating = useCallback(
+    (node: HTMLElement | null) => { floatingRefs.current.setFloating(node); },
+    []
+  );
 
   const handleMouseEnter = () => {
     if (timeoutRef.current) {
@@ -97,7 +109,7 @@ export function CitationBadge({
   return (
     <>
       <BadgeWrapper
-        ref={refs.setReference}
+        ref={safeSetReference}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
         onClick={handleClick}
@@ -107,7 +119,7 @@ export function CitationBadge({
       </BadgeWrapper>
       {isHovered && (
         <HoverCard
-          ref={refs.setFloating}
+          ref={safeSetFloating}
           style={floatingStyles}
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}

@@ -13,6 +13,21 @@
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,
-    "isolatedModules": true
+    "isolatedModules": true,
+    "baseUrl": ".",
+    "paths": {
+      "@sharely/services": ["packages/services/src"],
+      "@sharely/services/*": ["packages/services/src/*"],
+      "@sharely/ui-shared": ["packages/ui-shared/src"],
+      "@sharely/ui-shared/*": ["packages/ui-shared/src/*"],
+      "@sharely/ui-chat": ["packages/ui-chat/src"],
+      "@sharely/ui-chat/*": ["packages/ui-chat/src/*"],
+      "@sharely/ui-search": ["packages/ui-search/src"],
+      "@sharely/ui-search/*": ["packages/ui-search/src/*"],
+      "@sharely/ui-browse": ["packages/ui-browse/src"],
+      "@sharely/ui-browse/*": ["packages/ui-browse/src/*"],
+      "@sharely/ui-agent-chat": ["packages/ui-agent-chat/src"],
+      "@sharely/ui-agent-chat/*": ["packages/ui-agent-chat/src/*"]
+    }
   }
 }

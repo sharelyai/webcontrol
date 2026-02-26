@@ -1,7 +1,13 @@
 import { ReactNode, useState } from "react";
 
 import { Wrapper } from "./styles";
-import { AutoAwesome, Logo, Person, ReactMarkdown, useResponsive } from "@sharely/ui-shared";
+import {
+  AutoAwesome,
+  Logo,
+  Person,
+  ReactMarkdown,
+  useResponsive,
+} from "@sharely/ui-shared";
 import {
   constants,
   customEvents,
@@ -226,7 +232,7 @@ export const MessageBubble = (props: IMessageProps) => {
                 onClick={() => {
                   customEvents.publish(
                     constants.CUSTOM_EVENTS.TOGGLE_SAVE_CONVERSATION,
-                    { open: true }
+                    { open: true },
                   );
                 }}
               >
@@ -239,7 +245,8 @@ export const MessageBubble = (props: IMessageProps) => {
           className="sharelyai-webcontroller-message-thread-button-action"
           onClick={() => {}}
         >
-          {threadUsers && threadUsers.length > 0 &&
+          {threadUsers &&
+            threadUsers.length > 0 &&
             filterUniqueUsers(threadUsers)
               .slice(0, 2)
               .map((thread) => (

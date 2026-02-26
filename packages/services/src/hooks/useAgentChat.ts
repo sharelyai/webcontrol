@@ -21,6 +21,11 @@ import type {
   UseAgentChatReturn,
 } from "../types/agent";
 import { agentFetcher } from "../api/agentApi";
+import {
+  transformRawSourcesToMap,
+  mergeSourcesWithRawData,
+  processLoadedMessages,
+} from "../utils/sourceParser";
 import { useAgentSSE } from "./useAgentSSE";
 import { useGlobalStore } from "../stores/globalStore";
 
@@ -50,6 +55,11 @@ export function useAgentChat(options: UseAgentChatOptions): UseAgentChatReturn {
   const thinkingStepsRef = useRef<ThinkingStep[]>([]);
   const activeToolCallsRef = useRef<ToolCall[]>([]);
   const activeSourcesRef = useRef<Source[]>([]);
+
+  // Ref for raw source data from tool_call_end/tool_result events
+  const rawSourceDataRef = useRef<
+    Map<string, { pageNumber: number; filename: string; text: string }>
+  >(new Map());
 
   // Thread state
   const [threadId, setThreadId] = useState<string | null>(
@@ -115,7 +125,9 @@ export function useAgentChat(options: UseAgentChatOptions): UseAgentChatReturn {
       );
       threadIdRef.current = tid;
       setThreadId(tid);
-      setMessages(data.messages || []);
+      // Process loaded messages to merge sources with toolCalls data
+      const processedMessages = processLoadedMessages(data.messages || []);
+      setMessages(processedMessages);
       setError(null);
     } catch (e) {
       setError((e as Error).message);
@@ -155,6 +167,8 @@ export function useAgentChat(options: UseAgentChatOptions): UseAgentChatReturn {
           setThinkingSteps([]);
           setActiveToolCalls([]);
           setActiveSources([]);
+          // Clear raw source data for new message
+          rawSourceDataRef.current.clear();
           break;
         }
 
@@ -197,6 +211,20 @@ export function useAgentChat(options: UseAgentChatOptions): UseAgentChatReturn {
         // New backend format: "tool_result" event with tool output
         case "tool_result": {
           const event = data as ToolResultEvent;
+
+          // Capture raw source data if present (for RAG results)
+          const output = event.output as Record<string, unknown> | undefined;
+          if (output?.dataArraySortedWithSource) {
+            const rawSources = output.dataArraySortedWithSource as Array<{
+              text: string;
+              source: string;
+            }>;
+            const rawMap = transformRawSourcesToMap(rawSources);
+            rawMap.forEach((value, key) => {
+              rawSourceDataRef.current.set(key, value);
+            });
+          }
+
           setActiveToolCalls((prev) =>
             prev.map((tc) =>
               tc.name === event.tool && tc.status === "running"
@@ -288,6 +316,20 @@ export function useAgentChat(options: UseAgentChatOptions): UseAgentChatReturn {
         // Legacy format: tool_call_end
         case "tool_call_end": {
           const event = data as ToolCallEndEvent;
+
+          // Capture raw source data if present (for RAG results)
+          const toolOutput = event.output as Record<string, unknown> | undefined;
+          if (toolOutput?.dataArraySortedWithSource) {
+            const rawSources = toolOutput.dataArraySortedWithSource as Array<{
+              text: string;
+              source: string;
+            }>;
+            const rawMap = transformRawSourcesToMap(rawSources);
+            rawMap.forEach((value, key) => {
+              rawSourceDataRef.current.set(key, value);
+            });
+          }
+
           setActiveToolCalls((prev) =>
             prev.map((tc) =>
               tc.id === event.toolCallId
@@ -313,7 +355,12 @@ export function useAgentChat(options: UseAgentChatOptions): UseAgentChatReturn {
         // Legacy format: sources (plural)
         case "sources": {
           const event = data as SourcesEvent;
-          setActiveSources(event.sources);
+          // Merge with raw data from tool_call_end/tool_result events
+          const mergedSources = mergeSourcesWithRawData(
+            event.sources,
+            rawSourceDataRef.current
+          );
+          setActiveSources(mergedSources);
           break;
         }
 

@@ -1,4 +1,4 @@
-import React, { useState, ReactNode } from 'react';
+import React, { useState, useCallback, useEffect, useRef, ReactNode } from 'react';
 import {
   useFloating,
   autoUpdate,
@@ -34,10 +34,17 @@ const TooltipContent = styled.div`
 
 export const Tooltip = ({ children, text, placement = 'top' }: TooltipProps) => {
   const [isOpen, setIsOpen] = useState(false);
+  const mountedRef = useRef(true);
+  useEffect(() => () => { mountedRef.current = false; }, []);
+
+  // Guard against setState during React commit phase (floating-ui ref cleanup)
+  const handleOpenChange = useCallback((open: boolean) => {
+    if (mountedRef.current) setIsOpen(open);
+  }, []);
 
   const { refs, floatingStyles, context } = useFloating({
     open: isOpen,
-    onOpenChange: setIsOpen,
+    onOpenChange: handleOpenChange,
     placement,
     whileElementsMounted: autoUpdate,
     middleware: [
@@ -61,15 +68,26 @@ export const Tooltip = ({ children, text, placement = 'top' }: TooltipProps) => 
     role,
   ]);
 
+  const floatingRefs = useRef(refs);
+  floatingRefs.current = refs;
+  const safeSetReference = useCallback(
+    (node: HTMLElement | null) => { floatingRefs.current.setReference(node); },
+    []
+  );
+  const safeSetFloating = useCallback(
+    (node: HTMLElement | null) => { floatingRefs.current.setFloating(node); },
+    []
+  );
+
   return (
     <>
-      <div ref={refs.setReference} {...getReferenceProps()} style={{ display: 'inline-block' }}>
+      <div ref={safeSetReference} {...getReferenceProps()} style={{ display: 'inline-block' }}>
         {children}
       </div>
       {isOpen && (
         <FloatingPortal>
           <TooltipContent
-            ref={refs.setFloating}
+            ref={safeSetFloating}
             style={floatingStyles}
             {...getFloatingProps()}
           >

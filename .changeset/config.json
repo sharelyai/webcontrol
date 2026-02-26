@@ -8,13 +8,12 @@
       "@sharely/ui-shared",
       "@sharely/ui-chat",
       "@sharely/ui-search",
-      "@sharely/ui-browse",
-      "@sharely/webcontrol"
+      "@sharely/ui-browse"
     ]
   ],
   "linked": [],
   "access": "public",
   "baseBranch": "main",
   "updateInternalDependencies": "patch",
-  "ignore": ["@sharely/demo"]
+  "ignore": ["@sharely/demo", "@sharely/webcontrol"]
 }

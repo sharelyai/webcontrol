@@ -30,6 +30,9 @@ export const POSITIONS = [
 export const LANGUAGE_EN = "en";
 export const LANGUAGE_ES = "es";
 export const LANGUAGE_PT = "pt";
+export const LANGUAGE_PT_BR = "pt-br";
+export const LANGUAGE_DE = "de";
+export const LANGUAGE_PL = "pl";
 export const LANGUAGE_ZH = "zh";
 export const LANGUAGE_ZH_HANS = "zh-hans";
 export const LANGUAGE_ZH_HANT = "zh-hant";
@@ -39,6 +42,9 @@ export const LANGUAGES = [
   LANGUAGE_EN,
   LANGUAGE_ES,
   LANGUAGE_PT,
+  LANGUAGE_PT_BR,
+  LANGUAGE_DE,
+  LANGUAGE_PL,
   LANGUAGE_ZH,
   LANGUAGE_ZH_HANS,
   LANGUAGE_ZH_HANT,
@@ -59,7 +65,7 @@ export const CHAT_VIEW = "CHAT_VIEW";
 export const SEARCH_VIEW = "SEARCH_VIEW";
 export const BROWSE_VIEW = "BROWSE_VIEW";
 export const AGENT_VIEW = "AGENT_VIEW";
-export const MODAL_VIEWS = [CHAT_VIEW, SEARCH_VIEW, BROWSE_VIEW];
+export const MODAL_VIEWS = [CHAT_VIEW, SEARCH_VIEW, BROWSE_VIEW, AGENT_VIEW];
 
 export const GOAL_COMPLETED = "COMPLETED";
 export const GOAL_ACTIVE = "ACTIVE";
@@ -154,6 +160,11 @@ export const COOKIES_KEYS = {
   API_KEY_ACCESS: "apikey-access-token",
   AUTH_PROVIDER_TOKEN: "auth-provider-token",
   AUTH_PROVIDER_USER_ID: "auth-provider-user-id",
+  CURRENT_TAB: "current-tab",
+};
+
+export const COOKIE_MAX_AGE = {
+  CURRENT_TAB: 3600,
 };
 
 export const REGISTRATION_BY_EMAIL = "EMAIL";
@@ -168,6 +179,7 @@ export const DISPLAY_MODE = {
   VIEWS: {
     CHAT: "CHAT",
     SEARCH: "SEARCH",
+    AGENT: "AGENT",
   },
 };
 
@@ -261,6 +273,30 @@ export const MIMETYPE_TO_EXTENSION = {
   LINK: "link",
 };
 
+export const STATUS_DRAFT = "DRAFT";
+export const STATUS_PUBLISHED = "PUBLISHED";
+export const STATUS_PUBLISHED_UAT = "PUBLISHED_UAT";
+export const STATUS = [STATUS_DRAFT, STATUS_PUBLISHED, STATUS_PUBLISHED_UAT];
+
+export const ENVIRONMENT = {
+  DEVELOPMENT: {
+    key: "DEV",
+    status: STATUS_PUBLISHED,
+  },
+  STAGING: {
+    key: "STAGING",
+    status: STATUS_PUBLISHED_UAT,
+  },
+  PRODUCTION: {
+    key: "PROD",
+    status: STATUS_PUBLISHED,
+  },
+  UAT: {
+    key: "UAT",
+    status: STATUS_PUBLISHED_UAT,
+  },
+};
+
 export const SPACE_EVENTS = {
   SPACE_EVENT_SEARCH_TERM: "SEARCH_TERM",
   SPACE_EVENT_CLICKED_SEARCH_RESULT: "CLICKED_SEARCH_RESULT",
@@ -288,6 +324,9 @@ export const constants = {
   LANGUAGE_EN,
   LANGUAGE_ES,
   LANGUAGE_PT,
+  LANGUAGE_PT_BR,
+  LANGUAGE_DE,
+  LANGUAGE_PL,
   LANGUAGE_ZH,
   LANGUAGE_ZH_HANS,
   LANGUAGE_ZH_HANT,
@@ -340,6 +379,7 @@ export const constants = {
   AVATAR_MODES,
   LOCAL_STORAGE_KEYS,
   COOKIES_KEYS,
+  COOKIE_MAX_AGE,
   SPACE_STATUS_PRIVATE,
   SPACE_STATUS_PUBLIC,
   SPACE_STATUS,
@@ -377,4 +417,9 @@ export const constants = {
   MIMETYPES,
   MIMETYPE_TO_EXTENSION,
   SPACE_EVENTS,
+  ENVIRONMENT,
+  STATUS,
+  STATUS_DRAFT,
+  STATUS_PUBLISHED,
+  STATUS_PUBLISHED_UAT,
 };

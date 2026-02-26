@@ -8,7 +8,14 @@ import {
   AnchorMarkdownContainer,
   AnchorBoxWrapperReferences,
 } from "./styles";
-import { constants, regex, customEvents, useGlobalStore, useSharelyContext, useLanguage } from "@sharely/services";
+import {
+  constants,
+  regex,
+  customEvents,
+  useGlobalStore,
+  useSharelyContext,
+  useLanguage,
+} from "@sharely/services";
 import { useAnchorStore } from "./anchorStore";
 import { useResponsive } from "../../../../../hooks/useResponsive";
 
@@ -30,23 +37,23 @@ export const Anchor = ({ node, ...props }: any) => {
   const { isMobile } = useResponsive();
   const { t } = useLanguage();
   const langText = {
-    NoPreviewAvailableText: t('NoPreviewAvailableText'),
-    DownloadingText: t('DownloadingText'),
-    SourceText: t('SourceText'),
-    PageText: t('PageText'),
-    RelevanceText: t('RelevanceText'),
-    ContentPreviewText: t('ContentPreviewText'),
+    NoPreviewAvailableText: t("NoPreviewAvailableText"),
+    DownloadingText: t("DownloadingText"),
+    SourceText: t("SourceText"),
+    PageText: t("PageText"),
+    RelevanceText: t("RelevanceText"),
+    ContentPreviewText: t("ContentPreviewText"),
   };
   const referenceId = props?.href
     ?.replace(constants.PAGE_NUMBER_DOCUMENT_DOWNLOAD_URL, "")
     ?.replaceAll("____", " ");
   const sourcesMetadata = props?.sourcesMetadata;
   const findSourceMetadata = sourcesMetadata?.find(
-    (source: any) => source?.metadata?.source === referenceId
+    (source: any) => source?.metadata?.source === referenceId,
   );
   const sourceKnowledgeId = findSourceMetadata?.metadata?.knowledgeId;
   const isDocument = props?.href?.includes(
-    constants.PAGE_NUMBER_DOCUMENT_DOWNLOAD_URL
+    constants.PAGE_NUMBER_DOCUMENT_DOWNLOAD_URL,
   );
   const title = (() => {
     const source = findSourceMetadata?.metadata?.source;
@@ -85,12 +92,15 @@ export const Anchor = ({ node, ...props }: any) => {
     setKnowledgeId({ isLoading: true });
 
     try {
-      const responseDocument = await apiClient.knowledge.downloadFile(sourceKnowledgeId, pageNumber);
+      const responseDocument = await apiClient.knowledge.downloadFile(
+        sourceKnowledgeId,
+        pageNumber,
+      );
 
       if (responseDocument?.url) {
         const cleanUrl = responseDocument?.url?.replace(
           regex.GET_DOWNLOAD_WORD,
-          ""
+          "",
         );
 
         if (cleanUrl.includes("pdf")) {

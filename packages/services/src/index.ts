@@ -28,6 +28,7 @@ export { supabaseClient } from './auth/supabaseClient';
 export * from './api/agentApi';
 
 // Utils
+export * from './utils/sourceParser';
 export * from './utils/messageAdapters';
 export * from './utils/customEvents';
 export * from './utils/tryParseJson';
@@ -39,3 +40,5 @@ export * from './utils/regex';
 export * from './utils/getMessageCompletion';
 export { classNames } from './utils/classNames';
 export { schemas } from './utils/schemas';
+export { setCSSVariables } from './utils/helpers';
+export { setGlobalEnv, getGlobalEnv, getGlobalEnvStatus } from './utils/globalEnv';

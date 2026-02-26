@@ -1,11 +1,20 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { Wrapper } from "./styles";
 
 import { useWorkflowProgressStore } from "../../stores/workflowProgressStore";
-import { useGlobalStore, useWorkflows, constants, useSharelyContext, classNames } from "@sharely/services";
+import {
+  useGlobalStore,
+  useWorkflows,
+  constants,
+  useSharelyContext,
+  classNames,
+} from "@sharely/services";
 import { ArrowDown, Check } from "@sharely/ui-shared";
+
+const EMPTY_DATA: any[] = [];
+const NOOP = () => {};
 
 export interface WorkflowProgressProps {
   workspaceId?: string;
@@ -24,19 +33,19 @@ export const WorkflowProgress = (props: WorkflowProgressProps) => {
     workspaceId,
     goalId,
     messageId,
-    messageFrom = '',
+    messageFrom = "",
     type,
     showCollapse = false,
-    data = [],
+    data = EMPTY_DATA,
     groupId,
-    setShowCollapse = () => {},
+    setShowCollapse = NOOP,
   } = props;
 
   const { workflowId, setWorkflowId } = useWorkflowProgressStore();
   const queryClient = useQueryClient();
-  const { config } = useGlobalStore();
-  const { workflows } = useWorkflows({ workspaceId: workspaceId || '' });
+  const { workflows } = useWorkflows({ workspaceId: workspaceId || "" });
   const { apiClient } = useSharelyContext();
+  const lastSyncedDataRef = useRef<any>(null);
 
   const workflowProgressData = useQuery({
     queryKey: [
@@ -48,14 +57,14 @@ export const WorkflowProgress = (props: WorkflowProgressProps) => {
     ],
     queryFn: async () => {
       if (!workspaceId || !workflowId) return [];
-      
+
       if (messageId) {
         return apiClient.fetcher(
-          `/workspaces/${workspaceId}/workflows/${workflowId}/progress?messageId=${messageId}&messageFrom=${messageFrom}`
+          `/workspaces/${workspaceId}/workflows/${workflowId}/progress?messageId=${messageId}&messageFrom=${messageFrom}`,
         );
       } else if (groupId) {
         const response = await apiClient.fetcher<any[]>(
-          `/workspaces/${workspaceId}/workflows/${workflowId}/progress-by-group?groupId=${groupId}&messageFrom=${messageFrom}`
+          `/workspaces/${workspaceId}/workflows/${workflowId}/progress-by-group?groupId=${groupId}&messageFrom=${messageFrom}`,
         );
         return response?.filter((item) => item?.status === "PENDING") ?? [];
       }
@@ -68,11 +77,18 @@ export const WorkflowProgress = (props: WorkflowProgressProps) => {
       Boolean(messageFrom) &&
       data?.length === 0,
     refetchInterval: (query: any) => {
-      if (query?.state?.data?.error) {
+      const queryData = query?.state?.data;
+      if (queryData?.error) {
         return false;
-      } else {
-        return 500;
       }
+      if (
+        Array.isArray(queryData) &&
+        queryData.length > 0 &&
+        queryData.every((item: any) => item?.status !== "PENDING")
+      ) {
+        return false;
+      }
+      return 500;
     },
     retry: 3,
     retryDelay: 500,
@@ -83,21 +99,19 @@ export const WorkflowProgress = (props: WorkflowProgressProps) => {
       let findWorkflow = workflows.find(
         (workflow: any) =>
           workflow.direction ===
-          constants.SPACE_CONVERSATION_RETRIVAL_DATA_DEBUG_CONTENT_FROM_SPACE
+          constants.SPACE_CONVERSATION_RETRIVAL_DATA_DEBUG_CONTENT_FROM_SPACE,
       );
       if (goalId) {
         findWorkflow = workflows.find(
           (workflow: any) =>
             workflow.direction ===
               constants.SPACE_CONVERSATION_RETRIVAL_DATA_DEBUG_CONTENT_FROM_GOAL &&
-            workflow?.goals?.[0]?.goalId === goalId
+            workflow?.goals?.[0]?.goalId === goalId,
         );
       }
-      setWorkflowId(findWorkflow?.id || '');
-    } else {
-      setWorkflowId('');
+      setWorkflowId(findWorkflow?.id || "");
     }
-  }, [workflows, goalId, setWorkflowId]);
+  }, [workflows, goalId]);
 
   useEffect(() => {
     if (data?.length === 0 && !showCollapse) {
@@ -106,59 +120,69 @@ export const WorkflowProgress = (props: WorkflowProgressProps) => {
   }, [data, showCollapse, setShowCollapse]);
 
   useEffect(() => {
-    const updateTemporalUserWorkflowProgress = () => {
-      const queryKeys: Record<string, string> = {
-        [constants.WORKFLOW_MESSAGE_FROM_TYPE_GOAL]: "threads-messages",
-        [constants.WORKFLOW_MESSAGE_FROM_TYPE_SPACE]: "spaces-messages",
-      };
-      
-      const queryKey = queryKeys[messageFrom];
+    const progressData = workflowProgressData?.data;
+    if (
+      !progressData ||
+      !Array.isArray(progressData) ||
+      progressData.length === 0
+    )
+      return;
+    // Skip if we already synced this exact data reference
+    if (progressData === lastSyncedDataRef.current) return;
+    lastSyncedDataRef.current = progressData;
 
-      if (!queryKey) return;
-      
-      const query = queryClient
-        .getQueryCache()
-        .findAll()
-        .find((q) => q.queryKey[0] === queryKey);
-
-      if (!query) return;
-      
-      const messagesValue =
-        (query?.state?.data as any)?.["messages"] || query?.state?.data || [];
-      
-      let messageIdIndex: number | undefined = undefined;
-      let messageUserIndex: number | undefined = undefined;
-      let messageUserData: any = undefined;
-      
-      if (Array.isArray(messagesValue)) {
-        messageIdIndex = messagesValue.findIndex(
-          (item: any) => item.id === messageId
-        );
-        if (messageIdIndex !== -1) {
-          messageUserIndex = messageIdIndex + 1;
-          messageUserData = messagesValue[messageUserIndex];
-        }
-      }
-
-      if (messageUserIndex === undefined || !messageUserData || !messageUserData?.temp) return;
-
-      queryClient.setQueryData(query.queryKey, (oldData: any) => {
-        const hasMessages = Boolean(oldData?.["messages"]);
-        const updatedData = [...(oldData?.["messages"] || oldData)];
-        
-        if (updatedData?.[messageUserIndex as number]) {
-          updatedData[messageUserIndex as number] = {
-            ...updatedData[messageUserIndex as number],
-            workflowProgresses: workflowProgressData?.data || [],
-          };
-        }
-        return hasMessages ? { messages: updatedData } : updatedData;
-      });
+    const queryKeys: Record<string, string> = {
+      [constants.WORKFLOW_MESSAGE_FROM_TYPE_GOAL]: "threads-messages",
+      [constants.WORKFLOW_MESSAGE_FROM_TYPE_SPACE]: "spaces-messages",
     };
 
-    if (workflowProgressData?.data && Array.isArray(workflowProgressData.data) && workflowProgressData.data.length > 0) {
-      updateTemporalUserWorkflowProgress();
+    const queryKey = queryKeys[messageFrom];
+
+    if (!queryKey) return;
+
+    const query = queryClient
+      .getQueryCache()
+      .findAll()
+      .find((q) => q.queryKey[0] === queryKey);
+
+    if (!query) return;
+
+    const messagesValue =
+      (query?.state?.data as any)?.["messages"] || query?.state?.data || [];
+
+    let messageIdIndex: number | undefined = undefined;
+    let messageUserIndex: number | undefined = undefined;
+    let messageUserData: any = undefined;
+
+    if (Array.isArray(messagesValue)) {
+      messageIdIndex = messagesValue.findIndex(
+        (item: any) => item.id === messageId,
+      );
+      if (messageIdIndex !== -1) {
+        messageUserIndex = messageIdIndex + 1;
+        messageUserData = messagesValue[messageUserIndex];
+      }
     }
+
+    if (
+      messageUserIndex === undefined ||
+      !messageUserData ||
+      !messageUserData?.temp
+    )
+      return;
+
+    queryClient.setQueryData(query.queryKey, (oldData: any) => {
+      const hasMessages = Boolean(oldData?.["messages"]);
+      const updatedData = [...(oldData?.["messages"] || oldData)];
+
+      if (updatedData?.[messageUserIndex as number]) {
+        updatedData[messageUserIndex as number] = {
+          ...updatedData[messageUserIndex as number],
+          workflowProgresses: progressData,
+        };
+      }
+      return hasMessages ? { messages: updatedData } : updatedData;
+    });
   }, [workflowProgressData?.data, messageFrom, messageId, queryClient]);
 
   const toggleCollapse = () => {

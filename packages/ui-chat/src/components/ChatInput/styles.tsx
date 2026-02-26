@@ -3,126 +3,133 @@ import styled, { css } from "styled-components";
 export const Wrapper: any = styled.div`
   ${({ theme }: { theme: any }) => css`
     width: 100%;
-    padding: 12px 24px;
-    background: ${theme.colors.white};
 
-    .sharelyai-webcontroller-chat-input-container {
+    .sharelyai-webcontroller-content-input-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .sharelyai-webcontroller-content-input {
       border-radius: 50px;
       border: 1px solid ${theme.colors.athensGray2};
       background-color: ${theme.colors.white};
-      display: flex;
-      align-items: flex-end;
-      gap: 12px;
-      padding: 8px 12px;
+      display: grid;
+      align-items: center;
+      grid-template-columns: auto 1fr auto;
+      grid-gap: 16px;
+      padding: 12px;
       width: 100%;
 
       &:focus-within {
         border: 1px solid var(--web-control-styles-main_color, ${theme.colors.indigo});
       }
 
-      .sharelyai-webcontroller-chat-input-icon {
+      .sharelyai-webcontroller-image-user {
         background-color: ${theme.colors.white};
         border: 1px solid ${theme.colors.whiteLilac};
         border-radius: 50%;
         display: flex;
         align-items: center;
+        align-self: center;
         justify-content: center;
-        width: 36px;
-        height: 36px;
-        flex-shrink: 0;
-        margin-bottom: 2px;
+        width: 40px;
+        height: 40px;
 
         & > svg {
-          width: 20px;
-          height: 20px;
           fill: ${theme.colors.paleSky};
         }
       }
 
-      .sharelyai-webcontroller-chat-input-textarea {
-        flex: 1;
+      & > input {
+        height: 100%;
+        width: 100%;
+        padding-right: 0;
+        border-radius: 50px;
         border: none;
         outline: none;
-        background: transparent;
         color: ${theme.colors.ebony};
         font-size: ${theme.fonts.base};
+        font-style: normal;
         font-weight: 500;
-        line-height: 24px;
-        padding: 8px 0;
-        resize: none;
-        max-height: 150px;
-        min-height: 24px;
+        line-height: 20px;
 
         &::placeholder {
           color: ${theme.colors.gullGray};
         }
+
+        &:disabled {
+          background-color: ${theme.colors.white};
+          color: ${theme.colors.paleSky};
+        }
       }
 
-      .sharelyai-webcontroller-chat-input-actions {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        flex-shrink: 0;
-        margin-bottom: 2px;
-
-        .sharelyai-webcontroller-chat-input-goals-button {
-          background-color: var(--web-control-styles-main_card_background, ${theme.colors.whiteLilac2});
-          border: none;
-          border-radius: 50px;
-          cursor: pointer;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          width: 36px;
-          height: 36px;
+      & > .sharelyai-webcontroller-content-input-icon {
+        background-color: var(
+          --web-control-styles-main_color,
+          ${theme.colors.indigo}
+        );
+        width: 40px;
+        height: 40px;
+        cursor: pointer;
+        padding: 8px;
+        border-radius: 50px;
+        &.disabled {
+          background-color: ${theme.colors.athensGray3};
 
           & > svg {
-            width: 20px;
-            height: 20px;
-            fill: var(--web-control-styles-main_color, ${theme.colors.indigo});
+            fill: ${theme.colors.gullGray};
           }
         }
 
-        .sharelyai-webcontroller-chat-input-send-button {
-          background-color: var(--web-control-styles-main_color, ${theme.colors.indigo});
-          border: none;
-          width: 36px;
-          height: 36px;
-          cursor: pointer;
-          padding: 8px;
-          border-radius: 50px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-
-          &:disabled {
-            background-color: ${theme.colors.athensGray3};
-            cursor: not-allowed;
-            & > svg {
-              fill: ${theme.colors.gullGray};
-            }
-          }
-
-          & > svg {
-            width: 20px;
-            height: 20px;
-            fill: ${theme.colors.white};
-          }
-
-          .spinner {
-            width: 18px;
-            height: 18px;
-            border: 2px solid ${theme.colors.white};
-            border-top-color: transparent;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-          }
+        & > svg {
+          fill: ${theme.colors.white};
         }
       }
     }
 
-    @keyframes spin {
-      to { transform: rotate(360deg); }
+    .sharelyai-webcontroller-content-input.sharelyai-webcontroller-disabled {
+      border: 1px solid ${theme.colors.athensGray2};
+      cursor: not-allowed;
+
+      & > .sharelyai-webcontroller-content-input-icon {
+        & > svg > g > path {
+          fill: ${theme.colors.athensGray2};
+          cursor: not-allowed;
+        }
+      }
     }
+
+    .sharelyai-webcontroller-content-input.sharelyai-webcontroller-icon-disabled {
+      & > .sharelyai-webcontroller-content-input-icon {
+        & > svg > g > path {
+          fill: ${theme.colors.mischka};
+        }
+      }
+    }
+
+    .sharelyai-webcontroller-content-input-icon-goals {
+      background-color: var(
+        --web-control-styles-main_card_background,
+        ${theme.colors.whiteLilac2}
+      );
+      border-radius: 50px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 12px;
+      width: 56px;
+      height: 56px;
+
+      & > svg {
+        width: 24px;
+        height: 24px;
+        fill: var(--web-control-styles-main_color, ${theme.colors.indigo});
+      }
+    }
+
   `}
 `;
