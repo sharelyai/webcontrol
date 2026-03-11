@@ -18,3 +18,4 @@ export * from './useSpace';
 export * from './useAgentChat';
 export * from './useAgentThreads';
 export * from './useSourceDownload';
+export * from './useSharelyChat';

@@ -27,6 +27,9 @@ export { supabaseClient } from './auth/supabaseClient';
 // Agent API
 export * from './api/agentApi';
 
+// AI SDK adapters
+export * from './ai';
+
 // Utils
 export * from './utils/sourceParser';
 export * from './utils/messageAdapters';

@@ -34,13 +34,13 @@
     "@sharely/services": "workspace:*",
     "@sharely/ui-shared": "workspace:*",
     "@sharely/ui-search": "workspace:*",
-    "zustand": "^4.5.0"
+    "zustand": "^5.0.11"
   },
   "devDependencies": {
-    "@types/react": "^19.0.0",
-    "@types/react-dom": "^19.0.0",
-    "styled-components": "^6.1.0",
-    "tsup": "^8.0.0",
-    "typescript": "^5.4.0"
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "styled-components": "^6.3.11",
+    "tsup": "^8.5.1",
+    "typescript": "^5.9.3"
   }
 }

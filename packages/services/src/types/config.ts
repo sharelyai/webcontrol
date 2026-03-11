@@ -35,6 +35,7 @@ export interface SharelyConfig {
   };
   agentMode?: boolean;
   agentApi?: string;
+  useAgentV2?: boolean;
   env?: string | null;
   onError?: (error: Error) => void;
 }
