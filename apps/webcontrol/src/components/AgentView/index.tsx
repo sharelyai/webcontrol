@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { Wrapper, StreamingMessageWrapper, GreetingWrapper } from "./styles";
 import { ChatHistory } from "../ChatHistory";
 import {
-  useAgentChat,
+  useSharelyChat,
   useGlobalStore,
   useLanguage,
   constants,
@@ -20,7 +20,11 @@ import {
   Logo,
 } from "@sharely/ui-shared";
 import { MessageBubble } from "@sharely/ui-chat";
-import { ThinkingIndicator, ToolCallCard, SourcesList } from "@sharely/ui-agent-chat";
+import {
+  ThinkingIndicator,
+  ToolCallCard,
+  SourcesList,
+} from "@sharely/ui-agent-chat";
 
 interface AgentViewProps {
   spaceId: string;
@@ -100,14 +104,19 @@ function StreamingMessage({
   );
 }
 
-export const AgentView = ({ spaceId, showChatHistory = false, onCloseChatHistory, onCreateNewChat }: AgentViewProps) => {
+export const AgentView = ({
+  spaceId,
+  showChatHistory = false,
+  onCloseChatHistory,
+  onCreateNewChat,
+}: AgentViewProps) => {
   const [message, setMessage] = useState("");
 
   const { config, workspace, currentInformation, setCurrentInformation } =
     useGlobalStore();
   const { t } = useLanguage();
 
-  const agentChat = useAgentChat({
+  const agentChat = useSharelyChat({
     spaceId,
     initialThreadId: currentInformation?.agentThreadId,
   });
@@ -118,11 +127,15 @@ export const AgentView = ({ spaceId, showChatHistory = false, onCloseChatHistory
   );
 
   // Load thread when agentThreadId changes (e.g., from chat history selection)
+  // Reset chat when agentThreadId is cleared (e.g., header "New chat" button)
   useEffect(() => {
     const currentThreadId = currentInformation?.agentThreadId;
 
     if (currentThreadId && currentThreadId !== prevThreadIdRef.current) {
       agentChat.loadThread(currentThreadId);
+    } else if (!currentThreadId && prevThreadIdRef.current) {
+      // Thread ID was cleared — reset to fresh state without API call
+      agentChat.resetChat();
     }
 
     prevThreadIdRef.current = currentThreadId;
@@ -137,9 +150,8 @@ export const AgentView = ({ spaceId, showChatHistory = false, onCloseChatHistory
     ? customConfig?.inputChat?.showPersonIcon
     : true;
   const inputPlaceholder = hasCustomConfig
-    ? t(customConfig?.inputChat?.placeholderText) ||
-      t('IndexSmallChatText')
-    : t('IndexSmallChatText');
+    ? t(customConfig?.inputChat?.placeholderText) || t("IndexSmallChatText")
+    : t("IndexSmallChatText");
 
   // Convert agent messages for display
   const convertedMessages = agentChat.messages.map(agentMessageToBodyMessage);
@@ -298,10 +310,13 @@ export const AgentView = ({ spaceId, showChatHistory = false, onCloseChatHistory
                     showThumbUpIcon={false}
                     showSourcesButton={customConfig?.message?.showSourcesButton}
                     footer={
-                      (hasThinking || hasToolCalls || hasSources) ? (
+                      hasThinking || hasToolCalls || hasSources ? (
                         <div className="sharelyai-webcontroller-agent-content">
                           {hasThinking && (
-                            <ThinkingIndicator steps={msg.thinkingSteps} collapsed={true} />
+                            <ThinkingIndicator
+                              steps={msg.thinkingSteps}
+                              collapsed={true}
+                            />
                           )}
                           {hasToolCalls && (
                             <div className="sharelyai-webcontroller-agent-tools">
@@ -311,7 +326,10 @@ export const AgentView = ({ spaceId, showChatHistory = false, onCloseChatHistory
                             </div>
                           )}
                           {hasSources && (
-                            <SourcesList sources={msg.sources} defaultCollapsed={true} />
+                            <SourcesList
+                              sources={msg.sources}
+                              defaultCollapsed={true}
+                            />
                           )}
                         </div>
                       ) : undefined

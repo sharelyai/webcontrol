@@ -219,6 +219,7 @@ export interface UseAgentChatReturn {
   stopStreaming: () => void;
   createThread: (title?: string) => Promise<string>;
   loadThread: (threadId: string) => Promise<void>;
+  resetChat: () => void;
   clearError: () => void;
 }
 

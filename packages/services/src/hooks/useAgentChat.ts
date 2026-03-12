@@ -491,6 +491,20 @@ export function useAgentChat(options: UseAgentChatOptions): UseAgentChatReturn {
     setIsStreaming(false);
   }, [stopStream]);
 
+  // Reset chat to fresh state without API call
+  const resetChat = useCallback(() => {
+    threadIdRef.current = null;
+    setThreadId(null);
+    setMessages([]);
+    setStreamingContent("");
+    setThinkingSteps([]);
+    setActiveToolCalls([]);
+    setActiveSources([]);
+    setStreamingMessageId(null);
+    setIsStreaming(false);
+    setError(null);
+  }, []);
+
   // Clear error
   const clearError = useCallback(() => {
     setError(null);
@@ -517,6 +531,7 @@ export function useAgentChat(options: UseAgentChatOptions): UseAgentChatReturn {
     stopStreaming: handleStopStreaming,
     createThread,
     loadThread,
+    resetChat,
     clearError,
   };
 }

@@ -5,4 +5,5 @@ export {
   reasoningPartsToThinkingSteps,
   toolInvocationPartsToToolCalls,
   sourcePartsToSources,
+  uiMessageToAgentMessage,
 } from './convertMessages';

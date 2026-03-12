@@ -134,11 +134,14 @@ export function reasoningPartsToThinkingSteps(
 
   for (const part of parts) {
     if (part.type === "reasoning") {
+      const p = part as any;
       steps.push({
         id: `thinking-${idx++}`,
         title: "Thinking...",
-        content: (part as any).text || "",
-        status: "completed",
+        content: p.text || "",
+        // AI SDK reasoning parts use state: "streaming" | "done"
+        // Map to ThinkingStep status so ThinkingIndicator shows the spinner
+        status: p.state === "streaming" ? "running" : "completed",
       });
     }
   }
@@ -215,4 +218,29 @@ export function sourcePartsToSources(
   }
 
   return sources;
+}
+
+/**
+ * Convert a UIMessage back to an AgentMessage (reverse of agentMessagesToUIMessages).
+ * Used by the compatibility layer in useSharelyChat.
+ */
+export function uiMessageToAgentMessage(msg: UIMessage): AgentMessage {
+  const parts = msg.parts as AnyPart[];
+
+  return {
+    id: msg.id,
+    role: msg.role as AgentMessage["role"],
+    content:
+      parts
+        .filter((p) => p.type === "text")
+        .map((p) => (p as any).text)
+        .join("") || null,
+    thinkingSteps: reasoningPartsToThinkingSteps(parts),
+    toolCalls: toolInvocationPartsToToolCalls(parts),
+    sources: sourcePartsToSources(parts),
+    tokenUsage: null,
+    model: null,
+    finishReason: null,
+    createdAt: new Date().toISOString(),
+  };
 }

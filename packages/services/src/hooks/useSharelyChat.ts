@@ -4,6 +4,8 @@
  * - Thread lifecycle (create on first message, load from history)
  * - Auth via custom fetch
  * - Message format adaptation via custom transport
+ *
+ * Returns UseAgentChatReturn for drop-in compatibility with AgentView.
  */
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -13,8 +15,14 @@ import type { UIMessage } from "ai";
 import { useGlobalStore } from "../stores/globalStore";
 import { agentFetcher } from "../api/agentApi";
 import { createSharelyFetch } from "../ai/sharelyFetch";
-import { agentMessagesToUIMessages } from "../ai/convertMessages";
-import type { AgentMessage } from "../types/agent";
+import {
+  agentMessagesToUIMessages,
+  uiMessageToAgentMessage,
+  reasoningPartsToThinkingSteps,
+  toolInvocationPartsToToolCalls,
+  sourcePartsToSources,
+} from "../ai/convertMessages";
+import type { AgentMessage, UseAgentChatReturn } from "../types/agent";
 
 interface UseSharelyChatOptions {
   spaceId: string;
@@ -28,9 +36,9 @@ interface ThreadResponse {
   messages?: AgentMessage[];
 }
 
-type ThreadState = "IDLE" | "CREATING_THREAD" | "READY";
-
-export function useSharelyChat(options: UseSharelyChatOptions) {
+export function useSharelyChat(
+  options: UseSharelyChatOptions,
+): UseAgentChatReturn {
   const { spaceId, initialThreadId } = options;
   const { config, workspace } = useGlobalStore();
 
@@ -39,14 +47,13 @@ export function useSharelyChat(options: UseSharelyChatOptions) {
   const [threadId, setThreadId] = useState<string | null>(
     initialThreadId || null,
   );
-  const [threadState, setThreadState] = useState<ThreadState>(
-    initialThreadId ? "READY" : "IDLE",
-  );
   const [initialMessages, setInitialMessages] = useState<UIMessage[]>([]);
   const [hookError, setHookError] = useState<string | null>(null);
+  const [pendingUserMessage, setPendingUserMessage] =
+    useState<AgentMessage | null>(null);
+  const [isCreatingThread, setIsCreatingThread] = useState(false);
 
   const threadIdRef = useRef<string | null>(initialThreadId || null);
-  const pendingMessageRef = useRef<string | null>(null);
 
   const getBasePath = useCallback(() => {
     if (!workspaceId) return null;
@@ -56,31 +63,26 @@ export function useSharelyChat(options: UseSharelyChatOptions) {
   // Stable fetch wrapper
   const sharelyFetch = useMemo(() => createSharelyFetch(), []);
 
-  // Compute API endpoint
-  const api = threadIdRef.current
-    ? `${getBasePath()}/threads/${threadIdRef.current}/chat`
-    : "/noop";
-
-  // Create transport with custom request preparation
+  // Create transport with dynamic URL via prepareSendMessagesRequest
   const transport = useMemo(
     () =>
       new DefaultChatTransport({
-        api,
+        api: "", // never used directly — overridden by prepareSendMessagesRequest
         fetch: sharelyFetch,
         prepareSendMessagesRequest({ messages }) {
-          // Backend expects { message: string }, not the full messages array
+          const basePath = getBasePath();
+          const tid = threadIdRef.current;
           const lastMessage = messages[messages.length - 1];
-          const textPart = lastMessage?.parts?.find(
-            (p) => p.type === "text",
-          );
+          const textPart = lastMessage?.parts?.find((p) => p.type === "text");
           const messageText = (textPart as any)?.text || "";
 
           return {
+            api: `${basePath}/threads/${tid}/chat`,
             body: { message: messageText },
           };
         },
       }),
-    [api, sharelyFetch],
+    [sharelyFetch, getBasePath],
   );
 
   const chat = useChat({
@@ -88,24 +90,40 @@ export function useSharelyChat(options: UseSharelyChatOptions) {
     messages: initialMessages,
   });
 
-  // Create a new thread
-  const createThread = useCallback(
+  // Keep a ref to the latest chat so async callbacks never use stale closures.
+  const chatRef = useRef(chat);
+  chatRef.current = chat;
+
+  // Internal: create thread on backend, returns ID. Only sets the ref (not state)
+  // so callers can control when the React state update happens.
+  const createThreadOnServer = useCallback(
     async (title?: string): Promise<string> => {
       const basePath = getBasePath();
       if (!basePath) {
         throw new Error("Workspace ID not available");
       }
-      setThreadState("CREATING_THREAD");
       const data = await agentFetcher<ThreadResponse>(`${basePath}/threads`, {
         method: "POST",
         body: JSON.stringify({ spaceId, title }),
       });
       threadIdRef.current = data.id;
-      setThreadId(data.id);
-      setThreadState("READY");
       return data.id;
     },
     [spaceId, getBasePath],
+  );
+
+  // Public createThread: creates on backend AND updates UI state (clears messages).
+  // Used by AgentView's handleCreateNewChat.
+  const createThread = useCallback(
+    async (title?: string): Promise<string> => {
+      const id = await createThreadOnServer(title);
+      setThreadId(id);
+      setInitialMessages([]);
+      chatRef.current.setMessages([]);
+      setHookError(null);
+      return id;
+    },
+    [createThreadOnServer],
   );
 
   // Load an existing thread
@@ -120,69 +138,80 @@ export function useSharelyChat(options: UseSharelyChatOptions) {
         );
         threadIdRef.current = tid;
         setThreadId(tid);
-        setThreadState("READY");
 
         const uiMessages = agentMessagesToUIMessages(data.messages || []);
         setInitialMessages(uiMessages);
-        chat.setMessages(uiMessages);
+        chatRef.current.setMessages(uiMessages);
         setHookError(null);
       } catch (e) {
         setHookError((e as Error).message);
       }
     },
-    [getBasePath, chat],
+    [getBasePath],
   );
 
-  // Send message, creating thread if needed
+  // Send message, creating thread if needed.
+  // For new threads: creates thread silently (ref only, no state), then queues
+  // the message and sets threadId state together — so React batches them into
+  // a single render and the greeting transitions directly to showing the message.
   const sendMessage = useCallback(
     async (content: string): Promise<string | null> => {
       if (!content.trim()) return null;
 
       let tid = threadIdRef.current;
 
-      // Create thread if needed
       if (!tid) {
+        // Show user message optimistically BEFORE thread creation
+        const optimistic: AgentMessage = {
+          id: `pending-${Date.now()}`,
+          role: "user",
+          content,
+          thinkingSteps: [],
+          toolCalls: [],
+          sources: [],
+          tokenUsage: null,
+          model: null,
+          finishReason: null,
+          createdAt: new Date().toISOString(),
+        };
+        setPendingUserMessage(optimistic);
+        setIsCreatingThread(true);
+
         try {
-          pendingMessageRef.current = content;
-          tid = await createThread();
-          pendingMessageRef.current = null;
+          tid = await createThreadOnServer();
         } catch (e) {
-          pendingMessageRef.current = null;
+          setPendingUserMessage(null);
+          setIsCreatingThread(false);
           setHookError((e as Error).message);
           return null;
         }
       }
 
-      // Send via useChat's sendMessage
-      chat.sendMessage({ text: content });
+      chatRef.current.sendMessage({ text: content });
+      setThreadId(tid);
+      // Don't clear pendingUserMessage here — chat.messages may not have the
+      // real user message yet. It gets cleared reactively by the effect below.
 
       return tid;
     },
-    [createThread, chat],
+    [createThreadOnServer],
   );
 
-  // Send pending message after thread creation
+  // Clear the optimistic user message once the SDK's chat.messages picks up
+  // a real user message (avoids the gap where both are empty).
   useEffect(() => {
-    if (
-      threadState === "READY" &&
-      pendingMessageRef.current &&
-      threadIdRef.current
-    ) {
-      const msg = pendingMessageRef.current;
-      pendingMessageRef.current = null;
-      chat.sendMessage({ text: msg });
+    if (pendingUserMessage && chat.messages.some((m) => m.role === "user")) {
+      setPendingUserMessage(null);
+      setIsCreatingThread(false);
     }
-  }, [threadState, chat]);
+  }, [chat.messages, pendingUserMessage]);
 
-  // Create new chat (reset state)
-  const createNewThread = useCallback(async () => {
-    threadIdRef.current = null;
-    setThreadId(null);
-    setThreadState("IDLE");
-    setInitialMessages([]);
-    chat.setMessages([]);
-    setHookError(null);
-  }, [chat]);
+  // Fallback: clear isCreatingThread once the SDK is actively streaming/submitted
+  useEffect(() => {
+    if (isCreatingThread && (chat.status === "streaming" || chat.status === "submitted")) {
+      setIsCreatingThread(false);
+    }
+  }, [chat.status, isCreatingThread]);
 
   // Load initial thread on mount
   useEffect(() => {
@@ -191,32 +220,105 @@ export function useSharelyChat(options: UseSharelyChatOptions) {
     }
   }, [initialThreadId]);
 
+  // --- Compatibility layer: derive UseAgentChatReturn fields from UIMessage[] ---
+
+  const isStreaming =
+    chat.status === "streaming" ||
+    chat.status === "submitted" ||
+    isCreatingThread;
+
+  // The streaming assistant message is ONLY the last message in chat.messages
+  // when it's actually an assistant message. If the last message is a user message
+  // (request sent, no response yet), there's nothing streaming to show.
+  const lastMsg =
+    isStreaming && chat.messages.length > 0
+      ? chat.messages[chat.messages.length - 1]
+      : null;
+  const lastAssistantMsg = lastMsg?.role === "assistant" ? lastMsg : null;
+
+  // Convert UIMessages to AgentMessages.
+  // Exclude the last assistant message while streaming — AgentView renders it
+  // separately via StreamingMessage, so including it here would cause a duplicate.
+  // Only exclude when the last message IS an assistant (i.e., lastAssistantMsg is set).
+  // This prevents briefly hiding a completed assistant message when isStreaming flips
+  // true but the new user message hasn't been added to chat.messages yet.
+  const messages: AgentMessage[] = useMemo(() => {
+    const all = chat.messages.map(uiMessageToAgentMessage);
+    if (
+      isStreaming &&
+      lastAssistantMsg &&
+      all.length > 0 &&
+      all[all.length - 1].role === "assistant"
+    ) {
+      const result = all.slice(0, -1);
+      if (pendingUserMessage) {
+        return [...result, pendingUserMessage];
+      }
+      return result;
+    }
+    if (pendingUserMessage) {
+      return [...all, pendingUserMessage];
+    }
+    return all;
+  }, [chat.messages, isStreaming, lastAssistantMsg, pendingUserMessage]);
+
+  const lastParts = (lastAssistantMsg?.parts as any[]) || [];
+
+  const streamingMessageId = lastAssistantMsg?.id ?? null;
+
+  const streamingContent = isStreaming
+    ? lastParts
+        .filter((p) => p.type === "text")
+        .map((p) => p.text)
+        .join("")
+    : "";
+
+  const thinkingSteps = isStreaming
+    ? reasoningPartsToThinkingSteps(lastParts)
+    : [];
+
+  const activeToolCalls = isStreaming
+    ? toolInvocationPartsToToolCalls(lastParts)
+    : [];
+
+  const activeSources = isStreaming ? sourcePartsToSources(lastParts) : [];
+
+  // Reset chat to fresh state without making an API call (for "new chat" button)
+  const resetChat = useCallback(() => {
+    threadIdRef.current = null;
+    setThreadId(null);
+    setInitialMessages([]);
+    chatRef.current.setMessages([]);
+    setHookError(null);
+    setPendingUserMessage(null);
+  }, []);
+
+  const error = hookError || (chat.error ? chat.error.message : null);
+
+  const clearError = useCallback(() => {
+    chatRef.current.clearError();
+    setHookError(null);
+  }, []);
+
+  const stopStreaming = useCallback(() => {
+    chatRef.current.stop();
+  }, []);
+
   return {
-    // Thread state
     threadId,
-    isCreatingThread: threadState === "CREATING_THREAD",
-    threadState,
-
-    // Chat state from useChat
-    messages: chat.messages,
-    status: chat.status,
-    isLoading: chat.status === "submitted" || chat.status === "streaming",
-    error: chat.error || (hookError ? new Error(hookError) : undefined),
-
-    // Actions
+    messages,
+    isStreaming,
+    streamingMessageId,
+    streamingContent,
+    thinkingSteps,
+    activeToolCalls,
+    activeSources,
+    error,
     sendMessage,
-    stop: chat.stop,
-    setMessages: chat.setMessages,
-
-    // Thread management
+    stopStreaming,
     createThread,
-    createNewThread,
     loadThread,
-
-    // Error
-    clearError: () => {
-      chat.clearError();
-      setHookError(null);
-    },
+    resetChat,
+    clearError,
   };
 }

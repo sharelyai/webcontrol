@@ -41,7 +41,6 @@ import { AuthModal } from "./components/AuthModal";
 import { ViewTabs } from "./components/ViewTabs";
 import { ChatHistory } from "./components/ChatHistory";
 import { AgentView } from "./components/AgentView";
-import { AgentViewV2 } from "./components/AgentViewV2";
 import { SaveConversation } from "./components/SaveConversation";
 import { RbacBlocker } from "./components/RbacBlocker";
 
@@ -800,21 +799,12 @@ const WebControlInner = (props: WebControlProps) => {
                   />
                 )}
                 {currentView === constants.AGENT_VIEW && (
-                  config?.useAgentV2 ? (
-                    <AgentViewV2
-                      spaceId={currentInformation?.spaceId || ""}
-                      showChatHistory={showAgentChatHistory}
-                      onCloseChatHistory={() => setShowAgentChatHistory(false)}
-                      onCreateNewChat={() => setShowAgentChatHistory(false)}
-                    />
-                  ) : (
-                    <AgentView
-                      spaceId={currentInformation?.spaceId || ""}
-                      showChatHistory={showAgentChatHistory}
-                      onCloseChatHistory={() => setShowAgentChatHistory(false)}
-                      onCreateNewChat={() => setShowAgentChatHistory(false)}
-                    />
-                  )
+                  <AgentView
+                    spaceId={currentInformation?.spaceId || ""}
+                    showChatHistory={showAgentChatHistory}
+                    onCloseChatHistory={() => setShowAgentChatHistory(false)}
+                    onCreateNewChat={() => setShowAgentChatHistory(false)}
+                  />
                 )}
                 {currentView === constants.SEARCH_VIEW && <SearchPanel />}
                 {currentView === constants.BROWSE_VIEW && <BrowsePanel />}
