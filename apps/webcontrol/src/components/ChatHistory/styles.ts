@@ -261,7 +261,7 @@ export const Wrapper = styled.div<Props>`
                 flex-direction: column;
                 padding: 8px 0;
                 position: absolute;
-                top: 100px;
+                top: 100%;
                 right: 0;
                 z-index: 10;
 

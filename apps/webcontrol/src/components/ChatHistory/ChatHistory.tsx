@@ -522,30 +522,30 @@ export const ChatHistory = (props: ChatHistoryProps) => {
                                         >
                                           <MoreVert />
                                         </Tooltip>
-                                      </div>
-                                    )}
-                                    {showOptions && (
-                                      <div className="chat-history-actions-options">
-                                        <button
-                                          className="chat-history-actions-option"
-                                          onClick={(e) => {
-                                            e.stopPropagation();
-                                            handleRename(chat?.id, chat?.name);
-                                            closeOptions();
-                                          }}
-                                        >
-                                          Rename
-                                        </button>
-                                        <button
-                                          className="chat-history-actions-option"
-                                          onClick={(e) => {
-                                            e.stopPropagation();
-                                            handleDeleteChat(chat?.id);
-                                            closeOptions();
-                                          }}
-                                        >
-                                          Delete
-                                        </button>
+                                        {showOptions && (
+                                          <div className="chat-history-actions-options">
+                                            <button
+                                              className="chat-history-actions-option"
+                                              onClick={(e) => {
+                                                e.stopPropagation();
+                                                handleRename(chat?.id, chat?.name);
+                                                closeOptions();
+                                              }}
+                                            >
+                                              Rename
+                                            </button>
+                                            <button
+                                              className="chat-history-actions-option"
+                                              onClick={(e) => {
+                                                e.stopPropagation();
+                                                handleDeleteChat(chat?.id);
+                                                closeOptions();
+                                              }}
+                                            >
+                                              Delete
+                                            </button>
+                                          </div>
+                                        )}
                                       </div>
                                     )}
                                   </div>

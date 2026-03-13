@@ -1,0 +1,6 @@
+{
+  "buildCommand": "pnpm turbo run build --filter=@sharely/webcontrol...",
+  "outputDirectory": "apps/webcontrol/dist",
+  "installCommand": "pnpm install",
+  "framework": "vite"
+}
