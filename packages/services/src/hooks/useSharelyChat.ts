@@ -54,6 +54,7 @@ export function useSharelyChat(
   const [isCreatingThread, setIsCreatingThread] = useState(false);
 
   const threadIdRef = useRef<string | null>(initialThreadId || null);
+  const prevChatStatusRef = useRef<string>("ready");
 
   const getBasePath = useCallback(() => {
     if (!workspaceId) return null;
@@ -197,14 +198,30 @@ export function useSharelyChat(
     [createThreadOnServer],
   );
 
-  // Clear the optimistic user message once the SDK's chat.messages picks up
-  // a real user message (avoids the gap where both are empty).
+  // Clear the optimistic user message once the SDK has committed it AND
+  // progressed past "submitted" — prevents the visual gap where the optimistic
+  // message disappears before the real one is rendered.
   useEffect(() => {
-    if (pendingUserMessage && chat.messages.some((m) => m.role === "user")) {
+    if (!pendingUserMessage) return;
+
+    const sdkProgressed =
+      chat.status === "streaming" ||
+      chat.status === "ready" ||
+      chat.status === "error";
+
+    const matchingUserMsg = chat.messages.some(
+      (m) =>
+        m.role === "user" &&
+        m.parts?.some(
+          (p) => p.type === "text" && (p as any).text === pendingUserMessage.content
+        )
+    );
+
+    if (sdkProgressed && matchingUserMsg) {
       setPendingUserMessage(null);
       setIsCreatingThread(false);
     }
-  }, [chat.messages, pendingUserMessage]);
+  }, [chat.messages, chat.status, pendingUserMessage]);
 
   // Fallback: clear isCreatingThread once the SDK is actively streaming/submitted
   useEffect(() => {
@@ -212,6 +229,35 @@ export function useSharelyChat(
       setIsCreatingThread(false);
     }
   }, [chat.status, isCreatingThread]);
+
+  // After streaming completes, reload messages from server to get definitive
+  // database IDs and full metadata (replaces client-generated IDs).
+  useEffect(() => {
+    const wasActive =
+      prevChatStatusRef.current === "streaming" ||
+      prevChatStatusRef.current === "submitted";
+    const isNowDone = chat.status === "ready";
+    prevChatStatusRef.current = chat.status;
+
+    if (wasActive && isNowDone) {
+      const tid = threadIdRef.current;
+      if (!tid) return;
+
+      const basePath = getBasePath();
+      if (!basePath) return;
+
+      agentFetcher<ThreadResponse>(`${basePath}/threads/${tid}`)
+        .then((data) => {
+          if (chatRef.current.status === "ready" && threadIdRef.current === tid) {
+            const uiMessages = agentMessagesToUIMessages(data.messages || []);
+            chatRef.current.setMessages(uiMessages);
+          }
+        })
+        .catch(() => {
+          // Non-critical: streamed messages remain usable
+        });
+    }
+  }, [chat.status, getBasePath]);
 
   // Load initial thread on mount
   useEffect(() => {
@@ -244,6 +290,22 @@ export function useSharelyChat(
   // true but the new user message hasn't been added to chat.messages yet.
   const messages: AgentMessage[] = useMemo(() => {
     const all = chat.messages.map(uiMessageToAgentMessage);
+
+    // Check if the SDK already has the pending user message content —
+    // if so, don't append the optimistic duplicate.
+    const sdkHasPendingMsg =
+      pendingUserMessage &&
+      chat.messages.some(
+        (m) =>
+          m.role === "user" &&
+          m.parts?.some(
+            (p) =>
+              p.type === "text" &&
+              (p as any).text === pendingUserMessage.content
+          )
+      );
+    const effectivePending = sdkHasPendingMsg ? null : pendingUserMessage;
+
     if (
       isStreaming &&
       lastAssistantMsg &&
@@ -251,13 +313,13 @@ export function useSharelyChat(
       all[all.length - 1].role === "assistant"
     ) {
       const result = all.slice(0, -1);
-      if (pendingUserMessage) {
-        return [...result, pendingUserMessage];
+      if (effectivePending) {
+        return [...result, effectivePending];
       }
       return result;
     }
-    if (pendingUserMessage) {
-      return [...all, pendingUserMessage];
+    if (effectivePending) {
+      return [...all, effectivePending];
     }
     return all;
   }, [chat.messages, isStreaming, lastAssistantMsg, pendingUserMessage]);
