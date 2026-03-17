@@ -1,5 +1,5 @@
 import { useState } from "react";
-import type { ToolCall } from "@sharely/services";
+import type { ToolCall } from "@sharelyai/services";
 import {
   CheckIcon,
   ChevronDownIcon,

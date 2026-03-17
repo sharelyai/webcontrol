@@ -1,5 +1,5 @@
 import styled, { css } from "styled-components";
-import { SearchResultCard as ListSearchItem } from "@sharely/ui-search";
+import { SearchResultCard as ListSearchItem } from "@sharelyai/ui-search";
 import { 
   ScrollBar,
   ArrowBackIos, 
@@ -8,7 +8,7 @@ import {
   Loader, 
   EmptyState,
   useResponsive 
-} from "@sharely/ui-shared";
+} from "@sharelyai/ui-shared";
 import {
   useGlobalStore,
   useLanguage,
@@ -16,7 +16,7 @@ import {
   useKnowledgeResources,
   constants,
   useSharelyContext
-} from "@sharely/services";
+} from "@sharelyai/services";
 import { useBrowseStorage } from "../../../stores/browseStore";
 
 const Wrapper: any = styled.div`

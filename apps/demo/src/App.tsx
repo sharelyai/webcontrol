@@ -1,5 +1,5 @@
 import React from 'react';
-import { WebControl } from '@sharely/webcontrol';
+import { WebControl } from '@sharelyai/webcontrol';
 import DemoControls from './components/DemoControls';
 
 function App() {

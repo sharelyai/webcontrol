@@ -17,7 +17,7 @@ import {
   Word,
   Image,
   Link,
-} from "@sharely/ui-shared";
+} from "@sharelyai/ui-shared";
 import {
   constants,
   customEvents,
@@ -26,7 +26,7 @@ import {
   useSharelyContext,
   useLanguage,
   classNames
-} from "@sharely/services";
+} from "@sharelyai/services";
 
 const Container: any = styled.div`
   ${({ theme }) => css`

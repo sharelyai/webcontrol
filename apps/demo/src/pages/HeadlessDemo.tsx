@@ -1,6 +1,6 @@
 import React from 'react';
-import { useSpaceMessages, useSendMessage, SharelyProvider } from '@sharely/services';
-import { Button, Input } from '@sharely/ui-shared';
+import { useSpaceMessages, useSendMessage, SharelyProvider } from '@sharelyai/services';
+import { Button, Input } from '@sharelyai/ui-shared';
 
 function HeadlessDemo() {
   const [spaceId] = React.useState('');
@@ -52,7 +52,7 @@ function HeadlessDemoInner({ spaceId, groupId, setGroupId, messageContent, setMe
   return (
     <div style={{ padding: '20px' }}>
       <h2>Headless Hooks Demo</h2>
-      <p>This demo uses only the headless hooks from <code>@sharely/services</code> to build a custom UI.</p>
+      <p>This demo uses only the headless hooks from <code>@sharelyai/services</code> to build a custom UI.</p>
       <div style={{ height: '500px', width: '400px', border: '1px solid #ccc', margin: '20px auto', display: 'flex', flexDirection: 'column' }}>
         <div style={{ flex: 1, overflowY: 'auto', padding: '10px' }}>
           {messages.map((msg: any, index: number) => (

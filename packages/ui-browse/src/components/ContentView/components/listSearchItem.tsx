@@ -18,7 +18,7 @@ import {
   Image,
   Link,
   classNames
-} from "@sharely/ui-shared";
+} from "@sharelyai/ui-shared";
 
 import {
   constants,
@@ -26,7 +26,7 @@ import {
   regex,
   useGlobalStore,
   useSharelyContext
-} from "@sharely/services";
+} from "@sharelyai/services";
 
 const Container: any = styled.div`
   ${({ theme }) => css`

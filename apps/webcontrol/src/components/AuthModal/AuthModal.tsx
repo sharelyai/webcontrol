@@ -1,7 +1,7 @@
 import { Wrapper } from "./styles";
-import { Close } from "@sharely/ui-shared";
+import { Close } from "@sharelyai/ui-shared";
 import { AuthForm } from "./components/authForm";
-import { constants, useGlobalStore } from "@sharely/services";
+import { constants, useGlobalStore } from "@sharelyai/services";
 
 export interface AuthModalProps {
   onClose: () => void;

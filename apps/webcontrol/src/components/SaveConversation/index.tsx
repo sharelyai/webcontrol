@@ -1,5 +1,5 @@
-import { useLanguage, customEvents, constants } from '@sharely/services';
-import { useResponsive } from '@sharely/ui-shared';
+import { useLanguage, customEvents, constants } from '@sharelyai/services';
+import { useResponsive } from '@sharelyai/ui-shared';
 import { Wrapper } from './styles';
 
 interface SaveConversationProps {

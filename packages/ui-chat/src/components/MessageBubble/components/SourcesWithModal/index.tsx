@@ -14,8 +14,8 @@ import {
   Divider,
   Portal,
   Tooltip,
-} from "@sharely/ui-shared";
-import { classNames, regex } from "@sharely/services";
+} from "@sharelyai/ui-shared";
+import { classNames, regex } from "@sharelyai/services";
 
 export const SourcesWithModal = ({ sources, message }) => {
   const [isOpenModal, setIsOpenModal] = useState(false);

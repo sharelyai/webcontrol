@@ -3,7 +3,7 @@ import {
   ArrowBack, 
   useMaxHeight, 
   useVisualViewport 
-} from "@sharely/ui-shared";
+} from "@sharelyai/ui-shared";
 
 import { Wrapper } from "./styles";
 import { GoalCard } from "../GoalCard";
@@ -11,7 +11,7 @@ import {
   useGlobalStore,
   useGoals,
   constants,
-} from "@sharely/services";
+} from "@sharelyai/services";
 
 export const GoalsList = () => {
   const {

@@ -12,13 +12,13 @@ import {
   ApiClient,
   useSharelyContext,
   classNames,
-} from "@sharely/services";
+} from "@sharelyai/services";
 import {
   ScrollBar as ScrollArea,
   Loader,
   InputSkeleton,
   useResponsive,
-} from "@sharely/ui-shared";
+} from "@sharelyai/ui-shared";
 
 import { Wrapper } from "./styles";
 import { MessageBubble } from "../MessageBubble";

@@ -15,7 +15,7 @@ import {
   useGlobalStore,
   useSharelyContext,
   useLanguage,
-} from "@sharely/services";
+} from "@sharelyai/services";
 import { useAnchorStore } from "./anchorStore";
 import { useResponsive } from "../../../../../hooks/useResponsive";
 

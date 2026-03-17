@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { WebControl } from '@sharely/webcontrol';
+import { WebControl } from '@sharelyai/webcontrol';
 
 const MODES = [
   { value: 'top-center-floating', label: 'Top Center Floating', description: 'Fixed at top-center of viewport' },

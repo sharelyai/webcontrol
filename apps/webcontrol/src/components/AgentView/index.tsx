@@ -9,8 +9,8 @@ import {
   constants,
   classNames,
   agentMessageToBodyMessage,
-} from "@sharely/services";
-import type { ThinkingStep, ToolCall, Source } from "@sharely/services";
+} from "@sharelyai/services";
+import type { ThinkingStep, ToolCall, Source } from "@sharelyai/services";
 import {
   ScrollBar,
   Tooltip,
@@ -18,13 +18,13 @@ import {
   Interests,
   ArrowUpward,
   Logo,
-} from "@sharely/ui-shared";
-import { MessageBubble } from "@sharely/ui-chat";
+} from "@sharelyai/ui-shared";
+import { MessageBubble } from "@sharelyai/ui-chat";
 import {
   ThinkingIndicator,
   ToolCallCard,
   SourcesList,
-} from "@sharely/ui-agent-chat";
+} from "@sharelyai/ui-agent-chat";
 
 interface AgentViewProps {
   spaceId: string;

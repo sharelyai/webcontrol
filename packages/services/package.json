@@ -1,6 +1,10 @@
 {
-  "name": "@sharely/services",
-  "version": "1.0.0",
+  "name": "@sharelyai/services",
+  "version": "0.0.1",
+  "author": "Sharely AI",
+  "publishConfig": {
+    "access": "restricted"
+  },
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",

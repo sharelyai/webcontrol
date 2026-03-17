@@ -1,5 +1,5 @@
 {
-  "name": "@sharely/demo",
+  "name": "@sharelyai/demo",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -10,12 +10,12 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "@sharely/services": "workspace:*",
-    "@sharely/ui-browse": "workspace:*",
-    "@sharely/ui-chat": "workspace:*",
-    "@sharely/ui-search": "workspace:*",
-    "@sharely/ui-shared": "workspace:*",
-    "@sharely/webcontrol": "workspace:*",
+    "@sharelyai/services": "workspace:*",
+    "@sharelyai/ui-browse": "workspace:*",
+    "@sharelyai/ui-chat": "workspace:*",
+    "@sharelyai/ui-search": "workspace:*",
+    "@sharelyai/ui-shared": "workspace:*",
+    "@sharelyai/webcontrol": "workspace:*",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
     "react-router-dom": "^7.13.1"

@@ -1,10 +1,16 @@
 {
-  "name": "@sharely/ui-browse",
-  "version": "1.0.0",
+  "name": "@sharelyai/ui-browse",
+  "version": "0.0.1",
+  "author": "Sharely AI",
+  "publishConfig": {
+    "access": "restricted"
+  },
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
-  "sideEffects": ["*.css"],
+  "sideEffects": [
+    "*.css"
+  ],
   "exports": {
     ".": {
       "development": "./src/index.ts",
@@ -18,7 +24,9 @@
       }
     }
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "tsup",
     "dev": "tsup --watch",
@@ -31,9 +39,9 @@
     "styled-components": "^6.0.0"
   },
   "dependencies": {
-    "@sharely/services": "workspace:*",
-    "@sharely/ui-shared": "workspace:*",
-    "@sharely/ui-search": "workspace:*",
+    "@sharelyai/services": "workspace:*",
+    "@sharelyai/ui-shared": "workspace:*",
+    "@sharelyai/ui-search": "workspace:*",
     "zustand": "^5.0.11"
   },
   "devDependencies": {

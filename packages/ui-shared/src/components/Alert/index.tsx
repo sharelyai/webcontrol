@@ -1,7 +1,7 @@
 import { ReactElement, ReactNode, useEffect } from "react";
 
 import { AlertWrapper } from "./styles";
-import { TIME_AUTO_HIDE_DURATION } from "@sharely/services";
+import { TIME_AUTO_HIDE_DURATION } from "@sharelyai/services";
 
 interface IAlertProps {
   isOpen: boolean;

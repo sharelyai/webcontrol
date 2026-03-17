@@ -1,6 +1,6 @@
 import styled, { css } from "styled-components";
 import { SearchInput } from "./components/inputSearch";
-import { ButtonMultiSelect, Close, Tag, Tune, useResponsive } from "@sharely/ui-shared";
+import { ButtonMultiSelect, Close, Tag, Tune, useResponsive } from "@sharelyai/ui-shared";
 
 type WrapperProps = {
   $hasSearch?: boolean;

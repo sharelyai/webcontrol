@@ -1,5 +1,5 @@
-import { Skeleton, ArrowForward, useResponsive } from "@sharely/ui-shared";
-import { useGlobalStore, constants, useKnowledgeCategories, useSharelyContext } from "@sharely/services";
+import { Skeleton, ArrowForward, useResponsive } from "@sharelyai/ui-shared";
+import { useGlobalStore, constants, useKnowledgeCategories, useSharelyContext } from "@sharelyai/services";
 import { useBrowseStorage } from "../../../stores/browseStore";
 import styled, { css } from "styled-components";
 

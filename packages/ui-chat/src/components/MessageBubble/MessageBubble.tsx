@@ -7,13 +7,13 @@ import {
   Person,
   ReactMarkdown,
   useResponsive,
-} from "@sharely/ui-shared";
+} from "@sharelyai/ui-shared";
 import {
   constants,
   customEvents,
   regex,
   replaceMessageValue,
-} from "@sharely/services";
+} from "@sharelyai/services";
 import { MessageFeedback } from "../MessageFeedback";
 import { SourcesWithModal } from "./components/SourcesWithModal";
 import { WorkflowProgress } from "../WorkflowProgress";

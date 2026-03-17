@@ -1,5 +1,5 @@
 import { ReactNode, Fragment, Children, isValidElement, cloneElement, ReactElement } from "react";
-import type { Source } from "@sharely/services";
+import type { Source } from "@sharelyai/services";
 import { CitationBadge } from "../CitationBadge";
 
 interface CitationRendererProps {

@@ -1,4 +1,4 @@
-import { useGlobalStore as useGlobalState, useLanguage } from "@sharely/services";
+import { useGlobalStore as useGlobalState, useLanguage } from "@sharelyai/services";
 import styled, { css } from "styled-components";
 
 export const Wrapper: any = styled.div`

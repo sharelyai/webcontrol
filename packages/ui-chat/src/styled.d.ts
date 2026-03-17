@@ -1,5 +1,5 @@
 import 'styled-components';
-import { defaultTheme } from '@sharely/ui-shared';
+import { defaultTheme } from '@sharelyai/ui-shared';
 
 type Theme = typeof defaultTheme;
 

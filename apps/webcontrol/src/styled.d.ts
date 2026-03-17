@@ -1,5 +1,5 @@
 import 'styled-components';
-import { defaultTheme } from '@sharely/ui-shared'; // Assuming theme is exported from ui-shared
+import { defaultTheme } from '@sharelyai/ui-shared'; // Assuming theme is exported from ui-shared
 
 // You might need to duplicate the Theme interface here if you can't import the type easily
 // or if you want to strictly decouple.

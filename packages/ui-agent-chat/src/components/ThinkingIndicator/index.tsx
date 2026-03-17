@@ -1,6 +1,6 @@
 import { useState } from "react";
 import ReactMarkdown from "react-markdown";
-import type { ThinkingStep } from "@sharely/services";
+import type { ThinkingStep } from "@sharelyai/services";
 import {
   BrainIcon,
   CheckIcon,

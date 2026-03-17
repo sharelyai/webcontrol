@@ -1,6 +1,6 @@
 import React from 'react';
-import { ChatPanel } from '@sharely/ui-chat';
-import { SharelyProvider } from '@sharely/services';
+import { ChatPanel } from '@sharelyai/ui-chat';
+import { SharelyProvider } from '@sharelyai/services';
 
 function ChatOnly() {
   return (

@@ -1,10 +1,16 @@
 {
-  "name": "@sharely/ui-agent-chat",
-  "version": "1.0.0",
+  "name": "@sharelyai/ui-agent-chat",
+  "version": "0.0.1",
+  "author": "Sharely AI",
+  "publishConfig": {
+    "access": "restricted"
+  },
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
-  "sideEffects": ["*.css"],
+  "sideEffects": [
+    "*.css"
+  ],
   "exports": {
     ".": {
       "development": "./src/index.ts",
@@ -18,7 +24,9 @@
       }
     }
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "tsup",
     "dev": "tsup --watch",
@@ -31,8 +39,8 @@
     "styled-components": "^6.0.0"
   },
   "dependencies": {
-    "@sharely/services": "workspace:*",
-    "@sharely/ui-shared": "workspace:*",
+    "@sharelyai/services": "workspace:*",
+    "@sharelyai/ui-shared": "workspace:*",
     "@floating-ui/react": "^0.27.19",
     "react-markdown": "^10.1.0"
   },

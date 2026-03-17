@@ -1,5 +1,5 @@
 import ReactMarkdown from "react-markdown";
-import type { AgentMessage as AgentMessageType } from "@sharely/services";
+import type { AgentMessage as AgentMessageType } from "@sharelyai/services";
 import { BotIcon, UserIcon } from "../icons";
 import { SourcesList } from "../SourcesList";
 import {

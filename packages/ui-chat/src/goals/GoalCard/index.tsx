@@ -1,8 +1,8 @@
 import { useEffect, useRef } from "react";
 
 import { Wrapper } from "./styles";
-import { Flag } from "@sharely/ui-shared";
-import { useLanguage, constants, getLastTimeAgo } from "@sharely/services";
+import { Flag } from "@sharelyai/ui-shared";
+import { useLanguage, constants, getLastTimeAgo } from "@sharelyai/services";
 
 interface IGoalCardProps {
   title: string;

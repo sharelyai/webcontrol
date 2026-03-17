@@ -4,16 +4,17 @@
   "commit": false,
   "fixed": [
     [
-      "@sharely/services",
-      "@sharely/ui-shared",
-      "@sharely/ui-chat",
-      "@sharely/ui-search",
-      "@sharely/ui-browse"
+      "@sharelyai/services",
+      "@sharelyai/ui-shared",
+      "@sharelyai/ui-chat",
+      "@sharelyai/ui-search",
+      "@sharelyai/ui-browse",
+      "@sharelyai/ui-agent-chat"
     ]
   ],
   "linked": [],
-  "access": "public",
+  "access": "restricted",
   "baseBranch": "main",
   "updateInternalDependencies": "patch",
-  "ignore": ["@sharely/demo", "@sharely/webcontrol"]
+  "ignore": ["@sharelyai/demo", "@sharelyai/webcontrol"]
 }

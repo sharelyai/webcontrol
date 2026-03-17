@@ -14,8 +14,8 @@ import {
   classNames,
   setCSSVariables,
   cookieManager,
-} from "@sharely/services";
-import type { DisplayModeConfig } from "@sharely/services";
+} from "@sharelyai/services";
+import type { DisplayModeConfig } from "@sharelyai/services";
 import {
   ThemeProvider,
   GlobalStyle,
@@ -32,10 +32,10 @@ import {
   Menu,
   AddChatBox,
   Restart,
-} from "@sharely/ui-shared";
-import { ChatPanel } from "@sharely/ui-chat";
-import { SearchPanel } from "@sharely/ui-search";
-import { BrowsePanel } from "@sharely/ui-browse";
+} from "@sharelyai/ui-shared";
+import { ChatPanel } from "@sharelyai/ui-chat";
+import { SearchPanel } from "@sharelyai/ui-search";
+import { BrowsePanel } from "@sharelyai/ui-browse";
 import { Wrapper } from "./styles";
 import { AuthModal } from "./components/AuthModal";
 import { ViewTabs } from "./components/ViewTabs";

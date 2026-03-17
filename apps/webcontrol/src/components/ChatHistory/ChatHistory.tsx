@@ -16,7 +16,7 @@ import {
   ScrollBar,
   UserMenu,
   Portal,
-} from "@sharely/ui-shared";
+} from "@sharelyai/ui-shared";
 import {
   useGlobalStore,
   useSpace,
@@ -28,7 +28,7 @@ import {
   constants,
   formatDate,
   customEvents,
-} from "@sharely/services";
+} from "@sharelyai/services";
 
 interface ChatHistoryProps {
   version?: string;

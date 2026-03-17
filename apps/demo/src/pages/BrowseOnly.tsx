@@ -1,6 +1,6 @@
 import React from 'react';
-import { BrowsePanel } from '@sharely/ui-browse';
-import { SharelyProvider } from '@sharely/services';
+import { BrowsePanel } from '@sharelyai/ui-browse';
+import { SharelyProvider } from '@sharelyai/services';
 
 function BrowseOnly() {
   return (

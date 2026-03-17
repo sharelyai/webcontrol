@@ -4,12 +4,12 @@ import {
   LogoChat as Logo, 
   ScrollBar,
   useResponsive 
-} from "@sharely/ui-shared";
+} from "@sharelyai/ui-shared";
 import { 
   useGlobalStore, 
   useLanguage,
   constants 
-} from "@sharely/services";
+} from "@sharelyai/services";
 import { GoalCard } from "../../goals/GoalCard";
 import { Title } from "./components/title";
 

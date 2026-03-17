@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import styled from "styled-components";
 
-import { Tooltip, Divider, Close, Download, Interests, Launch } from "@sharely/ui-shared";
-import { regex, useGlobalStore, useSharelyContext, classNames } from "@sharely/services";
+import { Tooltip, Divider, Close, Download, Interests, Launch } from "@sharelyai/ui-shared";
+import { regex, useGlobalStore, useSharelyContext, classNames } from "@sharelyai/services";
 
 export const Wrapper: any = styled.div`
   ${({ theme }: { theme: any }) => `

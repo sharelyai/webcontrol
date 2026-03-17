@@ -1,5 +1,5 @@
 import styled, { css, keyframes } from "styled-components";
-import { constants } from "@sharely/services";
+import { constants } from "@sharelyai/services";
 
 interface IWrapperProps {
   mode?: string;

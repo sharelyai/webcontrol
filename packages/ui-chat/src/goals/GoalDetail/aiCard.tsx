@@ -7,8 +7,8 @@ import {
   Summarize,
   Loader,
   Skeleton,
-} from "@sharely/ui-shared";
-import { constants, classNames } from "@sharely/services";
+} from "@sharelyai/ui-shared";
+import { constants, classNames } from "@sharelyai/services";
 
 // types
 import { IGoalSuggestionsMessage } from "./index";

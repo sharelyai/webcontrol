@@ -1,5 +1,5 @@
 import { FormEvent, KeyboardEvent, useEffect, useRef, useState } from "react";
-import { useAgentChat } from "@sharely/services";
+import { useAgentChat } from "@sharelyai/services";
 import { AgentMessage } from "../AgentMessage";
 import { StreamingContent } from "../StreamingContent";
 import {

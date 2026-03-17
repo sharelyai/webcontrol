@@ -1,6 +1,6 @@
 import React from "react";
-import { ArrowUpward, Person, Interests, Tooltip } from "@sharely/ui-shared";
-import { classNames } from "@sharely/services";
+import { ArrowUpward, Person, Interests, Tooltip } from "@sharelyai/ui-shared";
+import { classNames } from "@sharelyai/services";
 import { Wrapper } from "./styles";
 
 export interface ChatInputProps {

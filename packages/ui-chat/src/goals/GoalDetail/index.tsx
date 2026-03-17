@@ -13,7 +13,7 @@ import {
   useResponsive,
   useMaxHeight,
   useVisualViewport
-} from "@sharely/ui-shared";
+} from "@sharelyai/ui-shared";
 import { 
   constants, 
   classNames,
@@ -24,7 +24,7 @@ import {
   useStartGoalThread, 
   useSendGoalMessage,
   useSharelyContext
-} from "@sharely/services";
+} from "@sharelyai/services";
 
 import { MessageBubble } from "../../components/MessageBubble";
 import { ChatInput } from "../../components/ChatInput";

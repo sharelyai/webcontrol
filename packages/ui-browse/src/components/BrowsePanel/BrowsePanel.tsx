@@ -2,8 +2,8 @@ import styled from "styled-components";
 import { BodySearch as ContentView } from "../ContentView";
 import { Title } from "./Title";
 import { useBrowseStorage } from "../../stores/browseStore";
-import { useGlobalStore, useLanguage } from "@sharely/services";
-import { EmptyState } from "@sharely/ui-shared";
+import { useGlobalStore, useLanguage } from "@sharelyai/services";
+import { EmptyState } from "@sharelyai/ui-shared";
 
 export const Wrapper: any = styled.div`
   display: flex;

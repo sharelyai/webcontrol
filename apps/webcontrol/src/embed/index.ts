@@ -1,8 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { useGlobalStore } from '@sharely/services';
-import { constants, setGlobalEnv, getGlobalEnv } from '@sharely/services';
-import type { SharelyConfig } from '@sharely/services';
+import { useGlobalStore } from '@sharelyai/services';
+import { constants, setGlobalEnv, getGlobalEnv } from '@sharelyai/services';
+import type { SharelyConfig } from '@sharelyai/services';
 import { WebControl } from '../WebControl';
 
 declare global {

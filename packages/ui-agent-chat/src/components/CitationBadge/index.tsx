@@ -1,7 +1,7 @@
 import { useState, useRef, useCallback, useMemo } from "react";
 import { useFloating, offset, flip, shift } from "@floating-ui/react";
-import type { Source } from "@sharely/services";
-import { useSourceDownload } from "@sharely/services";
+import type { Source } from "@sharelyai/services";
+import { useSourceDownload } from "@sharelyai/services";
 import {
   BadgeWrapper,
   HoverCard,

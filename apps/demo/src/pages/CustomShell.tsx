@@ -1,9 +1,9 @@
 import React from 'react';
-import { SharelyProvider } from '@sharely/services';
-import { ChatPanel } from '@sharely/ui-chat';
-import { SearchPanel } from '@sharely/ui-search';
-import { BrowsePanel } from '@sharely/ui-browse';
-import { Button } from '@sharely/ui-shared';
+import { SharelyProvider } from '@sharelyai/services';
+import { ChatPanel } from '@sharelyai/ui-chat';
+import { SearchPanel } from '@sharelyai/ui-search';
+import { BrowsePanel } from '@sharelyai/ui-browse';
+import { Button } from '@sharelyai/ui-shared';
 
 function CustomShell() {
   const [activeView, setActiveView] = React.useState('chat');

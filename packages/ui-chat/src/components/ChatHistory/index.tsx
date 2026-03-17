@@ -15,7 +15,7 @@ import {
   UserMenu,
   Portal,
   useResponsive
-} from "@sharely/ui-shared";
+} from "@sharelyai/ui-shared";
 import { 
   classNames, 
   constants, 
@@ -25,7 +25,7 @@ import {
   useSpace,
   useGoals,
   useSharelyContext
-} from "@sharely/services";
+} from "@sharelyai/services";
 
 import { Wrapper } from "./styles";
 

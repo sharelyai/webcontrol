@@ -1,5 +1,5 @@
 {
-  "name": "@sharely/webcontrol",
+  "name": "@sharelyai/webcontrol",
   "version": "1.0.0",
   "private": true,
   "type": "module",
@@ -13,12 +13,12 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "@sharely/services": "workspace:*",
-    "@sharely/ui-shared": "workspace:*",
-    "@sharely/ui-chat": "workspace:*",
-    "@sharely/ui-search": "workspace:*",
-    "@sharely/ui-browse": "workspace:*",
-    "@sharely/ui-agent-chat": "workspace:*",
+    "@sharelyai/services": "workspace:*",
+    "@sharelyai/ui-shared": "workspace:*",
+    "@sharelyai/ui-chat": "workspace:*",
+    "@sharelyai/ui-search": "workspace:*",
+    "@sharelyai/ui-browse": "workspace:*",
+    "@sharelyai/ui-agent-chat": "workspace:*",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
     "styled-components": "^6.3.11",

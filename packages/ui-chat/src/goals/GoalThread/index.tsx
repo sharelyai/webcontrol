@@ -1,8 +1,8 @@
 import { Wrapper } from "./styles";
-import { Ellipse, Flag, LogoChat, Person } from "@sharely/ui-shared";
-import { ReactMarkdown } from "@sharely/ui-shared";
-import { useLanguage } from "@sharely/services";
-import { constants, formatDate, replaceMessageValue } from "@sharely/services";
+import { Ellipse, Flag, LogoChat, Person } from "@sharelyai/ui-shared";
+import { ReactMarkdown } from "@sharelyai/ui-shared";
+import { useLanguage } from "@sharelyai/services";
+import { constants, formatDate, replaceMessageValue } from "@sharelyai/services";
 import { StatusGoal } from "../GoalStatus";
 
 interface IThreadCardProps {

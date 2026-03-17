@@ -10,8 +10,8 @@ import {
   constants,
   useSharelyContext,
   classNames
-} from "@sharely/services";
-import { useResponsive } from "@sharely/ui-shared";
+} from "@sharelyai/services";
+import { useResponsive } from "@sharelyai/ui-shared";
 
 export const SearchPanelWrapper: any = styled.div`
   display: flex;

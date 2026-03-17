@@ -1,5 +1,5 @@
 import React from 'react';
-import { WebControl } from '@sharely/webcontrol';
+import { WebControl } from '@sharelyai/webcontrol';
 
 function InlineDemo() {
   return (

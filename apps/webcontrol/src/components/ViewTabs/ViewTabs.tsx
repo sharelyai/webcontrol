@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef } from "react";
 import { ToggleButton, ToggleWrapper } from "./styles";
 
-import { useGlobalStore, useLanguage, constants } from "@sharely/services";
+import { useGlobalStore, useLanguage, constants } from "@sharelyai/services";
 import rolesTabsConfig from "./roles-tabs-config.json";
 
 interface TabConfig {

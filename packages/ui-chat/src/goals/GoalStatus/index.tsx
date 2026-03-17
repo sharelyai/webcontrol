@@ -1,6 +1,6 @@
 import { Wrapper } from "./styles";
-import { useLanguage } from "@sharely/services";
-import { constants } from "@sharely/services";
+import { useLanguage } from "@sharelyai/services";
+import { constants } from "@sharelyai/services";
 
 export interface IStatusGoalProps {
   status: string;

@@ -3,7 +3,7 @@ import {
   Google,
   Loader,
   useCountdown,
-} from "@sharely/ui-shared";
+} from "@sharelyai/ui-shared";
 import {
   constants,
   cookieManager,
@@ -13,7 +13,7 @@ import {
   supabaseClient,
   useGlobalStore,
   useSharelyContext
-} from "@sharely/services";
+} from "@sharelyai/services";
 import { Wrapper } from "./styles";
 
 export interface IAuthFormProps {

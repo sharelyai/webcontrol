@@ -20,22 +20,22 @@ importers:
 
   apps/demo:
     dependencies:
-      '@sharely/services':
+      '@sharelyai/services':
         specifier: workspace:*
         version: link:../../packages/services
-      '@sharely/ui-browse':
+      '@sharelyai/ui-browse':
         specifier: workspace:*
         version: link:../../packages/ui-browse
-      '@sharely/ui-chat':
+      '@sharelyai/ui-chat':
         specifier: workspace:*
         version: link:../../packages/ui-chat
-      '@sharely/ui-search':
+      '@sharelyai/ui-search':
         specifier: workspace:*
         version: link:../../packages/ui-search
-      '@sharely/ui-shared':
+      '@sharelyai/ui-shared':
         specifier: workspace:*
         version: link:../../packages/ui-shared
-      '@sharely/webcontrol':
+      '@sharelyai/webcontrol':
         specifier: workspace:*
         version: link:../webcontrol
       react:
@@ -66,22 +66,22 @@ importers:
 
   apps/webcontrol:
     dependencies:
-      '@sharely/services':
+      '@sharelyai/services':
         specifier: workspace:*
         version: link:../../packages/services
-      '@sharely/ui-agent-chat':
+      '@sharelyai/ui-agent-chat':
         specifier: workspace:*
         version: link:../../packages/ui-agent-chat
-      '@sharely/ui-browse':
+      '@sharelyai/ui-browse':
         specifier: workspace:*
         version: link:../../packages/ui-browse
-      '@sharely/ui-chat':
+      '@sharelyai/ui-chat':
         specifier: workspace:*
         version: link:../../packages/ui-chat
-      '@sharely/ui-search':
+      '@sharelyai/ui-search':
         specifier: workspace:*
         version: link:../../packages/ui-search
-      '@sharely/ui-shared':
+      '@sharelyai/ui-shared':
         specifier: workspace:*
         version: link:../../packages/ui-shared
       react:
@@ -179,10 +179,10 @@ importers:
       '@floating-ui/react':
         specifier: ^0.27.19
         version: 0.27.19(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
-      '@sharely/services':
+      '@sharelyai/services':
         specifier: workspace:*
         version: link:../services
-      '@sharely/ui-shared':
+      '@sharelyai/ui-shared':
         specifier: workspace:*
         version: link:../ui-shared
       react:
@@ -213,13 +213,13 @@ importers:
 
   packages/ui-browse:
     dependencies:
-      '@sharely/services':
+      '@sharelyai/services':
         specifier: workspace:*
         version: link:../services
-      '@sharely/ui-search':
+      '@sharelyai/ui-search':
         specifier: workspace:*
         version: link:../ui-search
-      '@sharely/ui-shared':
+      '@sharelyai/ui-shared':
         specifier: workspace:*
         version: link:../ui-shared
       react:
@@ -250,10 +250,10 @@ importers:
 
   packages/ui-chat:
     dependencies:
-      '@sharely/services':
+      '@sharelyai/services':
         specifier: workspace:*
         version: link:../services
-      '@sharely/ui-shared':
+      '@sharelyai/ui-shared':
         specifier: workspace:*
         version: link:../ui-shared
       '@tanstack/react-query':
@@ -287,10 +287,10 @@ importers:
 
   packages/ui-search:
     dependencies:
-      '@sharely/services':
+      '@sharelyai/services':
         specifier: workspace:*
         version: link:../services
-      '@sharely/ui-shared':
+      '@sharelyai/ui-shared':
         specifier: workspace:*
         version: link:../ui-shared
       react:
@@ -330,7 +330,7 @@ importers:
       '@react-pdf-viewer/default-layout':
         specifier: ^3.12.0
         version: 3.12.0(pdfjs-dist@3.11.174)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
-      '@sharely/services':
+      '@sharelyai/services':
         specifier: workspace:*
         version: link:../services
       react:

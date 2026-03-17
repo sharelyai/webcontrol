@@ -1,5 +1,5 @@
 import { Wrapper } from "./styles";
-import { Download, PictureAsPdf } from "@sharely/ui-shared";
+import { Download, PictureAsPdf } from "@sharelyai/ui-shared";
 
 interface IProps {
   title: string;

@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import styled from "styled-components";
 
-import { ArrowUpward, Close, Search, useResponsive } from "@sharely/ui-shared";
-import { useLanguage } from "@sharely/services";
+import { ArrowUpward, Close, Search, useResponsive } from "@sharelyai/ui-shared";
+import { useLanguage } from "@sharelyai/services";
 
 const Container: any = styled.div`
   width: 100%;

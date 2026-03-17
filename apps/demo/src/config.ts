@@ -1,4 +1,4 @@
-import { useGlobalStore } from '@sharely/services';
+import { useGlobalStore } from '@sharelyai/services';
 
 // Initialize the global store with environment variables.
 // This file is imported as a side-effect in main.tsx before the app renders.

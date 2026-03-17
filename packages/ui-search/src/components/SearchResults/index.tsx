@@ -1,9 +1,9 @@
 import styled, { css } from "styled-components";
 
 import { ListSearchItem } from "./components/listSearchItem";
-import { ScrollBar, Loader, Skeleton } from "@sharely/ui-shared";
+import { ScrollBar, Loader, Skeleton } from "@sharelyai/ui-shared";
 import { useSearchStorage } from "../../stores/searchStore";
-import { useGlobalStore, useLanguage } from "@sharely/services";
+import { useGlobalStore, useLanguage } from "@sharelyai/services";
 
 const Container: any = styled.div`
   ${({ theme }: { theme: any }) => css`

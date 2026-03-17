@@ -1,6 +1,6 @@
 import React from 'react';
-import { SearchPanel } from '@sharely/ui-search';
-import { SharelyProvider } from '@sharely/services';
+import { SearchPanel } from '@sharelyai/ui-search';
+import { SharelyProvider } from '@sharelyai/services';
 
 function SearchOnly() {
   return (

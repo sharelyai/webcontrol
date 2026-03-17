@@ -1,6 +1,6 @@
 import { useState, useCallback } from "react";
-import type { Source } from "@sharely/services";
-import { useSourceDownload } from "@sharely/services";
+import type { Source } from "@sharelyai/services";
+import { useSourceDownload } from "@sharelyai/services";
 import {
   SourceChipsContainer,
   SourceChipsHeader,

@@ -10,8 +10,8 @@ import {
   constants,
   useSharelyContext,
   classNames,
-} from "@sharely/services";
-import { ArrowDown, Check } from "@sharely/ui-shared";
+} from "@sharelyai/services";
+import { ArrowDown, Check } from "@sharelyai/ui-shared";
 
 const EMPTY_DATA: any[] = [];
 const NOOP = () => {};

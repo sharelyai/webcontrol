@@ -7,9 +7,9 @@ import {
   Close,
   Tooltip,
   useCountdown,
-} from "@sharely/ui-shared";
+} from "@sharelyai/ui-shared";
 import { Wrapper } from "./styles";
-import { classNames, constants } from "@sharely/services";
+import { classNames, constants } from "@sharelyai/services";
 import { useFeedbackBoxStore } from "./storage";
 
 export interface MessageFeedbackProps {
