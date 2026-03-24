@@ -17,6 +17,31 @@ interface RawSourceData {
   text: string;
 }
 
+/** Shape of a single entry in semantic_search output.sourcesMetadata */
+interface SemanticSourceMetadataEntry {
+  id: string;
+  score?: number;
+  metadata: {
+    text?: string;
+    type?: string;
+    title?: string;
+    source?: string;
+    sourceUrl?: string;
+    knowledgeId?: string;
+    [key: string]: unknown;
+  };
+}
+
+/** Shape of a single entry in search_knowledge output.results */
+interface SearchKnowledgeResult {
+  id: string;
+  type?: string;
+  title?: string;
+  content?: string;
+  filename?: string;
+  sourceUrl?: string | null;
+}
+
 /**
  * Parses the source string from tool_call_end event
  * Format: "pageNumber:filename:knowledgeId"
@@ -90,45 +115,69 @@ export function stripHtml(html: string): string {
 }
 
 /**
+ * Extracts Source objects from semantic_search tool output's sourcesMetadata.
+ * These are ordered to match the [N] references the AI generates.
+ */
+export function extractSourcesFromSemanticSearch(
+  sourcesMetadata: SemanticSourceMetadataEntry[],
+): Source[] {
+  return sourcesMetadata.map((entry) => {
+    const meta = entry.metadata;
+    const title = (meta.title || "").replace(/&#038;/g, "&").replace(/&amp;/g, "&");
+    return {
+      id: meta.knowledgeId || entry.id,
+      type: "knowledge" as const,
+      title,
+      url: meta.sourceUrl || undefined,
+      snippet: meta.text ? stripHtml(meta.text) : undefined,
+      metadata: {
+        knowledgeId: meta.knowledgeId || entry.id,
+        knowledgeType: meta.type,
+        similarity: entry.score,
+      },
+    };
+  });
+}
+
+/**
+ * Extracts Source objects from search_knowledge tool output's results.
+ */
+export function extractSourcesFromSearchKnowledge(
+  results: SearchKnowledgeResult[],
+): Source[] {
+  return results.map((result) => ({
+    id: result.id,
+    type: "knowledge" as const,
+    title: (result.title || "").replace(/&#038;/g, "&").replace(/&amp;/g, "&"),
+    url: result.sourceUrl || undefined,
+    snippet: result.content ? stripHtml(result.content) : undefined,
+    metadata: {
+      knowledgeId: result.id,
+      filename: result.filename,
+    },
+  }));
+}
+
+/**
  * Processes a loaded AgentMessage to merge its sources with toolCalls output data.
  * This is used when loading messages from the database (not during streaming).
  *
  * The message structure from the database:
  * - message.sources: Source[] - clean source objects with id, title, snippet
+ * - message.toolCalls[].output.sourcesMetadata: SemanticSourceMetadataEntry[] - from semantic_search
+ * - message.toolCalls[].output.results: SearchKnowledgeResult[] - from search_knowledge
  * - message.toolCalls[].output.dataArraySortedWithSource: RawSourceItem[] - raw data with pageNumber:filename:knowledgeId
  */
 export function processLoadedMessageSources(message: {
   sources?: Source[];
   toolCalls?: Array<{
+    name?: string;
     output?: unknown;
   }>;
 }): Source[] {
   const sources = message.sources || [];
 
-  if (sources.length === 0) {
-    return sources;
-  }
-
-  // Extract raw source data from toolCalls output
-  const rawDataMap = new Map<string, RawSourceData>();
-
-  if (message.toolCalls) {
-    for (const toolCall of message.toolCalls) {
-      const output = toolCall.output as
-        | { dataArraySortedWithSource?: RawSourceItem[] }
-        | undefined;
-
-      if (output?.dataArraySortedWithSource) {
-        const map = transformRawSourcesToMap(output.dataArraySortedWithSource);
-        map.forEach((value, key) => {
-          rawDataMap.set(key, value);
-        });
-      }
-    }
-  }
-
-  // If no raw data found, still ensure knowledgeId is set
-  if (rawDataMap.size === 0) {
+  if (!message.toolCalls || message.toolCalls.length === 0) {
     return sources.map((source) => ({
       ...source,
       metadata: {
@@ -138,9 +187,66 @@ export function processLoadedMessageSources(message: {
     }));
   }
 
-  // Merge sources with raw data
-  const merged = mergeSourcesWithRawData(sources, rawDataMap);
-  return merged;
+  // Extract raw source data from toolCalls output (for enrichment)
+  const rawDataMap = new Map<string, RawSourceData>();
+  // Extract full source lists from tool outputs
+  const semanticSources: Source[] = [];
+  const searchSources: Source[] = [];
+
+  for (const toolCall of message.toolCalls) {
+    const output = toolCall.output as Record<string, unknown> | undefined;
+    if (!output) continue;
+
+    // Collect raw data for enrichment
+    if (output.dataArraySortedWithSource) {
+      const map = transformRawSourcesToMap(
+        output.dataArraySortedWithSource as RawSourceItem[],
+      );
+      map.forEach((value, key) => {
+        rawDataMap.set(key, value);
+      });
+    }
+
+    // Extract sources from semantic_search output
+    if (output.sourcesMetadata && Array.isArray(output.sourcesMetadata)) {
+      const extracted = extractSourcesFromSemanticSearch(
+        output.sourcesMetadata as SemanticSourceMetadataEntry[],
+      );
+      semanticSources.push(...extracted);
+    }
+
+    // Extract sources from search_knowledge output
+    if (output.results && Array.isArray(output.results)) {
+      const extracted = extractSourcesFromSearchKnowledge(
+        output.results as SearchKnowledgeResult[],
+      );
+      searchSources.push(...extracted);
+    }
+  }
+
+  // If we found sources from tool outputs, use them (they match the AI's [N] numbering)
+  // Prefer semantic_search sources since the AI typically references those
+  let combinedSources: Source[];
+  if (semanticSources.length > 0) {
+    combinedSources = semanticSources;
+  } else if (searchSources.length > 0) {
+    combinedSources = searchSources;
+  } else {
+    combinedSources = sources;
+  }
+
+  // Enrich with raw data if available
+  if (rawDataMap.size > 0) {
+    return mergeSourcesWithRawData(combinedSources, rawDataMap);
+  }
+
+  return combinedSources.map((source) => ({
+    ...source,
+    metadata: {
+      ...source.metadata,
+      knowledgeId: source.metadata?.knowledgeId || source.id,
+    },
+  }));
 }
 
 /**
@@ -151,6 +257,7 @@ export function processLoadedMessages<
   T extends {
     sources?: Source[];
     toolCalls?: Array<{
+      name?: string;
       output?: unknown;
     }>;
   },

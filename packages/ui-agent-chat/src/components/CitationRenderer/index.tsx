@@ -8,7 +8,8 @@ interface CitationRendererProps {
   onSourceClick?: (sourceId: string) => void;
 }
 
-const CITATION_PATTERN = /\[(\d+)\]/g;
+// Matches [N] (single) and [N-M] (range) citation patterns
+const CITATION_PATTERN = /\[(\d+)(?:-(\d+))?\]/g;
 
 // Process a string to replace citation patterns with CitationBadge components
 function processString(
@@ -29,15 +30,18 @@ function processString(
       parts.push(text.slice(lastIndex, match.index));
     }
 
-    const citationNumber = parseInt(match[1], 10);
-    const sourceIndex = citationNumber - 1; // Citations are 1-indexed
+    const startNum = parseInt(match[1], 10);
+    const endNum = match[2] ? parseInt(match[2], 10) : startNum;
+
+    // For ranges like [1-6], show the first valid source as the badge
+    const sourceIndex = startNum - 1; // Citations are 1-indexed
     const source = sources[sourceIndex];
 
     if (source) {
       parts.push(
         <CitationBadge
-          key={`${keyPrefix}citation-${match.index}-${citationNumber}`}
-          index={citationNumber}
+          key={`${keyPrefix}citation-${match.index}-${startNum}`}
+          index={startNum}
           source={source}
           onSourceClick={onSourceClick}
         />,

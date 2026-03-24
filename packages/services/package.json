@@ -1,6 +1,6 @@
 {
   "name": "@sharelyai/services",
-  "version": "0.0.1",
+  "version": "0.0.4",
   "author": "Sharely AI",
   "publishConfig": {
     "access": "restricted"
@@ -11,7 +11,6 @@
   "sideEffects": false,
   "exports": {
     ".": {
-      "development": "./src/index.ts",
       "import": {
         "types": "./dist/index.d.mts",
         "default": "./dist/index.mjs"

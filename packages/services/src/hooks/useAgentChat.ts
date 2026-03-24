@@ -25,6 +25,8 @@ import {
   transformRawSourcesToMap,
   mergeSourcesWithRawData,
   processLoadedMessages,
+  extractSourcesFromSemanticSearch,
+  extractSourcesFromSearchKnowledge,
 } from "../utils/sourceParser";
 import { useAgentSSE } from "./useAgentSSE";
 import { useGlobalStore } from "../stores/globalStore";
@@ -225,6 +227,22 @@ export function useAgentChat(options: UseAgentChatOptions): UseAgentChatReturn {
             });
           }
 
+          // Extract sources from semantic_search sourcesMetadata
+          if (output?.sourcesMetadata && Array.isArray(output.sourcesMetadata)) {
+            const extracted = extractSourcesFromSemanticSearch(
+              output.sourcesMetadata as any[],
+            );
+            setActiveSources((prev) => [...prev, ...extracted]);
+          }
+
+          // Extract sources from search_knowledge results
+          if (output?.results && Array.isArray(output.results)) {
+            const extracted = extractSourcesFromSearchKnowledge(
+              output.results as any[],
+            );
+            setActiveSources((prev) => [...prev, ...extracted]);
+          }
+
           setActiveToolCalls((prev) =>
             prev.map((tc) =>
               tc.name === event.tool && tc.status === "running"
@@ -328,6 +346,22 @@ export function useAgentChat(options: UseAgentChatOptions): UseAgentChatReturn {
             rawMap.forEach((value, key) => {
               rawSourceDataRef.current.set(key, value);
             });
+          }
+
+          // Extract sources from semantic_search sourcesMetadata
+          if (toolOutput?.sourcesMetadata && Array.isArray(toolOutput.sourcesMetadata)) {
+            const extracted = extractSourcesFromSemanticSearch(
+              toolOutput.sourcesMetadata as any[],
+            );
+            setActiveSources((prev) => [...prev, ...extracted]);
+          }
+
+          // Extract sources from search_knowledge results
+          if (toolOutput?.results && Array.isArray(toolOutput.results)) {
+            const extracted = extractSourcesFromSearchKnowledge(
+              toolOutput.results as any[],
+            );
+            setActiveSources((prev) => [...prev, ...extracted]);
           }
 
           setActiveToolCalls((prev) =>

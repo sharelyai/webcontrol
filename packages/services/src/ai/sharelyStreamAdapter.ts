@@ -27,6 +27,8 @@ import type {
 import {
   transformRawSourcesToMap,
   mergeSourcesWithRawData,
+  extractSourcesFromSemanticSearch,
+  extractSourcesFromSearchKnowledge,
 } from "../utils/sourceParser";
 
 // Re-use the same SSE parsing logic from useAgentSSE.ts
@@ -187,6 +189,27 @@ export function createSharelyStreamAdapter(): TransformStream<
             });
           }
 
+          // Extract and emit sources from semantic_search sourcesMetadata
+          if (resultOutput?.sourcesMetadata && Array.isArray(resultOutput.sourcesMetadata)) {
+            const extracted = extractSourcesFromSemanticSearch(
+              resultOutput.sourcesMetadata as any[],
+            );
+            const merged = mergeSourcesWithRawData(extracted, rawSourceDataMap);
+            for (const src of merged) {
+              output += emitSource(src);
+            }
+          }
+
+          // Extract and emit sources from search_knowledge results
+          if (resultOutput?.results && Array.isArray(resultOutput.results)) {
+            const extracted = extractSourcesFromSearchKnowledge(
+              resultOutput.results as any[],
+            );
+            for (const src of extracted) {
+              output += emitSource(src);
+            }
+          }
+
           const toolCallId =
             toolCallIds.get(event.tool) || `call_${generateId()}`;
           output += encodeChunk({
@@ -227,6 +250,27 @@ export function createSharelyStreamAdapter(): TransformStream<
             rawMap.forEach((value, key) => {
               rawSourceDataMap.set(key, value);
             });
+          }
+
+          // Extract and emit sources from semantic_search sourcesMetadata
+          if (toolOutput?.sourcesMetadata && Array.isArray(toolOutput.sourcesMetadata)) {
+            const extracted = extractSourcesFromSemanticSearch(
+              toolOutput.sourcesMetadata as any[],
+            );
+            const merged = mergeSourcesWithRawData(extracted, rawSourceDataMap);
+            for (const src of merged) {
+              output += emitSource(src);
+            }
+          }
+
+          // Extract and emit sources from search_knowledge results
+          if (toolOutput?.results && Array.isArray(toolOutput.results)) {
+            const extracted = extractSourcesFromSearchKnowledge(
+              toolOutput.results as any[],
+            );
+            for (const src of extracted) {
+              output += emitSource(src);
+            }
           }
 
           if (event.error) {

@@ -43,11 +43,11 @@ export function agentMessageToBodyMessage(msg: AgentMessage): BodyMessage {
     };
   });
 
-  // Convert inline [N] references to markdown links so the Anchor component
+  // Convert inline [N] and [N-M] references to markdown links so the Anchor component
   // renders them as interactive pills with hover popups (matching regular chat behavior).
   if (msg.sources && msg.sources.length > 0) {
-    content = content.replace(/\[(\d+)\]/g, (match, numStr) => {
-      const index = parseInt(numStr, 10) - 1; // [1] → sources[0]
+    content = content.replace(/\[(\d+)(?:-(\d+))?\]/g, (match, startStr, _endStr) => {
+      const index = parseInt(startStr, 10) - 1; // [1] → sources[0], [1-6] → sources[0]
       if (index >= 0 && index < msg.sources.length) {
         const source = msg.sources[index];
         const title = source.title;

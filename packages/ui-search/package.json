@@ -1,6 +1,6 @@
 {
   "name": "@sharelyai/ui-search",
-  "version": "0.0.1",
+  "version": "0.0.4",
   "author": "Sharely AI",
   "publishConfig": {
     "access": "restricted"
