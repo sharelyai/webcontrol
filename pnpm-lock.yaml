@@ -180,11 +180,11 @@ importers:
         specifier: ^0.27.19
         version: 0.27.19(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       '@sharelyai/services':
-        specifier: workspace:*
-        version: link:../services
+        specifier: 0.0.4
+        version: 0.0.4(@types/react@19.2.14)(react@19.2.4)(use-sync-external-store@1.6.0(react@19.2.4))(zod@4.3.6)
       '@sharelyai/ui-shared':
-        specifier: workspace:*
-        version: link:../ui-shared
+        specifier: 0.0.4
+        version: 0.0.4(@types/react@19.2.14)(pdfjs-dist@3.11.174)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(styled-components@6.3.11(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(use-sync-external-store@1.6.0(react@19.2.4))(zod@4.3.6)
       react:
         specifier: ^18.0.0 || ^19.0.0
         version: 19.2.4
@@ -331,8 +331,8 @@ importers:
         specifier: ^3.12.0
         version: 3.12.0(pdfjs-dist@3.11.174)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       '@sharelyai/services':
-        specifier: workspace:*
-        version: link:../services
+        specifier: 0.0.4
+        version: 0.0.4(@types/react@19.2.14)(react@19.2.4)(use-sync-external-store@1.6.0(react@19.2.4))(zod@4.3.6)
       react:
         specifier: ^18.0.0 || ^19.0.0
         version: 19.2.4
@@ -1089,6 +1089,18 @@ packages:
     resolution: {integrity: sha512-2HRCml6OztYXyJXAvdDXPKcawukWY2GpR5/nxKp4iBgiO3wcoEGkAaqctIbZcNB6KlUQBIqt8VYkNSj2397EfA==}
     cpu: [x64]
     os: [win32]
+
+  '@sharelyai/services@0.0.4':
+    resolution: {integrity: sha512-emNhmnMGPIVht2bj5gd9Pup7rd9L5cJ77flj0oBM+bdn1ZGJ+WkWzpDFJ9ZynehFyZG4xPeZKWEEruslXgZewA==}
+    peerDependencies:
+      react: ^18.0.0 || ^19.0.0
+
+  '@sharelyai/ui-shared@0.0.4':
+    resolution: {integrity: sha512-t0zDakhtp49vQO5dDRYy8gWDm4DQOb22Mb9QAM98k4kS23camA/gMBOct9sex4A+R1T3FH64IdgqSNnqNq3DuA==}
+    peerDependencies:
+      react: ^18.0.0 || ^19.0.0
+      react-dom: ^18.0.0 || ^19.0.0
+      styled-components: ^6.0.0
 
   '@sindresorhus/is@4.6.0':
     resolution: {integrity: sha512-t09vSN3MdfsyCHoFcTRCH/iUtG7OJ0CsjzB8cjAmKc/va/kIgeDI/TxsigdncE/4be734m0cvIYwNaV4i2XqAw==}
@@ -3598,6 +3610,51 @@ snapshots:
 
   '@rollup/rollup-win32-x64-msvc@4.59.0':
     optional: true
+
+  '@sharelyai/services@0.0.4(@types/react@19.2.14)(react@19.2.4)(use-sync-external-store@1.6.0(react@19.2.4))(zod@4.3.6)':
+    dependencies:
+      '@ai-sdk/react': 3.0.118(react@19.2.4)(zod@4.3.6)
+      '@supabase/supabase-js': 2.98.0
+      '@tanstack/react-query': 5.90.21(react@19.2.4)
+      ai: 6.0.116(zod@4.3.6)
+      js-cookie: 3.0.5
+      jwt-decode: 4.0.0
+      react: 19.2.4
+      yup: 1.7.1
+      zustand: 5.0.11(@types/react@19.2.14)(react@19.2.4)(use-sync-external-store@1.6.0(react@19.2.4))
+    transitivePeerDependencies:
+      - '@types/react'
+      - bufferutil
+      - immer
+      - use-sync-external-store
+      - utf-8-validate
+      - zod
+
+  '@sharelyai/ui-shared@0.0.4(@types/react@19.2.14)(pdfjs-dist@3.11.174)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(styled-components@6.3.11(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(use-sync-external-store@1.6.0(react@19.2.4))(zod@4.3.6)':
+    dependencies:
+      '@floating-ui/react': 0.27.19(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      '@react-pdf-viewer/core': 3.12.0(pdfjs-dist@3.11.174)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      '@react-pdf-viewer/default-layout': 3.12.0(pdfjs-dist@3.11.174)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      '@sharelyai/services': 0.0.4(@types/react@19.2.14)(react@19.2.4)(use-sync-external-store@1.6.0(react@19.2.4))(zod@4.3.6)
+      react: 19.2.4
+      react-content-loader: 7.1.2(react@19.2.4)
+      react-dom: 19.2.4(react@19.2.4)
+      react-markdown: 10.1.0(@types/react@19.2.14)(react@19.2.4)
+      react-perfect-scrollbar: 1.5.8(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      rehype-raw: 7.0.0
+      remark-emoji: 5.0.2
+      remark-gfm: 4.0.1
+      styled-components: 6.3.11(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      zustand: 5.0.11(@types/react@19.2.14)(react@19.2.4)(use-sync-external-store@1.6.0(react@19.2.4))
+    transitivePeerDependencies:
+      - '@types/react'
+      - bufferutil
+      - immer
+      - pdfjs-dist
+      - supports-color
+      - use-sync-external-store
+      - utf-8-validate
+      - zod
 
   '@sindresorhus/is@4.6.0': {}
 
