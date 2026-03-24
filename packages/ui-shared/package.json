@@ -1,6 +1,6 @@
 {
   "name": "@sharelyai/ui-shared",
-  "version": "0.0.4",
+  "version": "0.0.6",
   "author": "Sharely AI",
   "publishConfig": {
     "access": "restricted"
@@ -36,24 +36,24 @@
     "styled-components": "^6.0.0"
   },
   "dependencies": {
-    "@floating-ui/react": "^0.27.19",
-    "@sharelyai/services": "0.0.4",
-    "react-content-loader": "^7.1.2",
-    "zustand": "^5.0.11",
-    "react-perfect-scrollbar": "^1.5.8",
-    "react-markdown": "^10.1.0",
-    "remark-emoji": "^5.0.2",
-    "remark-gfm": "^4.0.1",
-    "rehype-raw": "^7.0.0",
-    "@react-pdf-viewer/core": "^3.12.0",
-    "@react-pdf-viewer/default-layout": "^3.12.0"
+    "@floating-ui/react": "0.27.19",
+    "@sharelyai/services": "latest",
+    "react-content-loader": "7.1.2",
+    "zustand": "5.0.11",
+    "react-perfect-scrollbar": "1.5.8",
+    "react-markdown": "10.1.0",
+    "remark-emoji": "5.0.2",
+    "remark-gfm": "4.0.1",
+    "rehype-raw": "7.0.0",
+    "@react-pdf-viewer/core": "3.12.0",
+    "@react-pdf-viewer/default-layout": "3.12.0"
   },
   "devDependencies": {
-    "@types/react": "^19.2.14",
-    "@types/react-dom": "^19.2.3",
-    "styled-components": "^6.3.11",
-    "tsup": "^8.5.1",
-    "typescript": "^5.9.3",
-    "@types/mdast": "^4.0.4"
+    "@types/react": "19.2.14",
+    "@types/react-dom": "19.2.3",
+    "styled-components": "6.3.11",
+    "tsup": "8.5.1",
+    "typescript": "5.9.3",
+    "@types/mdast": "4.0.4"
   }
 }

@@ -19,18 +19,18 @@
     "@sharelyai/ui-search": "workspace:*",
     "@sharelyai/ui-browse": "workspace:*",
     "@sharelyai/ui-agent-chat": "workspace:*",
-    "react": "^19.2.4",
-    "react-dom": "^19.2.4",
-    "styled-components": "^6.3.11",
-    "yup": "^1.7.1"
+    "react": "19.2.4",
+    "react-dom": "19.2.4",
+    "styled-components": "6.3.11",
+    "yup": "1.7.1"
   },
   "devDependencies": {
-    "@types/react": "^19.2.14",
-    "@types/react-dom": "^19.2.3",
-    "@vitejs/plugin-react": "^5.1.4",
-    "babel-plugin-styled-components": "^2.1.4",
-    "typescript": "^5.9.3",
-    "vite": "^7.3.1",
-    "vite-plugin-css-injected-by-js": "^4.0.1"
+    "@types/react": "19.2.14",
+    "@types/react-dom": "19.2.3",
+    "@vitejs/plugin-react": "5.1.4",
+    "babel-plugin-styled-components": "2.1.4",
+    "typescript": "5.9.3",
+    "vite": "7.3.1",
+    "vite-plugin-css-injected-by-js": "4.0.1"
   }
 }

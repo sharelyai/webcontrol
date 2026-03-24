@@ -9,13 +9,13 @@ importers:
   .:
     devDependencies:
       '@changesets/cli':
-        specifier: ^2.30.0
+        specifier: 2.30.0
         version: 2.30.0(@types/node@25.3.5)
       turbo:
-        specifier: ^2.8.14
+        specifier: 2.8.14
         version: 2.8.14
       typescript:
-        specifier: ^5.9.3
+        specifier: 5.9.3
         version: 5.9.3
 
   apps/demo:
@@ -39,29 +39,29 @@ importers:
         specifier: workspace:*
         version: link:../webcontrol
       react:
-        specifier: ^19.2.4
+        specifier: 19.2.4
         version: 19.2.4
       react-dom:
-        specifier: ^19.2.4
+        specifier: 19.2.4
         version: 19.2.4(react@19.2.4)
       react-router-dom:
-        specifier: ^7.13.1
+        specifier: 7.13.1
         version: 7.13.1(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
     devDependencies:
       '@types/react':
-        specifier: ^19.2.14
+        specifier: 19.2.14
         version: 19.2.14
       '@types/react-dom':
-        specifier: ^19.2.3
+        specifier: 19.2.3
         version: 19.2.3(@types/react@19.2.14)
       '@vitejs/plugin-react':
-        specifier: ^5.1.4
+        specifier: 5.1.4
         version: 5.1.4(vite@7.3.1(@types/node@25.3.5))
       typescript:
-        specifier: ^5.9.3
+        specifier: 5.9.3
         version: 5.9.3
       vite:
-        specifier: ^7.3.1
+        specifier: 7.3.1
         version: 7.3.1(@types/node@25.3.5)
 
   apps/webcontrol:
@@ -85,299 +85,299 @@ importers:
         specifier: workspace:*
         version: link:../../packages/ui-shared
       react:
-        specifier: ^19.2.4
+        specifier: 19.2.4
         version: 19.2.4
       react-dom:
-        specifier: ^19.2.4
+        specifier: 19.2.4
         version: 19.2.4(react@19.2.4)
       styled-components:
-        specifier: ^6.3.11
+        specifier: 6.3.11
         version: 6.3.11(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       yup:
-        specifier: ^1.7.1
+        specifier: 1.7.1
         version: 1.7.1
     devDependencies:
       '@types/react':
-        specifier: ^19.2.14
+        specifier: 19.2.14
         version: 19.2.14
       '@types/react-dom':
-        specifier: ^19.2.3
+        specifier: 19.2.3
         version: 19.2.3(@types/react@19.2.14)
       '@vitejs/plugin-react':
-        specifier: ^5.1.4
+        specifier: 5.1.4
         version: 5.1.4(vite@7.3.1(@types/node@25.3.5))
       babel-plugin-styled-components:
-        specifier: ^2.1.4
+        specifier: 2.1.4
         version: 2.1.4(@babel/core@7.29.0)(styled-components@6.3.11(react-dom@19.2.4(react@19.2.4))(react@19.2.4))
       typescript:
-        specifier: ^5.9.3
+        specifier: 5.9.3
         version: 5.9.3
       vite:
-        specifier: ^7.3.1
+        specifier: 7.3.1
         version: 7.3.1(@types/node@25.3.5)
       vite-plugin-css-injected-by-js:
-        specifier: ^4.0.1
+        specifier: 4.0.1
         version: 4.0.1(vite@7.3.1(@types/node@25.3.5))
 
   packages/services:
     dependencies:
       '@ai-sdk/react':
-        specifier: ^3.0.41
-        version: 3.0.118(react@19.2.4)(zod@4.3.6)
+        specifier: 3.0.41
+        version: 3.0.41(react@19.2.4)(zod@4.3.6)
       '@supabase/supabase-js':
-        specifier: ^2.98.0
+        specifier: 2.98.0
         version: 2.98.0
       '@tanstack/react-query':
-        specifier: ^5.90.21
+        specifier: 5.90.21
         version: 5.90.21(react@19.2.4)
       ai:
-        specifier: ^6.0.68
-        version: 6.0.116(zod@4.3.6)
+        specifier: 6.0.68
+        version: 6.0.68(zod@4.3.6)
       js-cookie:
-        specifier: ^3.0.5
+        specifier: 3.0.5
         version: 3.0.5
       jwt-decode:
-        specifier: ^4.0.0
+        specifier: 4.0.0
         version: 4.0.0
       yup:
-        specifier: ^1.7.1
+        specifier: 1.7.1
         version: 1.7.1
       zustand:
-        specifier: ^5.0.11
+        specifier: 5.0.11
         version: 5.0.11(@types/react@19.2.14)(react@19.2.4)(use-sync-external-store@1.6.0(react@19.2.4))
     devDependencies:
       '@testing-library/jest-dom':
-        specifier: ^6.9.1
+        specifier: 6.9.1
         version: 6.9.1
       '@types/js-cookie':
-        specifier: ^3.0.6
+        specifier: 3.0.6
         version: 3.0.6
       '@types/node':
-        specifier: ^25.3.5
+        specifier: 25.3.5
         version: 25.3.5
       '@types/react':
-        specifier: ^19.2.14
+        specifier: 19.2.14
         version: 19.2.14
       jsdom:
-        specifier: ^28.1.0
+        specifier: 28.1.0
         version: 28.1.0(canvas@2.11.2)
       react:
-        specifier: ^19.2.4
+        specifier: 19.2.4
         version: 19.2.4
       tsup:
-        specifier: ^8.5.1
+        specifier: 8.5.1
         version: 8.5.1(postcss@8.5.8)(typescript@5.9.3)
       typescript:
-        specifier: ^5.9.3
+        specifier: 5.9.3
         version: 5.9.3
       vitest:
-        specifier: ^4.0.18
+        specifier: 4.0.18
         version: 4.0.18(@opentelemetry/api@1.9.0)(@types/node@25.3.5)(jsdom@28.1.0(canvas@2.11.2))
 
   packages/ui-agent-chat:
     dependencies:
       '@floating-ui/react':
-        specifier: ^0.27.19
-        version: 0.27.19(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+        specifier: 0.27.19
+        version: 0.27.19(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       '@sharelyai/services':
-        specifier: 0.0.4
-        version: 0.0.4(@types/react@19.2.14)(react@19.2.4)(use-sync-external-store@1.6.0(react@19.2.4))(zod@4.3.6)
+        specifier: latest
+        version: 0.0.5(@types/react@19.2.14)(react@19.0.0)(use-sync-external-store@1.6.0(react@19.0.0))(zod@4.3.6)
       '@sharelyai/ui-shared':
-        specifier: 0.0.4
-        version: 0.0.4(@types/react@19.2.14)(pdfjs-dist@3.11.174)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(styled-components@6.3.11(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(use-sync-external-store@1.6.0(react@19.2.4))(zod@4.3.6)
+        specifier: latest
+        version: 0.0.4(@types/react@19.2.14)(pdfjs-dist@3.11.174)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(styled-components@6.3.11(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(use-sync-external-store@1.6.0(react@19.0.0))(zod@4.3.6)
       react:
-        specifier: ^18.0.0 || ^19.0.0
-        version: 19.2.4
+        specifier: 18.0.0 || 19.0.0
+        version: 19.0.0
       react-dom:
-        specifier: ^18.0.0 || ^19.0.0
-        version: 19.2.4(react@19.2.4)
+        specifier: 18.0.0 || 19.0.0
+        version: 19.0.0(react@19.0.0)
       react-markdown:
-        specifier: ^10.1.0
-        version: 10.1.0(@types/react@19.2.14)(react@19.2.4)
+        specifier: 10.1.0
+        version: 10.1.0(@types/react@19.2.14)(react@19.0.0)
     devDependencies:
       '@types/react':
-        specifier: ^19.2.14
+        specifier: 19.2.14
         version: 19.2.14
       '@types/react-dom':
-        specifier: ^19.2.3
+        specifier: 19.2.3
         version: 19.2.3(@types/react@19.2.14)
       styled-components:
-        specifier: ^6.3.11
-        version: 6.3.11(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+        specifier: 6.3.11
+        version: 6.3.11(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       tsup:
-        specifier: ^8.5.1
+        specifier: 8.5.1
         version: 8.5.1(postcss@8.5.8)(typescript@5.9.3)
       typescript:
-        specifier: ^5.9.3
+        specifier: 5.9.3
         version: 5.9.3
 
   packages/ui-browse:
     dependencies:
       '@sharelyai/services':
-        specifier: workspace:*
-        version: link:../services
+        specifier: latest
+        version: 0.0.5(@types/react@19.2.14)(react@19.0.0)(use-sync-external-store@1.6.0(react@19.0.0))(zod@4.3.6)
       '@sharelyai/ui-search':
-        specifier: workspace:*
-        version: link:../ui-search
+        specifier: latest
+        version: 0.0.4(@types/react@19.2.14)(pdfjs-dist@3.11.174)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(styled-components@6.3.11(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(use-sync-external-store@1.6.0(react@19.0.0))(zod@4.3.6)
       '@sharelyai/ui-shared':
-        specifier: workspace:*
-        version: link:../ui-shared
+        specifier: latest
+        version: 0.0.4(@types/react@19.2.14)(pdfjs-dist@3.11.174)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(styled-components@6.3.11(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(use-sync-external-store@1.6.0(react@19.0.0))(zod@4.3.6)
       react:
-        specifier: ^18.0.0 || ^19.0.0
-        version: 19.2.4
+        specifier: 18.0.0 || 19.0.0
+        version: 19.0.0
       react-dom:
-        specifier: ^18.0.0 || ^19.0.0
-        version: 19.2.4(react@19.2.4)
+        specifier: 18.0.0 || 19.0.0
+        version: 19.0.0(react@19.0.0)
       zustand:
-        specifier: ^5.0.11
-        version: 5.0.11(@types/react@19.2.14)(react@19.2.4)(use-sync-external-store@1.6.0(react@19.2.4))
+        specifier: 5.0.11
+        version: 5.0.11(@types/react@19.2.14)(react@19.0.0)(use-sync-external-store@1.6.0(react@19.0.0))
     devDependencies:
       '@types/react':
-        specifier: ^19.2.14
+        specifier: 19.2.14
         version: 19.2.14
       '@types/react-dom':
-        specifier: ^19.2.3
+        specifier: 19.2.3
         version: 19.2.3(@types/react@19.2.14)
       styled-components:
-        specifier: ^6.3.11
-        version: 6.3.11(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+        specifier: 6.3.11
+        version: 6.3.11(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       tsup:
-        specifier: ^8.5.1
+        specifier: 8.5.1
         version: 8.5.1(postcss@8.5.8)(typescript@5.9.3)
       typescript:
-        specifier: ^5.9.3
+        specifier: 5.9.3
         version: 5.9.3
 
   packages/ui-chat:
     dependencies:
       '@sharelyai/services':
-        specifier: workspace:*
-        version: link:../services
+        specifier: latest
+        version: 0.0.5(@types/react@19.2.14)(react@19.0.0)(use-sync-external-store@1.6.0(react@19.0.0))(zod@4.3.6)
       '@sharelyai/ui-shared':
-        specifier: workspace:*
-        version: link:../ui-shared
+        specifier: latest
+        version: 0.0.4(@types/react@19.2.14)(pdfjs-dist@3.11.174)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(styled-components@6.3.11(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(use-sync-external-store@1.6.0(react@19.0.0))(zod@4.3.6)
       '@tanstack/react-query':
-        specifier: ^5.90.21
-        version: 5.90.21(react@19.2.4)
+        specifier: 5.90.21
+        version: 5.90.21(react@19.0.0)
       react:
-        specifier: ^18.0.0 || ^19.0.0
-        version: 19.2.4
+        specifier: 18.0.0 || 19.0.0
+        version: 19.0.0
       react-dom:
-        specifier: ^18.0.0 || ^19.0.0
-        version: 19.2.4(react@19.2.4)
+        specifier: 18.0.0 || 19.0.0
+        version: 19.0.0(react@19.0.0)
       zustand:
-        specifier: ^5.0.11
-        version: 5.0.11(@types/react@19.2.14)(react@19.2.4)(use-sync-external-store@1.6.0(react@19.2.4))
+        specifier: 5.0.11
+        version: 5.0.11(@types/react@19.2.14)(react@19.0.0)(use-sync-external-store@1.6.0(react@19.0.0))
     devDependencies:
       '@types/react':
-        specifier: ^19.2.14
+        specifier: 19.2.14
         version: 19.2.14
       '@types/react-dom':
-        specifier: ^19.2.3
+        specifier: 19.2.3
         version: 19.2.3(@types/react@19.2.14)
       styled-components:
-        specifier: ^6.3.11
-        version: 6.3.11(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+        specifier: 6.3.11
+        version: 6.3.11(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       tsup:
-        specifier: ^8.5.1
+        specifier: 8.5.1
         version: 8.5.1(postcss@8.5.8)(typescript@5.9.3)
       typescript:
-        specifier: ^5.9.3
+        specifier: 5.9.3
         version: 5.9.3
 
   packages/ui-search:
     dependencies:
       '@sharelyai/services':
-        specifier: workspace:*
-        version: link:../services
+        specifier: latest
+        version: 0.0.5(@types/react@19.2.14)(react@19.0.0)(use-sync-external-store@1.6.0(react@19.0.0))(zod@4.3.6)
       '@sharelyai/ui-shared':
-        specifier: workspace:*
-        version: link:../ui-shared
+        specifier: latest
+        version: 0.0.4(@types/react@19.2.14)(pdfjs-dist@3.11.174)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(styled-components@6.3.11(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(use-sync-external-store@1.6.0(react@19.0.0))(zod@4.3.6)
       react:
-        specifier: ^18.0.0 || ^19.0.0
-        version: 19.2.4
+        specifier: 18.0.0 || 19.0.0
+        version: 19.0.0
       react-dom:
-        specifier: ^18.0.0 || ^19.0.0
-        version: 19.2.4(react@19.2.4)
+        specifier: 18.0.0 || 19.0.0
+        version: 19.0.0(react@19.0.0)
       zustand:
-        specifier: ^5.0.11
-        version: 5.0.11(@types/react@19.2.14)(react@19.2.4)(use-sync-external-store@1.6.0(react@19.2.4))
+        specifier: 5.0.11
+        version: 5.0.11(@types/react@19.2.14)(react@19.0.0)(use-sync-external-store@1.6.0(react@19.0.0))
     devDependencies:
       '@types/react':
-        specifier: ^19.2.14
+        specifier: 19.2.14
         version: 19.2.14
       '@types/react-dom':
-        specifier: ^19.2.3
+        specifier: 19.2.3
         version: 19.2.3(@types/react@19.2.14)
       styled-components:
-        specifier: ^6.3.11
-        version: 6.3.11(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+        specifier: 6.3.11
+        version: 6.3.11(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       tsup:
-        specifier: ^8.5.1
+        specifier: 8.5.1
         version: 8.5.1(postcss@8.5.8)(typescript@5.9.3)
       typescript:
-        specifier: ^5.9.3
+        specifier: 5.9.3
         version: 5.9.3
 
   packages/ui-shared:
     dependencies:
       '@floating-ui/react':
-        specifier: ^0.27.19
-        version: 0.27.19(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+        specifier: 0.27.19
+        version: 0.27.19(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       '@react-pdf-viewer/core':
-        specifier: ^3.12.0
-        version: 3.12.0(pdfjs-dist@3.11.174)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+        specifier: 3.12.0
+        version: 3.12.0(pdfjs-dist@3.11.174)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       '@react-pdf-viewer/default-layout':
-        specifier: ^3.12.0
-        version: 3.12.0(pdfjs-dist@3.11.174)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+        specifier: 3.12.0
+        version: 3.12.0(pdfjs-dist@3.11.174)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       '@sharelyai/services':
-        specifier: 0.0.4
-        version: 0.0.4(@types/react@19.2.14)(react@19.2.4)(use-sync-external-store@1.6.0(react@19.2.4))(zod@4.3.6)
+        specifier: latest
+        version: 0.0.5(@types/react@19.2.14)(react@19.0.0)(use-sync-external-store@1.6.0(react@19.0.0))(zod@4.3.6)
       react:
-        specifier: ^18.0.0 || ^19.0.0
-        version: 19.2.4
+        specifier: 18.0.0 || 19.0.0
+        version: 19.0.0
       react-content-loader:
-        specifier: ^7.1.2
-        version: 7.1.2(react@19.2.4)
+        specifier: 7.1.2
+        version: 7.1.2(react@19.0.0)
       react-dom:
-        specifier: ^18.0.0 || ^19.0.0
-        version: 19.2.4(react@19.2.4)
+        specifier: 18.0.0 || 19.0.0
+        version: 19.0.0(react@19.0.0)
       react-markdown:
-        specifier: ^10.1.0
-        version: 10.1.0(@types/react@19.2.14)(react@19.2.4)
+        specifier: 10.1.0
+        version: 10.1.0(@types/react@19.2.14)(react@19.0.0)
       react-perfect-scrollbar:
-        specifier: ^1.5.8
-        version: 1.5.8(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+        specifier: 1.5.8
+        version: 1.5.8(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       rehype-raw:
-        specifier: ^7.0.0
+        specifier: 7.0.0
         version: 7.0.0
       remark-emoji:
-        specifier: ^5.0.2
+        specifier: 5.0.2
         version: 5.0.2
       remark-gfm:
-        specifier: ^4.0.1
+        specifier: 4.0.1
         version: 4.0.1
       zustand:
-        specifier: ^5.0.11
-        version: 5.0.11(@types/react@19.2.14)(react@19.2.4)(use-sync-external-store@1.6.0(react@19.2.4))
+        specifier: 5.0.11
+        version: 5.0.11(@types/react@19.2.14)(react@19.0.0)(use-sync-external-store@1.6.0(react@19.0.0))
     devDependencies:
       '@types/mdast':
-        specifier: ^4.0.4
+        specifier: 4.0.4
         version: 4.0.4
       '@types/react':
-        specifier: ^19.2.14
+        specifier: 19.2.14
         version: 19.2.14
       '@types/react-dom':
-        specifier: ^19.2.3
+        specifier: 19.2.3
         version: 19.2.3(@types/react@19.2.14)
       styled-components:
-        specifier: ^6.3.11
-        version: 6.3.11(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+        specifier: 6.3.11
+        version: 6.3.11(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       tsup:
-        specifier: ^8.5.1
+        specifier: 8.5.1
         version: 8.5.1(postcss@8.5.8)(typescript@5.9.3)
       typescript:
-        specifier: ^5.9.3
+        specifier: 5.9.3
         version: 5.9.3
 
 packages:
@@ -388,24 +388,40 @@ packages:
   '@adobe/css-tools@4.4.4':
     resolution: {integrity: sha512-Elp+iwUx5rN5+Y8xLt5/GRoG20WGoDCQ/1Fb+1LiGtvwbDavuSk0jhD/eZdckHAuzcDzccnkv+rEjyWfRx18gg==}
 
-  '@ai-sdk/gateway@3.0.66':
-    resolution: {integrity: sha512-SIQ0YY0iMuv+07HLsZ+bB990zUJ6S4ujORAh+Jv1V2KGNn73qQKnGO0JBk+w+Res8YqOFSycwDoWcFlQrVxS4A==}
+  '@ai-sdk/gateway@3.0.16':
+    resolution: {integrity: sha512-OOY5CfRJiHvh/8np2vs1RQaCZ5hWv2qOeEmmeiABXK3gLQHUVnCO+1hhoLsZdHM5iElu6M407dAOfyvTsKJqcQ==}
     engines: {node: '>=18'}
     peerDependencies:
       zod: ^3.25.76 || ^4.1.8
 
-  '@ai-sdk/provider-utils@4.0.19':
-    resolution: {integrity: sha512-3eG55CrSWCu2SXlqq2QCsFjo3+E7+Gmg7i/oRVoSZzIodTuDSfLb3MRje67xE9RFea73Zao7Lm4mADIfUETKGg==}
+  '@ai-sdk/gateway@3.0.32':
+    resolution: {integrity: sha512-7clZRr07P9rpur39t1RrbIe7x8jmwnwUWI8tZs+BvAfX3NFgdSVGGIaT7bTz2pb08jmLXzTSDbrOTqAQ7uBkBQ==}
     engines: {node: '>=18'}
     peerDependencies:
       zod: ^3.25.76 || ^4.1.8
 
-  '@ai-sdk/provider@3.0.8':
-    resolution: {integrity: sha512-oGMAgGoQdBXbZqNG0Ze56CHjDZ1IDYOwGYxYjO5KLSlz5HiNQ9udIXsPZ61VWaHGZ5XW/jyjmr6t2xz2jGVwbQ==}
+  '@ai-sdk/provider-utils@4.0.13':
+    resolution: {integrity: sha512-HHG72BN4d+OWTcq2NwTxOm/2qvk1duYsnhCDtsbYwn/h/4zeqURu1S0+Cn0nY2Ysq9a9HGKvrYuMn9bgFhR2Og==}
+    engines: {node: '>=18'}
+    peerDependencies:
+      zod: ^3.25.76 || ^4.1.8
+
+  '@ai-sdk/provider-utils@4.0.8':
+    resolution: {integrity: sha512-ns9gN7MmpI8vTRandzgz+KK/zNMLzhrriiKECMt4euLtQFSBgNfydtagPOX4j4pS1/3KvHF6RivhT3gNQgBZsg==}
+    engines: {node: '>=18'}
+    peerDependencies:
+      zod: ^3.25.76 || ^4.1.8
+
+  '@ai-sdk/provider@3.0.4':
+    resolution: {integrity: sha512-5KXyBOSEX+l67elrEa+wqo/LSsSTtrPj9Uoh3zMbe/ceQX4ucHI3b9nUEfNkGF3Ry1svv90widAt+aiKdIJasQ==}
     engines: {node: '>=18'}
 
-  '@ai-sdk/react@3.0.118':
-    resolution: {integrity: sha512-fBAix8Jftxse6/2YJnOFkwW1/O6EQK4DK68M9DlFmZGAzBmsaHXEPVS77sVIlkaOWCy11bE7434NAVXRY+3OsQ==}
+  '@ai-sdk/provider@3.0.7':
+    resolution: {integrity: sha512-VkPLrutM6VdA924/mG8OS+5frbVTcu6e046D2bgDo00tehBANR1QBJ/mPcZ9tXMFOsVcm6SQArOregxePzTFPw==}
+    engines: {node: '>=18'}
+
+  '@ai-sdk/react@3.0.41':
+    resolution: {integrity: sha512-mTyfkM+WVUIlaqIpOPSgHlKL1sRQ9df+hdhs7EmDi804m/Ouw+Cq++HCJ9GFAnpnLizcO8huBoTNIrgdjewjzQ==}
     engines: {node: '>=18'}
     peerDependencies:
       react: ^18 || ~19.0.1 || ~19.1.2 || ^19.2.1
@@ -1095,6 +1111,18 @@ packages:
     peerDependencies:
       react: ^18.0.0 || ^19.0.0
 
+  '@sharelyai/services@0.0.5':
+    resolution: {integrity: sha512-J5mdpMzbD519L3CcUe9tC39Es7Qk2HE17XYzE+mAdFNLhOvMGNkuOlXh96+mkbQ3mPKoLxwiuoD1EGuD9NUrug==}
+    peerDependencies:
+      react: ^18.0.0 || ^19.0.0
+
+  '@sharelyai/ui-search@0.0.4':
+    resolution: {integrity: sha512-uh7FbqjESNwSOQcZU632Ykb+DeO8npRfNP/CZrihYmi9uF899GzfPIuL/v6Vu+qGJYAkjW1+WXNh8fpHqDGG1g==}
+    peerDependencies:
+      react: ^18.0.0 || ^19.0.0
+      react-dom: ^18.0.0 || ^19.0.0
+      styled-components: ^6.0.0
+
   '@sharelyai/ui-shared@0.0.4':
     resolution: {integrity: sha512-t0zDakhtp49vQO5dDRYy8gWDm4DQOb22Mb9QAM98k4kS23camA/gMBOct9sex4A+R1T3FH64IdgqSNnqNq3DuA==}
     peerDependencies:
@@ -1271,8 +1299,14 @@ packages:
     resolution: {integrity: sha512-MnA+YT8fwfJPgBx3m60MNqakm30XOkyIoH1y6huTQvC0PwZG7ki8NacLBcrPbNoo8vEZy7Jpuk7+jMO+CUovTQ==}
     engines: {node: '>= 14'}
 
-  ai@6.0.116:
-    resolution: {integrity: sha512-7yM+cTmyRLeNIXwt4Vj+mrrJgVQ9RMIW5WO0ydoLoYkewIvsMcvUmqS4j2RJTUXaF1HphwmSKUMQ/HypNRGOmA==}
+  ai@6.0.39:
+    resolution: {integrity: sha512-hF05gF4H+IxuilA8kNANVVHQXduTJsJaH74jmlmy8mcQt3NZgPYe2zZNyGBV4DPDYTUDt1h31hbLgQqJTn5LGA==}
+    engines: {node: '>=18'}
+    peerDependencies:
+      zod: ^3.25.76 || ^4.1.8
+
+  ai@6.0.68:
+    resolution: {integrity: sha512-nrTOAXm+XUhi/NvkUbb5yRebf6+PBkZT8zkR2P57ot1f4IMGWMmBzk9JOSSSGiVeVUaakhOkLq/IUEtb71yWTw==}
     engines: {node: '>=18'}
     peerDependencies:
       zod: ^3.25.76 || ^4.1.8
@@ -2224,6 +2258,11 @@ packages:
     peerDependencies:
       react: '>=18.0.0'
 
+  react-dom@19.0.0:
+    resolution: {integrity: sha512-4GV5sHFG0e/0AD4X+ySy6UJd3jVl1iNsNHdpad0qhABJ11twS3TTBnseqsKurKcsNqCEFeGL3uLpVChpIO3QfQ==}
+    peerDependencies:
+      react: ^19.0.0
+
   react-dom@19.2.4:
     resolution: {integrity: sha512-AXJdLo8kgMbimY95O2aKQqsz2iWi9jMgKJhRBAxECE4IFxfcazB2LmzloIoibJI3C12IlY20+KFaLv+71bUJeQ==}
     peerDependencies:
@@ -2264,6 +2303,10 @@ packages:
     peerDependenciesMeta:
       react-dom:
         optional: true
+
+  react@19.0.0:
+    resolution: {integrity: sha512-V8AVnmPIICiWpGfm6GLzCR/W5FXLchHop40W4nXBmdlEceh16rCN8O8LNWm5bh5XUX91fh7KpA+W0TgMKmgTpQ==}
+    engines: {node: '>=0.10.0'}
 
   react@19.2.4:
     resolution: {integrity: sha512-9nfp2hYpCwOjAN+8TZFGhtWEwgvWHXqESH8qT89AT/lWklpLON22Lc8pEtnpsZz7VmawabSU0gCjnj8aC0euHQ==}
@@ -2338,6 +2381,9 @@ packages:
   saxes@6.0.0:
     resolution: {integrity: sha512-xAg7SOnEhrm5zI3puOOKyy1OMcMlIJZYNJY7xLBwSze0UjhPLnWfj2GF2EpT0jmzaJKIWKHLsaSSajf35bcYnA==}
     engines: {node: '>=v12.22.7'}
+
+  scheduler@0.25.0:
+    resolution: {integrity: sha512-xFVuu11jh+xcO7JOAGJNOXld8/TcEHK/4CituBUeUb5hqxJLj9YuemAEuvm9gQ/+pgXYfbQuqAkiYu+u7YEsNA==}
 
   scheduler@0.27.0:
     resolution: {integrity: sha512-eNv+WrVbKu1f3vbYJT/xtiF5syA5HPIMtf9IgY/nKg0sWqzAUEvqY/xm7OcZc/qafLx/iO9FgOmeSAp4v5ti/Q==}
@@ -2853,28 +2899,56 @@ snapshots:
 
   '@adobe/css-tools@4.4.4': {}
 
-  '@ai-sdk/gateway@3.0.66(zod@4.3.6)':
+  '@ai-sdk/gateway@3.0.16(zod@4.3.6)':
     dependencies:
-      '@ai-sdk/provider': 3.0.8
-      '@ai-sdk/provider-utils': 4.0.19(zod@4.3.6)
+      '@ai-sdk/provider': 3.0.4
+      '@ai-sdk/provider-utils': 4.0.8(zod@4.3.6)
       '@vercel/oidc': 3.1.0
       zod: 4.3.6
 
-  '@ai-sdk/provider-utils@4.0.19(zod@4.3.6)':
+  '@ai-sdk/gateway@3.0.32(zod@4.3.6)':
     dependencies:
-      '@ai-sdk/provider': 3.0.8
+      '@ai-sdk/provider': 3.0.7
+      '@ai-sdk/provider-utils': 4.0.13(zod@4.3.6)
+      '@vercel/oidc': 3.1.0
+      zod: 4.3.6
+
+  '@ai-sdk/provider-utils@4.0.13(zod@4.3.6)':
+    dependencies:
+      '@ai-sdk/provider': 3.0.7
       '@standard-schema/spec': 1.1.0
       eventsource-parser: 3.0.6
       zod: 4.3.6
 
-  '@ai-sdk/provider@3.0.8':
+  '@ai-sdk/provider-utils@4.0.8(zod@4.3.6)':
+    dependencies:
+      '@ai-sdk/provider': 3.0.4
+      '@standard-schema/spec': 1.1.0
+      eventsource-parser: 3.0.6
+      zod: 4.3.6
+
+  '@ai-sdk/provider@3.0.4':
     dependencies:
       json-schema: 0.4.0
 
-  '@ai-sdk/react@3.0.118(react@19.2.4)(zod@4.3.6)':
+  '@ai-sdk/provider@3.0.7':
     dependencies:
-      '@ai-sdk/provider-utils': 4.0.19(zod@4.3.6)
-      ai: 6.0.116(zod@4.3.6)
+      json-schema: 0.4.0
+
+  '@ai-sdk/react@3.0.41(react@19.0.0)(zod@4.3.6)':
+    dependencies:
+      '@ai-sdk/provider-utils': 4.0.8(zod@4.3.6)
+      ai: 6.0.39(zod@4.3.6)
+      react: 19.0.0
+      swr: 2.4.1(react@19.0.0)
+      throttleit: 2.1.0
+    transitivePeerDependencies:
+      - zod
+
+  '@ai-sdk/react@3.0.41(react@19.2.4)(zod@4.3.6)':
+    dependencies:
+      '@ai-sdk/provider-utils': 4.0.8(zod@4.3.6)
+      ai: 6.0.39(zod@4.3.6)
       react: 19.2.4
       swr: 2.4.1(react@19.2.4)
       throttleit: 2.1.0
@@ -3288,18 +3362,18 @@ snapshots:
       '@floating-ui/core': 1.7.5
       '@floating-ui/utils': 0.2.11
 
-  '@floating-ui/react-dom@2.1.8(react-dom@19.2.4(react@19.2.4))(react@19.2.4)':
+  '@floating-ui/react-dom@2.1.8(react-dom@19.0.0(react@19.0.0))(react@19.0.0)':
     dependencies:
       '@floating-ui/dom': 1.7.6
-      react: 19.2.4
-      react-dom: 19.2.4(react@19.2.4)
+      react: 19.0.0
+      react-dom: 19.0.0(react@19.0.0)
 
-  '@floating-ui/react@0.27.19(react-dom@19.2.4(react@19.2.4))(react@19.2.4)':
+  '@floating-ui/react@0.27.19(react-dom@19.0.0(react@19.0.0))(react@19.0.0)':
     dependencies:
-      '@floating-ui/react-dom': 2.1.8(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      '@floating-ui/react-dom': 2.1.8(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       '@floating-ui/utils': 0.2.11
-      react: 19.2.4
-      react-dom: 19.2.4(react@19.2.4)
+      react: 19.0.0
+      react-dom: 19.0.0(react@19.0.0)
       tabbable: 6.4.0
 
   '@floating-ui/utils@0.2.11': {}
@@ -3376,161 +3450,161 @@ snapshots:
 
   '@opentelemetry/api@1.9.0': {}
 
-  '@react-pdf-viewer/attachment@3.12.0(pdfjs-dist@3.11.174)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)':
+  '@react-pdf-viewer/attachment@3.12.0(pdfjs-dist@3.11.174)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)':
     dependencies:
-      '@react-pdf-viewer/core': 3.12.0(pdfjs-dist@3.11.174)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
-      react: 19.2.4
-      react-dom: 19.2.4(react@19.2.4)
+      '@react-pdf-viewer/core': 3.12.0(pdfjs-dist@3.11.174)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+      react: 19.0.0
+      react-dom: 19.0.0(react@19.0.0)
     transitivePeerDependencies:
       - pdfjs-dist
 
-  '@react-pdf-viewer/bookmark@3.12.0(pdfjs-dist@3.11.174)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)':
+  '@react-pdf-viewer/bookmark@3.12.0(pdfjs-dist@3.11.174)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)':
     dependencies:
-      '@react-pdf-viewer/core': 3.12.0(pdfjs-dist@3.11.174)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
-      react: 19.2.4
-      react-dom: 19.2.4(react@19.2.4)
+      '@react-pdf-viewer/core': 3.12.0(pdfjs-dist@3.11.174)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+      react: 19.0.0
+      react-dom: 19.0.0(react@19.0.0)
     transitivePeerDependencies:
       - pdfjs-dist
 
-  '@react-pdf-viewer/core@3.12.0(pdfjs-dist@3.11.174)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)':
+  '@react-pdf-viewer/core@3.12.0(pdfjs-dist@3.11.174)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)':
     dependencies:
       pdfjs-dist: 3.11.174
-      react: 19.2.4
-      react-dom: 19.2.4(react@19.2.4)
+      react: 19.0.0
+      react-dom: 19.0.0(react@19.0.0)
 
-  '@react-pdf-viewer/default-layout@3.12.0(pdfjs-dist@3.11.174)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)':
+  '@react-pdf-viewer/default-layout@3.12.0(pdfjs-dist@3.11.174)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)':
     dependencies:
-      '@react-pdf-viewer/attachment': 3.12.0(pdfjs-dist@3.11.174)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
-      '@react-pdf-viewer/bookmark': 3.12.0(pdfjs-dist@3.11.174)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
-      '@react-pdf-viewer/core': 3.12.0(pdfjs-dist@3.11.174)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
-      '@react-pdf-viewer/thumbnail': 3.12.0(pdfjs-dist@3.11.174)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
-      '@react-pdf-viewer/toolbar': 3.12.0(pdfjs-dist@3.11.174)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
-      react: 19.2.4
-      react-dom: 19.2.4(react@19.2.4)
+      '@react-pdf-viewer/attachment': 3.12.0(pdfjs-dist@3.11.174)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+      '@react-pdf-viewer/bookmark': 3.12.0(pdfjs-dist@3.11.174)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+      '@react-pdf-viewer/core': 3.12.0(pdfjs-dist@3.11.174)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+      '@react-pdf-viewer/thumbnail': 3.12.0(pdfjs-dist@3.11.174)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+      '@react-pdf-viewer/toolbar': 3.12.0(pdfjs-dist@3.11.174)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+      react: 19.0.0
+      react-dom: 19.0.0(react@19.0.0)
     transitivePeerDependencies:
       - pdfjs-dist
 
-  '@react-pdf-viewer/full-screen@3.12.0(pdfjs-dist@3.11.174)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)':
+  '@react-pdf-viewer/full-screen@3.12.0(pdfjs-dist@3.11.174)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)':
     dependencies:
-      '@react-pdf-viewer/core': 3.12.0(pdfjs-dist@3.11.174)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
-      react: 19.2.4
-      react-dom: 19.2.4(react@19.2.4)
+      '@react-pdf-viewer/core': 3.12.0(pdfjs-dist@3.11.174)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+      react: 19.0.0
+      react-dom: 19.0.0(react@19.0.0)
     transitivePeerDependencies:
       - pdfjs-dist
 
-  '@react-pdf-viewer/get-file@3.12.0(pdfjs-dist@3.11.174)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)':
+  '@react-pdf-viewer/get-file@3.12.0(pdfjs-dist@3.11.174)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)':
     dependencies:
-      '@react-pdf-viewer/core': 3.12.0(pdfjs-dist@3.11.174)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
-      react: 19.2.4
-      react-dom: 19.2.4(react@19.2.4)
+      '@react-pdf-viewer/core': 3.12.0(pdfjs-dist@3.11.174)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+      react: 19.0.0
+      react-dom: 19.0.0(react@19.0.0)
     transitivePeerDependencies:
       - pdfjs-dist
 
-  '@react-pdf-viewer/open@3.12.0(pdfjs-dist@3.11.174)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)':
+  '@react-pdf-viewer/open@3.12.0(pdfjs-dist@3.11.174)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)':
     dependencies:
-      '@react-pdf-viewer/core': 3.12.0(pdfjs-dist@3.11.174)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
-      react: 19.2.4
-      react-dom: 19.2.4(react@19.2.4)
+      '@react-pdf-viewer/core': 3.12.0(pdfjs-dist@3.11.174)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+      react: 19.0.0
+      react-dom: 19.0.0(react@19.0.0)
     transitivePeerDependencies:
       - pdfjs-dist
 
-  '@react-pdf-viewer/page-navigation@3.12.0(pdfjs-dist@3.11.174)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)':
+  '@react-pdf-viewer/page-navigation@3.12.0(pdfjs-dist@3.11.174)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)':
     dependencies:
-      '@react-pdf-viewer/core': 3.12.0(pdfjs-dist@3.11.174)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
-      react: 19.2.4
-      react-dom: 19.2.4(react@19.2.4)
+      '@react-pdf-viewer/core': 3.12.0(pdfjs-dist@3.11.174)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+      react: 19.0.0
+      react-dom: 19.0.0(react@19.0.0)
     transitivePeerDependencies:
       - pdfjs-dist
 
-  '@react-pdf-viewer/print@3.12.0(pdfjs-dist@3.11.174)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)':
+  '@react-pdf-viewer/print@3.12.0(pdfjs-dist@3.11.174)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)':
     dependencies:
-      '@react-pdf-viewer/core': 3.12.0(pdfjs-dist@3.11.174)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
-      react: 19.2.4
-      react-dom: 19.2.4(react@19.2.4)
+      '@react-pdf-viewer/core': 3.12.0(pdfjs-dist@3.11.174)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+      react: 19.0.0
+      react-dom: 19.0.0(react@19.0.0)
     transitivePeerDependencies:
       - pdfjs-dist
 
-  '@react-pdf-viewer/properties@3.12.0(pdfjs-dist@3.11.174)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)':
+  '@react-pdf-viewer/properties@3.12.0(pdfjs-dist@3.11.174)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)':
     dependencies:
-      '@react-pdf-viewer/core': 3.12.0(pdfjs-dist@3.11.174)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
-      react: 19.2.4
-      react-dom: 19.2.4(react@19.2.4)
+      '@react-pdf-viewer/core': 3.12.0(pdfjs-dist@3.11.174)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+      react: 19.0.0
+      react-dom: 19.0.0(react@19.0.0)
     transitivePeerDependencies:
       - pdfjs-dist
 
-  '@react-pdf-viewer/rotate@3.12.0(pdfjs-dist@3.11.174)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)':
+  '@react-pdf-viewer/rotate@3.12.0(pdfjs-dist@3.11.174)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)':
     dependencies:
-      '@react-pdf-viewer/core': 3.12.0(pdfjs-dist@3.11.174)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
-      react: 19.2.4
-      react-dom: 19.2.4(react@19.2.4)
+      '@react-pdf-viewer/core': 3.12.0(pdfjs-dist@3.11.174)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+      react: 19.0.0
+      react-dom: 19.0.0(react@19.0.0)
     transitivePeerDependencies:
       - pdfjs-dist
 
-  '@react-pdf-viewer/scroll-mode@3.12.0(pdfjs-dist@3.11.174)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)':
+  '@react-pdf-viewer/scroll-mode@3.12.0(pdfjs-dist@3.11.174)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)':
     dependencies:
-      '@react-pdf-viewer/core': 3.12.0(pdfjs-dist@3.11.174)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
-      react: 19.2.4
-      react-dom: 19.2.4(react@19.2.4)
+      '@react-pdf-viewer/core': 3.12.0(pdfjs-dist@3.11.174)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+      react: 19.0.0
+      react-dom: 19.0.0(react@19.0.0)
     transitivePeerDependencies:
       - pdfjs-dist
 
-  '@react-pdf-viewer/search@3.12.0(pdfjs-dist@3.11.174)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)':
+  '@react-pdf-viewer/search@3.12.0(pdfjs-dist@3.11.174)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)':
     dependencies:
-      '@react-pdf-viewer/core': 3.12.0(pdfjs-dist@3.11.174)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
-      react: 19.2.4
-      react-dom: 19.2.4(react@19.2.4)
+      '@react-pdf-viewer/core': 3.12.0(pdfjs-dist@3.11.174)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+      react: 19.0.0
+      react-dom: 19.0.0(react@19.0.0)
     transitivePeerDependencies:
       - pdfjs-dist
 
-  '@react-pdf-viewer/selection-mode@3.12.0(pdfjs-dist@3.11.174)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)':
+  '@react-pdf-viewer/selection-mode@3.12.0(pdfjs-dist@3.11.174)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)':
     dependencies:
-      '@react-pdf-viewer/core': 3.12.0(pdfjs-dist@3.11.174)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
-      react: 19.2.4
-      react-dom: 19.2.4(react@19.2.4)
+      '@react-pdf-viewer/core': 3.12.0(pdfjs-dist@3.11.174)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+      react: 19.0.0
+      react-dom: 19.0.0(react@19.0.0)
     transitivePeerDependencies:
       - pdfjs-dist
 
-  '@react-pdf-viewer/theme@3.12.0(pdfjs-dist@3.11.174)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)':
+  '@react-pdf-viewer/theme@3.12.0(pdfjs-dist@3.11.174)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)':
     dependencies:
-      '@react-pdf-viewer/core': 3.12.0(pdfjs-dist@3.11.174)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
-      react: 19.2.4
-      react-dom: 19.2.4(react@19.2.4)
+      '@react-pdf-viewer/core': 3.12.0(pdfjs-dist@3.11.174)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+      react: 19.0.0
+      react-dom: 19.0.0(react@19.0.0)
     transitivePeerDependencies:
       - pdfjs-dist
 
-  '@react-pdf-viewer/thumbnail@3.12.0(pdfjs-dist@3.11.174)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)':
+  '@react-pdf-viewer/thumbnail@3.12.0(pdfjs-dist@3.11.174)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)':
     dependencies:
-      '@react-pdf-viewer/core': 3.12.0(pdfjs-dist@3.11.174)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
-      react: 19.2.4
-      react-dom: 19.2.4(react@19.2.4)
+      '@react-pdf-viewer/core': 3.12.0(pdfjs-dist@3.11.174)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+      react: 19.0.0
+      react-dom: 19.0.0(react@19.0.0)
     transitivePeerDependencies:
       - pdfjs-dist
 
-  '@react-pdf-viewer/toolbar@3.12.0(pdfjs-dist@3.11.174)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)':
+  '@react-pdf-viewer/toolbar@3.12.0(pdfjs-dist@3.11.174)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)':
     dependencies:
-      '@react-pdf-viewer/core': 3.12.0(pdfjs-dist@3.11.174)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
-      '@react-pdf-viewer/full-screen': 3.12.0(pdfjs-dist@3.11.174)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
-      '@react-pdf-viewer/get-file': 3.12.0(pdfjs-dist@3.11.174)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
-      '@react-pdf-viewer/open': 3.12.0(pdfjs-dist@3.11.174)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
-      '@react-pdf-viewer/page-navigation': 3.12.0(pdfjs-dist@3.11.174)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
-      '@react-pdf-viewer/print': 3.12.0(pdfjs-dist@3.11.174)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
-      '@react-pdf-viewer/properties': 3.12.0(pdfjs-dist@3.11.174)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
-      '@react-pdf-viewer/rotate': 3.12.0(pdfjs-dist@3.11.174)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
-      '@react-pdf-viewer/scroll-mode': 3.12.0(pdfjs-dist@3.11.174)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
-      '@react-pdf-viewer/search': 3.12.0(pdfjs-dist@3.11.174)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
-      '@react-pdf-viewer/selection-mode': 3.12.0(pdfjs-dist@3.11.174)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
-      '@react-pdf-viewer/theme': 3.12.0(pdfjs-dist@3.11.174)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
-      '@react-pdf-viewer/zoom': 3.12.0(pdfjs-dist@3.11.174)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
-      react: 19.2.4
-      react-dom: 19.2.4(react@19.2.4)
+      '@react-pdf-viewer/core': 3.12.0(pdfjs-dist@3.11.174)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+      '@react-pdf-viewer/full-screen': 3.12.0(pdfjs-dist@3.11.174)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+      '@react-pdf-viewer/get-file': 3.12.0(pdfjs-dist@3.11.174)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+      '@react-pdf-viewer/open': 3.12.0(pdfjs-dist@3.11.174)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+      '@react-pdf-viewer/page-navigation': 3.12.0(pdfjs-dist@3.11.174)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+      '@react-pdf-viewer/print': 3.12.0(pdfjs-dist@3.11.174)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+      '@react-pdf-viewer/properties': 3.12.0(pdfjs-dist@3.11.174)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+      '@react-pdf-viewer/rotate': 3.12.0(pdfjs-dist@3.11.174)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+      '@react-pdf-viewer/scroll-mode': 3.12.0(pdfjs-dist@3.11.174)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+      '@react-pdf-viewer/search': 3.12.0(pdfjs-dist@3.11.174)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+      '@react-pdf-viewer/selection-mode': 3.12.0(pdfjs-dist@3.11.174)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+      '@react-pdf-viewer/theme': 3.12.0(pdfjs-dist@3.11.174)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+      '@react-pdf-viewer/zoom': 3.12.0(pdfjs-dist@3.11.174)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+      react: 19.0.0
+      react-dom: 19.0.0(react@19.0.0)
     transitivePeerDependencies:
       - pdfjs-dist
 
-  '@react-pdf-viewer/zoom@3.12.0(pdfjs-dist@3.11.174)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)':
+  '@react-pdf-viewer/zoom@3.12.0(pdfjs-dist@3.11.174)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)':
     dependencies:
-      '@react-pdf-viewer/core': 3.12.0(pdfjs-dist@3.11.174)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
-      react: 19.2.4
-      react-dom: 19.2.4(react@19.2.4)
+      '@react-pdf-viewer/core': 3.12.0(pdfjs-dist@3.11.174)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+      react: 19.0.0
+      react-dom: 19.0.0(react@19.0.0)
     transitivePeerDependencies:
       - pdfjs-dist
 
@@ -3611,17 +3685,17 @@ snapshots:
   '@rollup/rollup-win32-x64-msvc@4.59.0':
     optional: true
 
-  '@sharelyai/services@0.0.4(@types/react@19.2.14)(react@19.2.4)(use-sync-external-store@1.6.0(react@19.2.4))(zod@4.3.6)':
+  '@sharelyai/services@0.0.4(@types/react@19.2.14)(react@19.0.0)(use-sync-external-store@1.6.0(react@19.0.0))(zod@4.3.6)':
     dependencies:
-      '@ai-sdk/react': 3.0.118(react@19.2.4)(zod@4.3.6)
+      '@ai-sdk/react': 3.0.41(react@19.0.0)(zod@4.3.6)
       '@supabase/supabase-js': 2.98.0
-      '@tanstack/react-query': 5.90.21(react@19.2.4)
-      ai: 6.0.116(zod@4.3.6)
+      '@tanstack/react-query': 5.90.21(react@19.0.0)
+      ai: 6.0.68(zod@4.3.6)
       js-cookie: 3.0.5
       jwt-decode: 4.0.0
-      react: 19.2.4
+      react: 19.0.0
       yup: 1.7.1
-      zustand: 5.0.11(@types/react@19.2.14)(react@19.2.4)(use-sync-external-store@1.6.0(react@19.2.4))
+      zustand: 5.0.11(@types/react@19.2.14)(react@19.0.0)(use-sync-external-store@1.6.0(react@19.0.0))
     transitivePeerDependencies:
       - '@types/react'
       - bufferutil
@@ -3630,22 +3704,59 @@ snapshots:
       - utf-8-validate
       - zod
 
-  '@sharelyai/ui-shared@0.0.4(@types/react@19.2.14)(pdfjs-dist@3.11.174)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(styled-components@6.3.11(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(use-sync-external-store@1.6.0(react@19.2.4))(zod@4.3.6)':
+  '@sharelyai/services@0.0.5(@types/react@19.2.14)(react@19.0.0)(use-sync-external-store@1.6.0(react@19.0.0))(zod@4.3.6)':
     dependencies:
-      '@floating-ui/react': 0.27.19(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
-      '@react-pdf-viewer/core': 3.12.0(pdfjs-dist@3.11.174)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
-      '@react-pdf-viewer/default-layout': 3.12.0(pdfjs-dist@3.11.174)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
-      '@sharelyai/services': 0.0.4(@types/react@19.2.14)(react@19.2.4)(use-sync-external-store@1.6.0(react@19.2.4))(zod@4.3.6)
-      react: 19.2.4
-      react-content-loader: 7.1.2(react@19.2.4)
-      react-dom: 19.2.4(react@19.2.4)
-      react-markdown: 10.1.0(@types/react@19.2.14)(react@19.2.4)
-      react-perfect-scrollbar: 1.5.8(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      '@ai-sdk/react': 3.0.41(react@19.0.0)(zod@4.3.6)
+      '@supabase/supabase-js': 2.98.0
+      '@tanstack/react-query': 5.90.21(react@19.0.0)
+      ai: 6.0.68(zod@4.3.6)
+      js-cookie: 3.0.5
+      jwt-decode: 4.0.0
+      react: 19.0.0
+      yup: 1.7.1
+      zustand: 5.0.11(@types/react@19.2.14)(react@19.0.0)(use-sync-external-store@1.6.0(react@19.0.0))
+    transitivePeerDependencies:
+      - '@types/react'
+      - bufferutil
+      - immer
+      - use-sync-external-store
+      - utf-8-validate
+      - zod
+
+  '@sharelyai/ui-search@0.0.4(@types/react@19.2.14)(pdfjs-dist@3.11.174)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(styled-components@6.3.11(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(use-sync-external-store@1.6.0(react@19.0.0))(zod@4.3.6)':
+    dependencies:
+      '@sharelyai/services': 0.0.4(@types/react@19.2.14)(react@19.0.0)(use-sync-external-store@1.6.0(react@19.0.0))(zod@4.3.6)
+      '@sharelyai/ui-shared': 0.0.4(@types/react@19.2.14)(pdfjs-dist@3.11.174)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(styled-components@6.3.11(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(use-sync-external-store@1.6.0(react@19.0.0))(zod@4.3.6)
+      react: 19.0.0
+      react-dom: 19.0.0(react@19.0.0)
+      styled-components: 6.3.11(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+      zustand: 5.0.11(@types/react@19.2.14)(react@19.0.0)(use-sync-external-store@1.6.0(react@19.0.0))
+    transitivePeerDependencies:
+      - '@types/react'
+      - bufferutil
+      - immer
+      - pdfjs-dist
+      - supports-color
+      - use-sync-external-store
+      - utf-8-validate
+      - zod
+
+  '@sharelyai/ui-shared@0.0.4(@types/react@19.2.14)(pdfjs-dist@3.11.174)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(styled-components@6.3.11(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(use-sync-external-store@1.6.0(react@19.0.0))(zod@4.3.6)':
+    dependencies:
+      '@floating-ui/react': 0.27.19(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+      '@react-pdf-viewer/core': 3.12.0(pdfjs-dist@3.11.174)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+      '@react-pdf-viewer/default-layout': 3.12.0(pdfjs-dist@3.11.174)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+      '@sharelyai/services': 0.0.4(@types/react@19.2.14)(react@19.0.0)(use-sync-external-store@1.6.0(react@19.0.0))(zod@4.3.6)
+      react: 19.0.0
+      react-content-loader: 7.1.2(react@19.0.0)
+      react-dom: 19.0.0(react@19.0.0)
+      react-markdown: 10.1.0(@types/react@19.2.14)(react@19.0.0)
+      react-perfect-scrollbar: 1.5.8(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       rehype-raw: 7.0.0
       remark-emoji: 5.0.2
       remark-gfm: 4.0.1
-      styled-components: 6.3.11(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
-      zustand: 5.0.11(@types/react@19.2.14)(react@19.2.4)(use-sync-external-store@1.6.0(react@19.2.4))
+      styled-components: 6.3.11(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+      zustand: 5.0.11(@types/react@19.2.14)(react@19.0.0)(use-sync-external-store@1.6.0(react@19.0.0))
     transitivePeerDependencies:
       - '@types/react'
       - bufferutil
@@ -3699,6 +3810,11 @@ snapshots:
       - utf-8-validate
 
   '@tanstack/query-core@5.90.20': {}
+
+  '@tanstack/react-query@5.90.21(react@19.0.0)':
+    dependencies:
+      '@tanstack/query-core': 5.90.20
+      react: 19.0.0
 
   '@tanstack/react-query@5.90.21(react@19.2.4)':
     dependencies:
@@ -3859,11 +3975,19 @@ snapshots:
 
   agent-base@7.1.4: {}
 
-  ai@6.0.116(zod@4.3.6):
+  ai@6.0.39(zod@4.3.6):
     dependencies:
-      '@ai-sdk/gateway': 3.0.66(zod@4.3.6)
-      '@ai-sdk/provider': 3.0.8
-      '@ai-sdk/provider-utils': 4.0.19(zod@4.3.6)
+      '@ai-sdk/gateway': 3.0.16(zod@4.3.6)
+      '@ai-sdk/provider': 3.0.4
+      '@ai-sdk/provider-utils': 4.0.8(zod@4.3.6)
+      '@opentelemetry/api': 1.9.0
+      zod: 4.3.6
+
+  ai@6.0.68(zod@4.3.6):
+    dependencies:
+      '@ai-sdk/gateway': 3.0.32(zod@4.3.6)
+      '@ai-sdk/provider': 3.0.7
+      '@ai-sdk/provider-utils': 4.0.13(zod@4.3.6)
       '@opentelemetry/api': 1.9.0
       zod: 4.3.6
 
@@ -5051,9 +5175,14 @@ snapshots:
 
   queue-microtask@1.2.3: {}
 
-  react-content-loader@7.1.2(react@19.2.4):
+  react-content-loader@7.1.2(react@19.0.0):
     dependencies:
-      react: 19.2.4
+      react: 19.0.0
+
+  react-dom@19.0.0(react@19.0.0):
+    dependencies:
+      react: 19.0.0
+      scheduler: 0.25.0
 
   react-dom@19.2.4(react@19.2.4):
     dependencies:
@@ -5062,7 +5191,7 @@ snapshots:
 
   react-is@16.13.1: {}
 
-  react-markdown@10.1.0(@types/react@19.2.14)(react@19.2.4):
+  react-markdown@10.1.0(@types/react@19.2.14)(react@19.0.0):
     dependencies:
       '@types/hast': 3.0.4
       '@types/mdast': 4.0.4
@@ -5071,7 +5200,7 @@ snapshots:
       hast-util-to-jsx-runtime: 2.3.6
       html-url-attributes: 3.0.1
       mdast-util-to-hast: 13.2.1
-      react: 19.2.4
+      react: 19.0.0
       remark-parse: 11.0.0
       remark-rehype: 11.1.2
       unified: 11.0.5
@@ -5080,12 +5209,12 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  react-perfect-scrollbar@1.5.8(react-dom@19.2.4(react@19.2.4))(react@19.2.4):
+  react-perfect-scrollbar@1.5.8(react-dom@19.0.0(react@19.0.0))(react@19.0.0):
     dependencies:
       perfect-scrollbar: 1.5.6
       prop-types: 15.8.1
-      react: 19.2.4
-      react-dom: 19.2.4(react@19.2.4)
+      react: 19.0.0
+      react-dom: 19.0.0(react@19.0.0)
 
   react-refresh@0.18.0: {}
 
@@ -5102,6 +5231,8 @@ snapshots:
       set-cookie-parser: 2.7.2
     optionalDependencies:
       react-dom: 19.2.4(react@19.2.4)
+
+  react@19.0.0: {}
 
   react@19.2.4: {}
 
@@ -5229,6 +5360,8 @@ snapshots:
     dependencies:
       xmlchars: 2.2.0
 
+  scheduler@0.25.0: {}
+
   scheduler@0.27.0: {}
 
   semver@6.3.1: {}
@@ -5323,6 +5456,21 @@ snapshots:
     dependencies:
       inline-style-parser: 0.2.7
 
+  styled-components@6.3.11(react-dom@19.0.0(react@19.0.0))(react@19.0.0):
+    dependencies:
+      '@emotion/is-prop-valid': 1.4.0
+      '@emotion/unitless': 0.10.0
+      '@types/stylis': 4.2.7
+      css-to-react-native: 3.2.0
+      csstype: 3.2.3
+      postcss: 8.4.49
+      react: 19.0.0
+      shallowequal: 1.1.0
+      stylis: 4.3.6
+      tslib: 2.8.1
+    optionalDependencies:
+      react-dom: 19.0.0(react@19.0.0)
+
   styled-components@6.3.11(react-dom@19.2.4(react@19.2.4))(react@19.2.4):
     dependencies:
       '@emotion/is-prop-valid': 1.4.0
@@ -5349,6 +5497,12 @@ snapshots:
       pirates: 4.0.7
       tinyglobby: 0.2.15
       ts-interface-checker: 0.1.13
+
+  swr@2.4.1(react@19.0.0):
+    dependencies:
+      dequal: 2.0.3
+      react: 19.0.0
+      use-sync-external-store: 1.6.0(react@19.0.0)
 
   swr@2.4.1(react@19.2.4):
     dependencies:
@@ -5538,6 +5692,10 @@ snapshots:
       escalade: 3.2.0
       picocolors: 1.1.1
 
+  use-sync-external-store@1.6.0(react@19.0.0):
+    dependencies:
+      react: 19.0.0
+
   use-sync-external-store@1.6.0(react@19.2.4):
     dependencies:
       react: 19.2.4
@@ -5678,6 +5836,12 @@ snapshots:
       type-fest: 2.19.0
 
   zod@4.3.6: {}
+
+  zustand@5.0.11(@types/react@19.2.14)(react@19.0.0)(use-sync-external-store@1.6.0(react@19.0.0)):
+    optionalDependencies:
+      '@types/react': 19.2.14
+      react: 19.0.0
+      use-sync-external-store: 1.6.0(react@19.0.0)
 
   zustand@5.0.11(@types/react@19.2.14)(react@19.2.4)(use-sync-external-store@1.6.0(react@19.2.4)):
     optionalDependencies:

@@ -1,5 +1,17 @@
 # @sharelyai/ui-chat
 
+## 0.0.6
+
+### Patch Changes
+
+- Update peer dependency ranges for react, react-dom, and styled-components to accept any compatible version (^18 || ^19).
+
+## 0.0.5
+
+### Patch Changes
+
+- Fix missing languageId in agent chat flow and update internal dependency versions to use latest tag.
+
 ## 0.0.4
 
 ### Patch Changes

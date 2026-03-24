@@ -84,7 +84,10 @@ export const WebControl = (props: WebControlProps) => {
   if (props.baseUrl !== undefined) propConfig.baseUrl = props.baseUrl;
   if (props.externalUserId !== undefined)
     propConfig.externalUserId = props.externalUserId;
-  if (props.lang !== undefined) propConfig.lang = props.lang;
+  if (props.lang !== undefined) {
+    propConfig.lang = props.lang;
+    propConfig.langKnowledge = props.lang;
+  }
   if (props.displayMode !== undefined)
     propConfig.displayMode = props.displayMode;
   if (props.mode !== undefined) propConfig.mode = props.mode;

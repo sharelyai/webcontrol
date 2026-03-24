@@ -143,11 +143,13 @@ export function useAgentChat(options: UseAgentChatOptions): UseAgentChatReturn {
       if (!basePath) {
         throw new Error("Workspace ID not available");
       }
+      const languageId = config?.langKnowledge;
       const data = await agentFetcher<ThreadResponse>(`${basePath}/threads`, {
         method: "POST",
         body: JSON.stringify({
           spaceId,
           title,
+          ...(languageId ? { languageId } : {}),
         }),
       });
       threadIdRef.current = data.id;
@@ -155,7 +157,7 @@ export function useAgentChat(options: UseAgentChatOptions): UseAgentChatReturn {
       setMessages([]);
       return data.id;
     },
-    [spaceId, getBasePath],
+    [spaceId, getBasePath, config],
   );
 
   // Handle SSE events (supports both new backend format and legacy format)
@@ -494,10 +496,11 @@ export function useAgentChat(options: UseAgentChatOptions): UseAgentChatReturn {
       setIsStreaming(true);
       setError(null);
 
+      const languageId = config?.langKnowledge;
       try {
         await startStream(
           `${basePath}/threads/${tid}/chat`,
-          { message: content },
+          { message: content, ...(languageId ? { languageId } : {}) },
           {
             onEvent: handleEvent,
             onError: (e) => {
@@ -516,7 +519,7 @@ export function useAgentChat(options: UseAgentChatOptions): UseAgentChatReturn {
 
       return tid;
     },
-    [createThread, startStream, handleEvent, getBasePath],
+    [createThread, startStream, handleEvent, getBasePath, config],
   );
 
   // Stop streaming
