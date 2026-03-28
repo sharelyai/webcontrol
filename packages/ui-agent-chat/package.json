@@ -38,8 +38,8 @@
     "styled-components": "^6.0.0"
   },
   "dependencies": {
-    "@sharelyai/services": "latest",
-    "@sharelyai/ui-shared": "latest",
+    "@sharelyai/services": "workspace:*",
+    "@sharelyai/ui-shared": "workspace:*",
     "@floating-ui/react": "0.27.19",
     "react-markdown": "10.1.0"
   },

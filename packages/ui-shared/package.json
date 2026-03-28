@@ -37,7 +37,7 @@
   },
   "dependencies": {
     "@floating-ui/react": "0.27.19",
-    "@sharelyai/services": "latest",
+    "@sharelyai/services": "workspace:*",
     "react-content-loader": "7.1.2",
     "zustand": "5.0.11",
     "react-perfect-scrollbar": "1.5.8",

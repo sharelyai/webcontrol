@@ -121,7 +121,9 @@ export function stripHtml(html: string): string {
 export function extractSourcesFromSemanticSearch(
   sourcesMetadata: SemanticSourceMetadataEntry[],
 ): Source[] {
-  return sourcesMetadata.map((entry) => {
+  return sourcesMetadata
+    .filter((entry) => entry.metadata != null)
+    .map((entry) => {
     const meta = entry.metadata;
     const title = (meta.title || "").replace(/&#038;/g, "&").replace(/&amp;/g, "&");
     return {

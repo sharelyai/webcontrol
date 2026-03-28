@@ -39,8 +39,8 @@
     "styled-components": "^6.0.0"
   },
   "dependencies": {
-    "@sharelyai/services": "latest",
-    "@sharelyai/ui-shared": "latest",
+    "@sharelyai/services": "workspace:*",
+    "@sharelyai/ui-shared": "workspace:*",
     "@tanstack/react-query": "5.90.21",
     "zustand": "5.0.11"
   },

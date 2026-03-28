@@ -3,7 +3,7 @@ import react from "@vitejs/plugin-react";
 import cssInjectedByJsPlugin from "vite-plugin-css-injected-by-js";
 import path from "path";
 
-export default defineConfig({
+export default defineConfig(({ command }) => ({
   plugins: [
     react({
       babel: {
@@ -20,7 +20,7 @@ export default defineConfig({
     cssInjectedByJsPlugin(),
   ],
   resolve: {
-    conditions: ["development", "browser"],
+    conditions: command === "serve" ? ["development", "browser"] : ["browser"],
   },
   envDir: path.resolve(__dirname, "../../"),
   server: {
@@ -36,4 +36,4 @@ export default defineConfig({
       },
     },
   },
-});
+}));

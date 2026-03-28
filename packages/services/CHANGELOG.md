@@ -1,5 +1,11 @@
 # @sharelyai/services
 
+## 0.0.8
+
+### Patch Changes
+
+- update render message
+
 ## 0.0.7
 
 ### Patch Changes
