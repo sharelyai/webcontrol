@@ -39,7 +39,7 @@ export function agentMessageToBodyMessage(msg: AgentMessage): BodyMessage {
         text: source.snippet || source.excerpt,
         ...(source.metadata as Record<string, unknown> | undefined),
       },
-      score: (source.metadata as any)?.score ?? 0,
+      score: (source.metadata as any)?.similarity ?? (source.metadata as any)?.score ?? 0,
     };
   });
 

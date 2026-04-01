@@ -17,11 +17,19 @@ interface RawSourceData {
   text: string;
 }
 
-/** Shape of a single entry in semantic_search output.sourcesMetadata */
+/** Shape of a single entry in semantic_search output.sourcesMetadata.
+ *  Backend sends flat objects (text, title, knowledgeId at top level),
+ *  but some paths may nest them under a `metadata` key. Handle both. */
 interface SemanticSourceMetadataEntry {
   id: string;
   score?: number;
-  metadata: {
+  text?: string;
+  type?: string;
+  title?: string;
+  source?: string;
+  sourceUrl?: string;
+  knowledgeId?: string;
+  metadata?: {
     text?: string;
     type?: string;
     title?: string;
@@ -30,6 +38,7 @@ interface SemanticSourceMetadataEntry {
     knowledgeId?: string;
     [key: string]: unknown;
   };
+  [key: string]: unknown;
 }
 
 /** Shape of a single entry in search_knowledge output.results */
@@ -53,7 +62,7 @@ export function parseSourceString(sourceStr: string): ParsedSourceData {
   // The knowledgeId is always the last part (UUID format)
   // The pageNumber is always the first part
   // The filename is everything in between (may contain colons)
-  const pageNumber = parseInt(parts[0], 10) || 0;
+  const pageNumber = parseInt(parts[0], 10) || 1;
   const knowledgeId = parts[parts.length - 1];
   const filename = parts.slice(1, -1).join(":");
   return { pageNumber, filename, knowledgeId };
@@ -122,20 +131,21 @@ export function extractSourcesFromSemanticSearch(
   sourcesMetadata: SemanticSourceMetadataEntry[],
 ): Source[] {
   return sourcesMetadata
-    .filter((entry) => entry.metadata != null)
     .map((entry) => {
-    const meta = entry.metadata;
-    const title = (meta.title || "").replace(/&#038;/g, "&").replace(/&amp;/g, "&");
+    // Handle both nested metadata and flat format from the backend
+    const meta = entry.metadata || entry;
+    const score = entry.score ?? (meta as any).score;
+    const title = ((meta.title || "") as string).replace(/&#038;/g, "&").replace(/&amp;/g, "&");
     return {
-      id: meta.knowledgeId || entry.id,
+      id: meta.knowledgeId || entry.knowledgeId || entry.id,
       type: "knowledge" as const,
       title,
       url: meta.sourceUrl || undefined,
-      snippet: meta.text ? stripHtml(meta.text) : undefined,
+      snippet: meta.text ? stripHtml(meta.text as string) : undefined,
       metadata: {
-        knowledgeId: meta.knowledgeId || entry.id,
+        knowledgeId: meta.knowledgeId || entry.knowledgeId || entry.id,
         knowledgeType: meta.type,
-        similarity: entry.score,
+        similarity: score,
       },
     };
   });

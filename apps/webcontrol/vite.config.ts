@@ -26,6 +26,7 @@ export default defineConfig(({ command }) => ({
   server: {
     port: 5174,
     cors: true,
+    hmr: false,
   },
   build: {
     rollupOptions: {
