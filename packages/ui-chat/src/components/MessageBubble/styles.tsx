@@ -115,6 +115,42 @@ export const Wrapper: any = styled.div.withConfig({
           font-weight: 400;
           line-height: 28px;
           word-break: break-word;
+
+          h1, h2, h3, h4, h5, h6 {
+            margin: 16px 0 8px 0;
+
+            &:first-child {
+              margin-top: 0;
+            }
+          }
+
+          h1 { font-size: 1.5em; font-weight: 600; }
+          h2 { font-size: 1.3em; font-weight: 600; }
+          h3 { font-size: 1.15em; font-weight: 600; }
+          h4, h5, h6 { font-size: 1em; font-weight: 600; }
+
+          p {
+            margin: 0 0 8px 0;
+
+            &:last-child {
+              margin-bottom: 0;
+            }
+          }
+
+          ul, ol {
+            margin: 8px 0;
+            padding-left: 24px;
+          }
+
+          li {
+            margin-bottom: 4px;
+          }
+
+          blockquote {
+            margin: 8px 0;
+            padding-left: 12px;
+            border-left: 3px solid ${theme.colors.paleSky};
+          }
         }
 
         .sharelyai-webcontroller-content-message-footer {

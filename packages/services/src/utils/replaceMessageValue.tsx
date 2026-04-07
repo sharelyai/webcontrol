@@ -29,7 +29,7 @@ export const replaceMessageValue = (props: IReplaceMessageValueProps) => {
       regex.MARKDOWN_ANCHOR_GENERAL,
       function (_m, label, href) {
         return handleAnchorsValidations(label, href);
-      }
+      },
     );
     // Type 2 & 3: [label] (but not if followed by '(' which would be a markdown anchor)
     text = text.replace(/\^\[([^\]]+)\](?!e)/g, (_, label) => {
@@ -48,7 +48,9 @@ export const replaceMessageValue = (props: IReplaceMessageValueProps) => {
         const link = `${constants.PAGE_NUMBER_DOCUMENT_DOWNLOAD_URL}${href
           ?.split(" ")
           ?.join("____")}`;
-        const text = `${anchorValues[1]} P${anchorValues[0]}`;
+        const pageNum = parseInt(anchorValues[0], 10);
+        const title = anchorValues[1].replaceAll("____", " ");
+        const text = pageNum > 0 ? `${title} P${anchorValues[0]}` : title;
         return `[${text}](${link})`;
       }
 
@@ -60,7 +62,7 @@ export const replaceMessageValue = (props: IReplaceMessageValueProps) => {
           const link = `${constants.PAGE_NUMBER_DOCUMENT_DOWNLOAD_URL}${href
             ?.split(" ")
             ?.join("____")}`;
-          const text = anchorValues[1];
+          const text = anchorValues[1].replaceAll("____", " ");
           return `[${text}](${link})`;
         }
       }
@@ -77,7 +79,9 @@ export const replaceMessageValue = (props: IReplaceMessageValueProps) => {
     if (!href && label) {
       const anchorValues = label?.split(":");
       if (anchorValues.length === 3 && /^\d+$/.test(anchorValues[0])) {
-        return `[${anchorValues[1]} P${anchorValues[0]}](${ 
+        const pageNum = parseInt(anchorValues[0], 10);
+        const displayText = pageNum > 0 ? `${anchorValues[1]} P${anchorValues[0]}` : anchorValues[1];
+        return `[${displayText}](${
           constants.PAGE_NUMBER_DOCUMENT_DOWNLOAD_URL
         }${label?.split(" ")?.join("____")})`;
       }
@@ -115,7 +119,7 @@ export const replaceMessageValue = (props: IReplaceMessageValueProps) => {
     const isBase64 = sharelyTagsContent.match(/^[a-zA-Z0-9+/]+={0,2}$/);
     if (isBase64) {
       const decoded = Buffer.from(sharelyTagsContent, "base64").toString(
-        "utf-8"
+        "utf-8",
       );
       content = tryParseJSON(decoded);
     } else {

@@ -1,5 +1,14 @@
 # @sharelyai/ui-chat
 
+## 0.0.8
+
+### Patch Changes
+
+- Fix source badge rendering: strip HTML from content preview, hide empty popups, remove P0 suffix, replace \_\_\_\_ with spaces in display text, and add markdown element spacing
+- Updated dependencies
+  - @sharelyai/services@0.0.11
+  - @sharelyai/ui-shared@0.0.8
+
 ## 0.0.7
 
 ### Patch Changes

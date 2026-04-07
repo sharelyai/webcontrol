@@ -1,5 +1,17 @@
 # @sharelyai/services
 
+## 0.0.11
+
+### Patch Changes
+
+- Fix source badge rendering: strip HTML from content preview, hide empty popups, remove P0 suffix, replace \_\_\_\_ with spaces in display text, and add markdown element spacing
+
+## 0.0.10
+
+### Patch Changes
+
+- update markdown links
+
 ## 0.0.9
 
 ### Patch Changes

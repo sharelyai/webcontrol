@@ -66,8 +66,11 @@ export const Anchor = ({ node, ...props }: any) => {
   })();
   const pageNumber = findSourceMetadata?.metadata?.["loc.pageNumber"];
   const relevancePercentage = (findSourceMetadata?.score * 100).toFixed(3);
-  const contentPreview =
-    findSourceMetadata?.metadata?.text || langText.NoPreviewAvailableText;
+  const rawPreview = findSourceMetadata?.metadata?.text;
+  const contentPreview = rawPreview
+    ? rawPreview.replace(/<[^>]*>/g, "").trim()
+    : "";
+  const hasSourceData = !!(findSourceMetadata && (title || contentPreview));
   // Add uuid to the key to ensure uniqueness
   const keyAnchorElement =
     props?.href + "_" + props?.messageId + "_" + anchorUUID.current;
@@ -136,7 +139,7 @@ export const Anchor = ({ node, ...props }: any) => {
       <AnchorMarkdown>
         <span>{props.children}</span>
       </AnchorMarkdown>
-      {!findSourceMetadata && (
+      {!findSourceMetadata && currentHref && (
         <AnchorBoxWrapper
           ref={refs.setFloating}
           style={{
@@ -149,7 +152,7 @@ export const Anchor = ({ node, ...props }: any) => {
         </AnchorBoxWrapper>
       )}
 
-      {!isMobile && findSourceMetadata && (
+      {!isMobile && hasSourceData && (
         <AnchorBoxWrapperReferences
           ref={refs.setFloating}
           style={{
@@ -158,10 +161,12 @@ export const Anchor = ({ node, ...props }: any) => {
             opacity: isHovered?.[keyAnchorElement] ? 1 : 0,
           }}
         >
-          <div className="space">
-            <span className="title">{langText.SourceText}</span>
-            <span className="description">{title}</span>
-          </div>
+          {title && (
+            <div className="space">
+              <span className="title">{langText.SourceText}</span>
+              <span className="description">{title}</span>
+            </div>
+          )}
           {Boolean(pageNumber) && pageNumber > 0 && (
             <div className="space">
               <span className="title">{langText.PageText}</span>
@@ -172,10 +177,12 @@ export const Anchor = ({ node, ...props }: any) => {
             <span className="title">{langText.RelevanceText}</span>
             <span className="description">{relevancePercentage}</span>
           </div>
-          <div className="space">
-            <span className="title">{langText.ContentPreviewText}</span>
-            <span className="description">{contentPreview}</span>
-          </div>
+          {contentPreview && (
+            <div className="space">
+              <span className="title">{langText.ContentPreviewText}</span>
+              <span className="description">{contentPreview}</span>
+            </div>
+          )}
         </AnchorBoxWrapperReferences>
       )}
     </AnchorMarkdownContainer>
