@@ -1,5 +1,13 @@
 # @sharelyai/services
 
+## 0.0.12
+
+### Patch Changes
+
+- - Add suggested followups support to useAgentChat hook
+  - Handle suggested_followups SSE event
+  - Clear followups on new message send and chat reset
+
 ## 0.0.11
 
 ### Patch Changes

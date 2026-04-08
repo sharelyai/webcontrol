@@ -195,6 +195,7 @@ export type SSEEventType =
   | "message_end"
   | "error"
   | "done"
+  | "suggested_followups"
   // Legacy event types for backwards compatibility
   | "thinking_start"
   | "thinking_delta"
@@ -202,6 +203,15 @@ export type SSEEventType =
   | "tool_call_start"
   | "tool_call_end"
   | "sources";
+
+// Feedback & Follow-ups
+
+export interface AgentFeedback {
+  messageId: string;
+  vote: "up" | "down" | null;
+  reason?: string;
+  detail?: string;
+}
 
 // Hook Return Types
 
@@ -221,6 +231,8 @@ export interface UseAgentChatReturn {
   loadThread: (threadId: string) => Promise<void>;
   resetChat: () => void;
   clearError: () => void;
+  suggestedFollowups: string[];
+  retryLastMessage: () => void;
 }
 
 export interface UseAgentThreadsReturn {

@@ -1,188 +1,184 @@
 import styled, { css, keyframes } from "styled-components";
 
-// Animations
-const spin = keyframes`
+// ─── Keyframe Animations ────────────────────────────────────────────────────────
+
+export const spin = keyframes`
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
 `;
 
-const blink = keyframes`
-  0%, 50% { opacity: 1; }
-  51%, 100% { opacity: 0; }
+export const fadeIn = keyframes`
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 `;
 
-const fadeIn = keyframes`
-  from { opacity: 0; transform: translateY(8px); }
-  to { opacity: 1; transform: translateY(0); }
+export const cursorBlink = keyframes`
+  0% { opacity: 0; }
+  50% { opacity: 1; }
+  100% { opacity: 0; }
 `;
 
-// Main Container
-export const AgentChatWrapper = styled.div`
+// ─── Layout Components ──────────────────────────────────────────────────────────
+
+export const ChatWrapper = styled.div`
   ${({ theme }) => css`
     display: flex;
     flex-direction: column;
     height: 100%;
     background: ${theme.colors.white};
+    font-family: inherit;
   `}
 `;
 
-// Error Banner
-export const ErrorBanner = styled.div`
+export const ChatHeader = styled.div`
   ${({ theme }) => css`
     display: flex;
+    flex-direction: row;
     align-items: center;
     justify-content: space-between;
     padding: 12px 16px;
-    background: ${theme.colors.provincialPink};
-    border-bottom: 1px solid ${theme.colors.cinderella};
-    color: ${theme.colors.thunderbird};
-    font-size: ${theme.fonts.sm};
-
-    button {
-      background: none;
-      border: none;
-      color: ${theme.colors.thunderbird};
-      cursor: pointer;
-      font-weight: 500;
-      padding: 4px 8px;
-      border-radius: 4px;
-
-      &:hover {
-        background: ${theme.colors.cinderella};
-      }
-    }
+    border-bottom: 1px solid ${theme.colors.athensGray4};
+    background: ${theme.colors.white};
   `}
 `;
 
-// Messages Container
-export const MessagesContainer = styled.div`
+export const ChatArea = styled.div`
   ${({ theme }) => css`
     flex: 1;
-    overflow-y: auto;
-    padding: 16px;
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    overflow-y: auto;
+    padding: 24px 16px;
 
     &::-webkit-scrollbar {
-      width: 6px;
+      width: 5px;
     }
 
     &::-webkit-scrollbar-track {
-      background: ${theme.colors.athensGray};
+      background: transparent;
     }
 
     &::-webkit-scrollbar-thumb {
       background: ${theme.colors.mischka};
       border-radius: 3px;
     }
+
+    &::-webkit-scrollbar-thumb:hover {
+      background: ${theme.colors.gullGray};
+    }
   `}
 `;
 
-// Message Styles
-interface MessageWrapperProps {
-  $role: "user" | "assistant" | "system";
-  $isStreaming?: boolean;
-}
+export const MessagesContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  max-width: 680px;
+  margin: 0 auto;
+`;
 
-export const MessageWrapper = styled.div<MessageWrapperProps>`
-  ${({ $role, $isStreaming }) => css`
-    display: flex;
-    gap: 12px;
-    animation: ${fadeIn} 0.2s ease-out;
+// ─── Message Components ─────────────────────────────────────────────────────────
 
-    ${$role === "user" &&
-    css`
-      flex-direction: row-reverse;
-    `}
-
-    ${$isStreaming &&
-    css`
-      opacity: 0.95;
-    `}
+export const UserBubble = styled.div`
+  ${({ theme }) => css`
+    background: ${theme.colors.athensGray};
+    padding: 12px 16px;
+    border-radius: 16px 16px 4px 16px;
+    max-width: 85%;
+    align-self: flex-end;
+    font-size: ${theme.fonts.sm};
+    color: ${theme.colors.OxfordBlue};
+    line-height: 1.5;
+    word-break: break-word;
   `}
 `;
 
-export const MessageAvatar = styled.div<{ $role: "user" | "assistant" | "system" }>`
-  ${({ theme, $role }) => css`
+export const AiRow = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: 12px;
+  align-items: flex-start;
+`;
+
+export const Avatar = styled.div`
+  ${({ theme }) => css`
     width: 32px;
     height: 32px;
     border-radius: 50%;
+    flex-shrink: 0;
+    overflow: hidden;
+    background: ${theme.colors.athensGray3};
+    border: 1px solid ${theme.colors.athensGray4};
     display: flex;
     align-items: center;
     justify-content: center;
-    flex-shrink: 0;
-    font-size: 14px;
 
-    ${$role === "user"
-      ? css`
-          background: ${theme.colors.cornflowerBlue};
-          color: ${theme.colors.white};
-        `
-      : css`
-          background: ${theme.colors.mediumPurple};
-          color: ${theme.colors.white};
-        `}
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
   `}
 `;
 
-export const MessageContent = styled.div<{ $role: "user" | "assistant" | "system" }>`
-  ${({ $role }) => css`
-    flex: 1;
-    max-width: 80%;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-
-    ${$role === "user" &&
-    css`
-      align-items: flex-end;
-    `}
-  `}
+export const AiContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+  min-width: 0;
 `;
 
-export const MessageText = styled.div<{ $role: "user" | "assistant" | "system" }>`
-  ${({ theme, $role }) => css`
-    padding: 12px 16px;
-    border-radius: 12px;
+export const ResponseText = styled.div`
+  ${({ theme }) => css`
     font-size: ${theme.fonts.sm};
-    line-height: 1.5;
+    line-height: 1.7;
+    color: ${theme.colors.OxfordBlue};
+    word-break: break-word;
 
-    ${$role === "user"
-      ? css`
-          background: ${theme.colors.cornflowerBlue};
-          color: ${theme.colors.white};
-          border-bottom-right-radius: 4px;
-        `
-      : css`
-          background: ${theme.colors.athensGray};
-          color: ${theme.colors.ebony};
-          border-bottom-left-radius: 4px;
-        `}
-
-    h1, h2, h3, h4, h5, h6 {
-      margin: 16px 0 8px 0;
+    h1,
+    h2 {
+      font-size: 1.25em;
+      font-weight: 600;
+      margin: 20px 0 8px;
+      color: ${theme.colors.ebony};
 
       &:first-child {
         margin-top: 0;
       }
     }
 
-    h1 { font-size: 1.5em; font-weight: 600; }
-    h2 { font-size: 1.3em; font-weight: 600; }
-    h3 { font-size: 1.15em; font-weight: 600; }
-    h4, h5, h6 { font-size: 1em; font-weight: 600; }
+    h3,
+    h4,
+    h5,
+    h6 {
+      font-size: 1.1em;
+      font-weight: 600;
+      margin: 16px 0 6px;
+      color: ${theme.colors.ebony};
+
+      &:first-child {
+        margin-top: 0;
+      }
+    }
 
     p {
-      margin: 0 0 8px 0;
+      margin: 0 0 10px;
 
       &:last-child {
         margin-bottom: 0;
       }
     }
 
-    ul, ol {
-      margin: 8px 0;
+    ul,
+    ol {
+      margin: 4px 0 10px;
       padding-left: 24px;
     }
 
@@ -190,427 +186,916 @@ export const MessageText = styled.div<{ $role: "user" | "assistant" | "system" }
       margin-bottom: 4px;
     }
 
-    blockquote {
-      margin: 8px 0;
-      padding-left: 12px;
-      border-left: 3px solid ${theme.colors.paleSky};
+    strong {
+      font-weight: 600;
+      color: ${theme.colors.ebony};
     }
 
     code {
-      background: ${$role === "user"
-        ? "rgba(255, 255, 255, 0.2)"
-        : theme.colors.athensGray2};
+      background: ${theme.colors.athensGray};
       padding: 2px 6px;
       border-radius: 4px;
-      font-size: 0.9em;
+      font-size: 0.92em;
     }
 
     pre {
       background: ${theme.colors.mirage};
-      color: ${theme.colors.athensGray};
-      padding: 12px;
-      border-radius: 8px;
+      color: ${theme.colors.athensGray3};
+      padding: 14px 16px;
+      border-radius: 10px;
       overflow-x: auto;
-      margin: 8px 0;
+      margin: 10px 0;
 
       code {
         background: none;
         padding: 0;
+        font-size: inherit;
       }
+    }
+
+    blockquote {
+      margin: 8px 0;
+      padding-left: 12px;
+      border-left: 3px solid ${theme.colors.mischka};
+      color: ${theme.colors.paleSky};
     }
   `}
 `;
 
-export const MessageMeta = styled.div`
+// ─── Thinking Components ────────────────────────────────────────────────────────
+
+export const ThinkingToggle = styled.button`
   ${({ theme }) => css`
     display: flex;
-    gap: 12px;
-    font-size: ${theme.fonts.xs};
-    color: ${theme.colors.paleSky};
-    padding: 0 4px;
-  `}
-`;
-
-// Thinking Indicator Styles
-export const ThinkingWrapper = styled.div`
-  ${({ theme }) => css`
-    border-radius: 8px;
-    border: 1px solid ${theme.colors.athensGray2};
-    overflow: hidden;
-    background: ${theme.colors.white};
-  `}
-`;
-
-export const ThinkingHeader = styled.button`
-  ${({ theme }) => css`
-    width: 100%;
-    display: flex;
+    flex-direction: row;
     align-items: center;
     gap: 8px;
-    padding: 10px 12px;
+    padding: 8px 14px;
+    border-radius: 20px;
     background: ${theme.colors.athensGray};
-    border: none;
     cursor: pointer;
-    font-size: ${theme.fonts.sm};
-    color: ${theme.colors.fiord};
-    text-align: left;
+    transition: background 0.15s;
+    border: none;
+    font-family: inherit;
 
     &:hover {
-      background: ${theme.colors.athensGray2};
+      background: ${theme.colors.athensGray4};
     }
   `}
 `;
 
-export const ThinkingIcon = styled.span<{ $spinning?: boolean }>`
-  ${({ theme, $spinning }) => css`
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 18px;
-    height: 18px;
-    color: ${theme.colors.mediumPurple};
-
-    ${$spinning &&
-    css`
-      animation: ${spin} 1s linear infinite;
-    `}
-
-    svg {
-      width: 16px;
-      height: 16px;
-    }
-  `}
-`;
-
-export const ThinkingTitle = styled.span`
-  flex: 1;
-  font-weight: 500;
-`;
-
-export const ExpandIcon = styled.span`
+export const ThinkingText = styled.span`
   ${({ theme }) => css`
-    display: flex;
-    align-items: center;
-    color: ${theme.colors.gullGray};
-
-    svg {
-      width: 16px;
-      height: 16px;
-    }
+    font-size: 13px;
+    font-weight: 500;
+    color: ${theme.colors.paleSky};
+    animation: ${fadeIn} 0.3s ease;
   `}
 `;
 
-export const ThinkingStepsList = styled.div`
+export const ThinkingSpinner = styled.span`
   ${({ theme }) => css`
-    padding: 12px;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    border-top: 1px solid ${theme.colors.athensGray2};
-  `}
-`;
-
-export const ThinkingStepItem = styled.div<{ $status: "running" | "completed" | "failed" }>`
-  ${({ theme, $status }) => css`
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-
-    ${$status === "running" &&
-    css`
-      opacity: 0.9;
-    `}
-
-    ${$status === "failed" &&
-    css`
-      .step-header {
-        color: ${theme.colors.flamingo};
-      }
-    `}
-  `}
-`;
-
-export const StepHeader = styled.div`
-  ${({ theme }) => css`
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: ${theme.fonts.sm};
-    color: ${theme.colors.fiord};
-  `}
-`;
-
-export const StepStatus = styled.span<{ $status: "running" | "completed" | "failed" }>`
-  ${({ theme, $status }) => css`
-    display: flex;
-    align-items: center;
-    justify-content: center;
     width: 16px;
     height: 16px;
+    border: 2px solid ${theme.colors.athensGray4};
+    border-top-color: var(
+      --web-control-styles-main_color,
+      ${theme.colors.mediumPurple}
+    );
+    border-radius: 50%;
+    animation: ${spin} 0.7s linear infinite;
+    display: inline-block;
+    box-sizing: border-box;
+  `}
+`;
 
-    ${$status === "running" &&
-    css`
-      color: ${theme.colors.mediumPurple};
-      animation: ${spin} 1s linear infinite;
-    `}
+export const ThinkingCard = styled.div`
+  ${({ theme }) => css`
+    margin-top: 8px;
+    padding: 12px 16px;
+    background: ${theme.colors.white};
+    border-radius: 12px;
+    border: 1px solid ${theme.colors.athensGray4};
+  `}
+`;
 
-    ${$status === "completed" &&
-    css`
-      color: ${theme.colors.mountainMeadow};
-    `}
+export const ThinkingTimeline = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  position: relative;
+`;
 
-    ${$status === "failed" &&
-    css`
-      color: ${theme.colors.flamingo};
-    `}
+export const ThinkingTimelineItem = styled.div`
+  ${({ theme }) => css`
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 0;
+    font-size: 13px;
+    color: ${theme.colors.paleSky};
+    position: relative;
 
-    svg {
-      width: 14px;
-      height: 14px;
+    &::before {
+      content: "";
+      position: absolute;
+      left: 9px;
+      top: 100%;
+      width: 1px;
+      height: 100%;
+      background: ${theme.colors.athensGray4};
+    }
+
+    &:last-child::before {
+      display: none;
     }
   `}
 `;
 
-export const StepTitle = styled.span`
-  flex: 1;
-  font-weight: 500;
+export const ThinkingTimelineIcon = styled.span`
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
 `;
 
-export const StepDuration = styled.span`
+// ─── Citation Components ────────────────────────────────────────────────────────
+
+export const CiteButton = styled.button`
   ${({ theme }) => css`
-    font-size: ${theme.fonts.xs};
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(
+      --web-control-styles-main_color,
+      ${theme.colors.mediumPurple}
+    );
+    cursor: pointer;
+    padding: 1px 6px;
+    border-radius: 10px;
+    background: transparent;
+    border: 1px solid
+      color-mix(
+        in srgb,
+        var(--web-control-styles-main_color, ${theme.colors.mediumPurple}) 30%,
+        transparent
+      );
+    transition: all 0.15s;
+    font-family: inherit;
+
+    &:hover {
+      background: color-mix(
+        in srgb,
+        var(--web-control-styles-main_color, ${theme.colors.mediumPurple}) 8%,
+        transparent
+      );
+    }
+  `}
+`;
+
+export const CitePopover = styled.div`
+  ${({ theme }) => css`
+    position: absolute;
+    z-index: 100;
+    min-width: 260px;
+    max-width: 340px;
+    background: ${theme.colors.white};
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12),
+      0 1px 4px rgba(0, 0, 0, 0.08);
+    padding: 14px 16px;
+    animation: ${fadeIn} 0.3s ease;
+  `}
+`;
+
+export const CitePopoverHeader = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 8px;
+`;
+
+export const CiteTypeIcon = styled.div`
+  ${({ theme }) => css`
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    background: ${theme.colors.athensGray3};
+  `}
+`;
+
+export const CitePopoverTitle = styled.div`
+  ${({ theme }) => css`
+    font-size: 14px;
+    font-weight: 600;
+    color: ${theme.colors.ebony};
+  `}
+`;
+
+export const CitePopoverSnippet = styled.div`
+  ${({ theme }) => css`
+    font-size: 13px;
+    color: ${theme.colors.paleSky};
+    line-height: 1.5;
+    max-height: 80px;
+    overflow: hidden;
+  `}
+`;
+
+export const CitePopoverFooter = styled.div`
+  ${({ theme }) => css`
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-top: 10px;
+    font-size: 12px;
     color: ${theme.colors.paleSky};
   `}
 `;
 
-export const StepContent = styled.div`
+// ─── Source Components ──────────────────────────────────────────────────────────
+
+export const SourcesSection = styled.div`
+  margin-top: 8px;
+`;
+
+export const SourcesSectionLabel = styled.div`
   ${({ theme }) => css`
-    margin-left: 24px;
-    padding: 8px 12px;
-    background: ${theme.colors.athensGray};
-    border-radius: 6px;
-    font-size: ${theme.fonts.xs};
-    color: ${theme.colors.shuttleGray};
-    line-height: 1.5;
-    max-height: 200px;
-    overflow-y: auto;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 500;
+    color: ${theme.colors.paleSky};
+    margin-bottom: 8px;
   `}
 `;
 
-// Tool Call Card Styles
-export const ToolCallWrapper = styled.div<{ $status: "running" | "completed" | "error" }>`
-  ${({ theme, $status }) => css`
+export const SourceChipsRow = styled.div`
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 6px;
+`;
+
+export const SourceChipButton = styled.button`
+  ${({ theme }) => css`
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: 20px;
+    border: 1px solid ${theme.colors.athensGray4};
+    background: ${theme.colors.white};
+    cursor: pointer;
+    font-size: 13px;
+    color: ${theme.colors.OxfordBlue};
+    transition: all 0.15s;
+    max-width: 220px;
+    font-family: inherit;
+
+    &:hover {
+      border-color: ${theme.colors.mischka};
+      background: ${theme.colors.athensGray3};
+    }
+  `}
+`;
+
+export const SourceChipTitle = styled.span`
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`;
+
+export const SourceChipRelevance = styled.span`
+  ${({ theme }) => css`
+    font-size: 11px;
+    color: ${theme.colors.paleSky};
+    flex-shrink: 0;
+  `}
+`;
+
+export const SourceMoreChip = styled.button`
+  ${({ theme }) => css`
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: 20px;
+    border: 1px solid ${theme.colors.athensGray4};
+    background: ${theme.colors.athensGray3};
+    cursor: pointer;
+    font-size: 13px;
+    color: ${theme.colors.paleSky};
+    transition: all 0.15s;
+    font-family: inherit;
+
+    &:hover {
+      border-color: ${theme.colors.mischka};
+      background: ${theme.colors.athensGray4};
+    }
+  `}
+`;
+
+// ─── Action Bar ─────────────────────────────────────────────────────────────────
+
+export const ActionBarWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: 2px;
+  margin-top: 4px;
+  animation: ${fadeIn} 0.3s ease;
+`;
+
+export const IconBtn = styled.button<{ $active?: boolean }>`
+  ${({ theme, $active }) => css`
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     border-radius: 8px;
-    border: 1px solid
-      ${$status === "error"
-        ? theme.colors.cinderella
-        : theme.colors.athensGray2};
-    overflow: hidden;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: ${theme.colors.paleSky};
+    transition: all 0.15s;
+    padding: 0;
+
+    &:hover {
+      background: ${theme.colors.athensGray};
+      color: ${theme.colors.OxfordBlue};
+    }
+
+    ${$active &&
+    css`
+      color: var(
+        --web-control-styles-main_color,
+        ${theme.colors.mediumPurple}
+      );
+    `}
+  `}
+`;
+
+// ─── Feedback Panel ─────────────────────────────────────────────────────────────
+
+export const FeedbackWrapper = styled.div`
+  ${({ theme }) => css`
+    padding: 14px 16px;
+    background: ${theme.colors.athensGray3};
+    border-radius: 12px;
+    margin-top: 8px;
+    animation: ${fadeIn} 0.3s ease;
+  `}
+`;
+
+export const FeedbackTitle = styled.div`
+  ${({ theme }) => css`
+    font-size: 14px;
+    font-weight: 500;
+    color: ${theme.colors.ebony};
+    margin-bottom: 10px;
+  `}
+`;
+
+export const FeedbackOptionsRow = styled.div`
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+`;
+
+export const FeedbackOption = styled.button<{ $active?: boolean }>`
+  ${({ theme, $active }) => css`
+    padding: 6px 14px;
+    border-radius: 20px;
+    border: 1px solid ${theme.colors.mischka};
+    background: ${theme.colors.white};
+    font-size: 13px;
+    color: ${theme.colors.OxfordBlue};
+    cursor: pointer;
+    transition: all 0.15s;
+    font-family: inherit;
+
+    ${$active &&
+    css`
+      border-color: var(
+        --web-control-styles-main_color,
+        ${theme.colors.mediumPurple}
+      );
+      background: color-mix(
+        in srgb,
+        var(--web-control-styles-main_color, ${theme.colors.mediumPurple}) 6%,
+        transparent
+      );
+      color: var(
+        --web-control-styles-main_color,
+        ${theme.colors.mediumPurple}
+      );
+    `}
+  `}
+`;
+
+export const FeedbackTextarea = styled.textarea`
+  ${({ theme }) => css`
+    width: 100%;
+    min-height: 72px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    border: 1px solid ${theme.colors.mischka};
+    font-size: 13px;
+    font-family: inherit;
+    resize: vertical;
+    outline: none;
+    box-sizing: border-box;
+    color: ${theme.colors.ebony};
+
+    &:focus {
+      border-color: var(
+        --web-control-styles-main_color,
+        ${theme.colors.mediumPurple}
+      );
+    }
+
+    &::placeholder {
+      color: ${theme.colors.gullGray};
+    }
+  `}
+`;
+
+export const FeedbackActions = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 10px;
+`;
+
+export const FeedbackBtn = styled.button<{
+  $variant?: "primary" | "secondary";
+}>`
+  ${({ theme, $variant = "primary" }) => css`
+    padding: 7px 18px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.15s;
+
+    ${$variant === "primary" &&
+    css`
+      background: var(
+        --web-control-styles-main_color,
+        ${theme.colors.mediumPurple}
+      );
+      color: ${theme.colors.white};
+      border: none;
+
+      &:hover {
+        opacity: 0.9;
+      }
+    `}
+
+    ${$variant === "secondary" &&
+    css`
+      background: transparent;
+      color: ${theme.colors.paleSky};
+      border: 1px solid ${theme.colors.mischka};
+
+      &:hover {
+        background: ${theme.colors.athensGray3};
+      }
+    `}
+  `}
+`;
+
+export const FeedbackSuccess = styled.div`
+  ${({ theme }) => css`
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: ${theme.colors.mountainMeadow};
+    font-weight: 500;
+    animation: ${fadeIn} 0.3s ease;
+  `}
+`;
+
+// ─── Suggested Followups ────────────────────────────────────────────────────────
+
+export const FollowupsRow = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 10px;
+`;
+
+export const FollowupButton = styled.button`
+  ${({ theme }) => css`
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 14px;
+    border-radius: 12px;
+    border: 1px solid ${theme.colors.athensGray4};
+    background: ${theme.colors.white};
+    cursor: pointer;
+    font-size: 13px;
+    color: ${theme.colors.OxfordBlue};
+    text-align: left;
+    transition: all 0.15s;
+    font-family: inherit;
+    width: 100%;
+
+    &:hover {
+      border-color: ${theme.colors.mischka};
+      background: ${theme.colors.athensGray3};
+    }
+  `}
+`;
+
+// ─── Input Area ─────────────────────────────────────────────────────────────────
+
+export const InputArea = styled.div`
+  ${({ theme }) => css`
+    padding: 12px 16px;
+    border-top: 1px solid ${theme.colors.athensGray4};
     background: ${theme.colors.white};
   `}
 `;
 
-export const ToolCallHeader = styled.button`
+export const InputRow = styled.div`
   ${({ theme }) => css`
-    width: 100%;
     display: flex;
-    align-items: center;
+    flex-direction: row;
+    align-items: flex-end;
     gap: 8px;
-    padding: 10px 12px;
-    background: ${theme.colors.athensGray};
-    border: none;
-    cursor: pointer;
-    font-size: ${theme.fonts.sm};
-    color: ${theme.colors.fiord};
-    text-align: left;
+    padding: 8px 12px;
+    border-radius: 24px;
+    border: 1px solid ${theme.colors.mischka};
+    background: ${theme.colors.white};
+    transition: border-color 0.15s;
 
-    &:hover {
-      background: ${theme.colors.athensGray2};
+    &:focus-within {
+      border-color: var(
+        --web-control-styles-main_color,
+        ${theme.colors.mediumPurple}
+      );
     }
   `}
 `;
 
-export const ToolIconStyled = styled.span<{ $status: "running" | "completed" | "error" }>`
-  ${({ theme, $status }) => css`
+export const InputField = styled.textarea`
+  ${({ theme }) => css`
+    flex: 1;
+    border: none;
+    outline: none;
+    font-size: ${theme.fonts.sm};
+    font-family: inherit;
+    resize: none;
+    min-height: 24px;
+    max-height: 120px;
+    line-height: 1.5;
+    color: ${theme.colors.ebony};
+    background: transparent;
+
+    &::placeholder {
+      color: ${theme.colors.gullGray};
+    }
+  `}
+`;
+
+export const SendButton = styled.button<{ $variant?: "danger" }>`
+  ${({ theme, $variant }) => css`
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 18px;
-    height: 18px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.15s;
+    flex-shrink: 0;
+    padding: 0;
 
-    ${$status === "running" &&
+    background: var(
+      --web-control-styles-main_color,
+      ${theme.colors.mediumPurple}
+    );
+    color: ${theme.colors.white};
+
+    ${$variant === "danger" &&
     css`
-      color: ${theme.colors.cornflowerBlue};
-      animation: ${spin} 1s linear infinite;
+      background: ${theme.colors.flamingo};
     `}
 
-    ${$status === "completed" &&
-    css`
-      color: ${theme.colors.mountainMeadow};
-    `}
-
-    ${$status === "error" &&
-    css`
-      color: ${theme.colors.flamingo};
-    `}
-
-    svg {
-      width: 16px;
-      height: 16px;
+    &:disabled {
+      opacity: 0.4;
+      cursor: default;
     }
   `}
 `;
 
-export const ToolName = styled.span`
-  flex: 1;
-  font-weight: 500;
-`;
-
-export const ToolDuration = styled.span`
+export const DisclaimerText = styled.div`
   ${({ theme }) => css`
-    font-size: ${theme.fonts.xs};
-    color: ${theme.colors.paleSky};
+    text-align: center;
+    font-size: 11px;
+    color: ${theme.colors.gullGray};
+    margin-top: 8px;
   `}
 `;
 
-export const ToolCallDetails = styled.div`
+// ─── Empty State ────────────────────────────────────────────────────────────────
+
+export const EmptyStateWrapper = styled.div`
   ${({ theme }) => css`
-    padding: 12px;
-    border-top: 1px solid ${theme.colors.athensGray2};
+    flex: 1;
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    align-items: center;
+    justify-content: center;
+    padding: 32px 24px;
+    text-align: center;
   `}
 `;
 
-export const ToolSection = styled.div`
+export const EmptyStateIcon = styled.div`
   ${({ theme }) => css`
-    h4 {
-      margin: 0 0 6px 0;
-      font-size: ${theme.fonts.xs};
-      font-weight: 600;
-      color: ${theme.colors.paleSky};
-      text-transform: uppercase;
-    }
+    width: 48px;
+    height: 48px;
+    color: var(
+      --web-control-styles-main_color,
+      ${theme.colors.mediumPurple}
+    );
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
-    pre {
-      margin: 0;
-      padding: 10px;
-      background: ${theme.colors.mirage};
-      color: ${theme.colors.athensGray};
-      border-radius: 6px;
-      font-size: ${theme.fonts.xs};
-      overflow-x: auto;
-      max-height: 200px;
-      overflow-y: auto;
+    svg {
+      width: 100%;
+      height: 100%;
     }
   `}
 `;
 
-// Sources List Styles
-export const SourcesWrapper = styled.div`
+export const EmptyStateTitle = styled.div`
   ${({ theme }) => css`
-    padding: 12px;
-    background: ${theme.colors.athensGray};
-    border-radius: 8px;
-
-    h4 {
-      margin: 0 0 8px 0;
-      font-size: ${theme.fonts.xs};
-      font-weight: 600;
-      color: ${theme.colors.paleSky};
-      text-transform: uppercase;
-    }
-
-    ul {
-      margin: 0;
-      padding: 0;
-      list-style: none;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
-    li {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
+    font-size: ${theme.fonts.lg};
+    font-weight: 600;
+    color: ${theme.colors.ebony};
+    margin-bottom: 8px;
   `}
 `;
 
-export const SourceIndex = styled.span`
-  ${({ theme }) => css`
-    font-size: ${theme.fonts.xs};
-    color: ${theme.colors.gullGray};
-    font-weight: 500;
-    margin-right: 6px;
-  `}
-`;
-
-export const SourceLink = styled.a`
+export const EmptyStateDescription = styled.div`
   ${({ theme }) => css`
     font-size: ${theme.fonts.sm};
-    color: ${theme.colors.royalBlue};
-    text-decoration: none;
+    color: ${theme.colors.paleSky};
+    max-width: 360px;
+    line-height: 1.5;
+  `}
+`;
+
+// ─── Error Components ───────────────────────────────────────────────────────────
+
+export const ErrorCard = styled.div`
+  ${({ theme }) => css`
+    display: flex;
+    flex-direction: row;
+    gap: 12px;
+    padding: 14px 16px;
+    background: color-mix(in srgb, ${theme.colors.flamingo} 6%, transparent);
+    border-radius: 12px;
+    border: 1px solid
+      color-mix(in srgb, ${theme.colors.flamingo} 20%, transparent);
+  `}
+`;
+
+export const ErrorIcon = styled.div`
+  ${({ theme }) => css`
+    color: ${theme.colors.flamingo};
+    flex-shrink: 0;
+    display: flex;
+    align-items: flex-start;
+  `}
+`;
+
+export const ErrorContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+`;
+
+export const ErrorText = styled.div`
+  ${({ theme }) => css`
+    font-size: ${theme.fonts.sm};
+    color: ${theme.colors.flamingo};
+  `}
+`;
+
+export const ErrorRetryButton = styled.button`
+  ${({ theme }) => css`
+    align-self: flex-start;
+    padding: 6px 14px;
+    border-radius: 8px;
+    border: 1px solid
+      color-mix(in srgb, ${theme.colors.flamingo} 30%, transparent);
+    background: transparent;
+    color: ${theme.colors.flamingo};
+    font-size: 13px;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.15s;
 
     &:hover {
-      text-decoration: underline;
+      background: color-mix(
+        in srgb,
+        ${theme.colors.flamingo} 8%,
+        transparent
+      );
     }
   `}
 `;
 
-export const SourceTitle = styled.span`
-  ${({ theme }) => css`
-    font-size: ${theme.fonts.sm};
-    color: ${theme.colors.fiord};
+// ─── Modal Components ───────────────────────────────────────────────────────────
+
+export const ModalBackdrop = styled.div`
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 1000;
+  animation: ${fadeIn} 0.3s ease;
+`;
+
+export const ModalContainer = styled.div<{ $overlay?: boolean }>`
+  ${({ theme, $overlay }) => css`
+    display: flex;
+    flex-direction: column;
+    background: ${theme.colors.white};
+    animation: ${fadeIn} 0.3s ease;
+
+    ${$overlay
+      ? css`
+          position: absolute;
+          inset: 0;
+          z-index: 10;
+        `
+      : css`
+          position: fixed;
+          inset: 0;
+          z-index: 1001;
+        `}
   `}
 `;
 
-export const SourceSnippet = styled.p`
+export const ModalHeader = styled.div`
   ${({ theme }) => css`
-    margin: 0;
-    font-size: ${theme.fonts.xs};
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px;
+    border-bottom: 1px solid ${theme.colors.athensGray4};
+  `}
+`;
+
+export const ModalTitle = styled.div`
+  ${({ theme }) => css`
+    font-size: ${theme.fonts.base};
+    font-weight: 600;
+    color: ${theme.colors.ebony};
+  `}
+`;
+
+export const ModalBody = styled.div`
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px 16px;
+`;
+
+export const ModalDateGroup = styled.div`
+  ${({ theme }) => css`
+    font-size: 12px;
+    font-weight: 500;
     color: ${theme.colors.paleSky};
-    line-height: 1.4;
-    padding-left: 24px;
+    padding: 12px 0 6px;
+    text-transform: uppercase;
   `}
 `;
 
-// Streaming Content Styles
+export const ModalThreadItem = styled.div<{ $active?: boolean }>`
+  ${({ theme, $active }) => css`
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.15s;
+    font-size: ${theme.fonts.sm};
+    color: ${theme.colors.OxfordBlue};
+
+    &:hover {
+      background: ${theme.colors.athensGray3};
+    }
+
+    ${$active &&
+    css`
+      background: ${theme.colors.athensGray3};
+      font-weight: 500;
+    `}
+  `}
+`;
+
+export const ModalNewChatButton = styled.button`
+  ${({ theme }) => css`
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: calc(100% - 32px);
+    margin: 8px 16px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 1px solid ${theme.colors.athensGray4};
+    background: ${theme.colors.white};
+    font-size: ${theme.fonts.sm};
+    font-weight: 500;
+    color: ${theme.colors.OxfordBlue};
+    cursor: pointer;
+    font-family: inherit;
+    transition: background 0.15s;
+
+    &:hover {
+      background: ${theme.colors.athensGray3};
+    }
+  `}
+`;
+
+// ─── Streaming ──────────────────────────────────────────────────────────────────
+
 export const StreamingWrapper = styled.div`
   ${({ theme }) => css`
-    padding: 12px 16px;
-    background: ${theme.colors.athensGray};
-    border-radius: 12px;
-    border-bottom-left-radius: 4px;
     font-size: ${theme.fonts.sm};
-    line-height: 1.5;
-    color: ${theme.colors.ebony};
+    line-height: 1.7;
+    color: ${theme.colors.OxfordBlue};
+    word-break: break-word;
 
-    h1, h2, h3, h4, h5, h6 {
-      margin: 16px 0 8px 0;
+    h1,
+    h2 {
+      font-size: 1.25em;
+      font-weight: 600;
+      margin: 20px 0 8px;
+      color: ${theme.colors.ebony};
 
       &:first-child {
         margin-top: 0;
       }
     }
 
-    h1 { font-size: 1.5em; font-weight: 600; }
-    h2 { font-size: 1.3em; font-weight: 600; }
-    h3 { font-size: 1.15em; font-weight: 600; }
-    h4, h5, h6 { font-size: 1em; font-weight: 600; }
+    h3,
+    h4,
+    h5,
+    h6 {
+      font-size: 1.1em;
+      font-weight: 600;
+      margin: 16px 0 6px;
+      color: ${theme.colors.ebony};
+
+      &:first-child {
+        margin-top: 0;
+      }
+    }
 
     p {
-      margin: 0 0 8px 0;
+      margin: 0 0 10px;
 
       &:last-child {
         margin-bottom: 0;
       }
     }
 
-    ul, ol {
-      margin: 8px 0;
+    ul,
+    ol {
+      margin: 4px 0 10px;
       padding-left: 24px;
     }
 
@@ -618,10 +1103,38 @@ export const StreamingWrapper = styled.div`
       margin-bottom: 4px;
     }
 
+    strong {
+      font-weight: 600;
+      color: ${theme.colors.ebony};
+    }
+
+    code {
+      background: ${theme.colors.athensGray};
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.92em;
+    }
+
+    pre {
+      background: ${theme.colors.mirage};
+      color: ${theme.colors.athensGray3};
+      padding: 14px 16px;
+      border-radius: 10px;
+      overflow-x: auto;
+      margin: 10px 0;
+
+      code {
+        background: none;
+        padding: 0;
+        font-size: inherit;
+      }
+    }
+
     blockquote {
       margin: 8px 0;
       padding-left: 12px;
-      border-left: 3px solid ${theme.colors.paleSky};
+      border-left: 3px solid ${theme.colors.mischka};
+      color: ${theme.colors.paleSky};
     }
   `}
 `;
@@ -631,440 +1144,101 @@ export const Cursor = styled.span`
     display: inline-block;
     width: 2px;
     height: 1em;
-    background: ${theme.colors.mediumPurple};
+    background: var(
+      --web-control-styles-main_color,
+      ${theme.colors.mediumPurple}
+    );
     margin-left: 2px;
     vertical-align: text-bottom;
-    animation: ${blink} 1s step-end infinite;
+    animation: ${cursorBlink} 1s step-end infinite;
   `}
 `;
 
-// Input Area Styles
-export const InputWrapper = styled.form`
+// ─── Tool Call Components ───────────────────────────────────────────────────────
+
+export const ToolCallWrapper = styled.div<{ $error?: boolean }>`
+  ${({ theme, $error }) => css`
+    border: 1px solid ${theme.colors.athensGray4};
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 4px;
+
+    ${$error &&
+    css`
+      border-color: color-mix(
+        in srgb,
+        ${theme.colors.flamingo} 30%,
+        transparent
+      );
+    `}
+  `}
+`;
+
+export const ToolCallHeader = styled.div`
   ${({ theme }) => css`
     display: flex;
-    gap: 12px;
-    padding: 16px;
-    border-top: 1px solid ${theme.colors.athensGray2};
-    background: ${theme.colors.white};
-  `}
-`;
-
-export const InputTextarea = styled.textarea`
-  ${({ theme }) => css`
-    flex: 1;
-    min-height: 44px;
-    max-height: 120px;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
     padding: 10px 14px;
-    border: 1px solid ${theme.colors.mischka};
-    border-radius: 8px;
-    font-size: ${theme.fonts.sm};
-    font-family: inherit;
-    resize: none;
-    outline: none;
-    transition: border-color 0.15s;
-
-    &:focus {
-      border-color: ${theme.colors.mediumPurple};
-    }
-
-    &:disabled {
-      background: ${theme.colors.athensGray};
-      cursor: not-allowed;
-    }
-
-    &::placeholder {
-      color: ${theme.colors.gullGray};
-    }
-  `}
-`;
-
-export const SendButton = styled.button<{ $variant?: "primary" | "danger" }>`
-  ${({ theme, $variant = "primary" }) => css`
-    padding: 10px 20px;
-    border: none;
-    border-radius: 8px;
-    font-size: ${theme.fonts.sm};
-    font-weight: 500;
     cursor: pointer;
+    background: ${theme.colors.white};
     transition: background 0.15s;
 
-    ${$variant === "primary" &&
-    css`
-      background: ${theme.colors.mediumPurple};
-      color: ${theme.colors.white};
-
-      &:hover:not(:disabled) {
-        background: ${theme.colors.mysticLavender};
-      }
-    `}
-
-    ${$variant === "danger" &&
-    css`
-      background: ${theme.colors.flamingo};
-      color: ${theme.colors.white};
-
-      &:hover:not(:disabled) {
-        background: ${theme.colors.thunderbird};
-      }
-    `}
-
-    &:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
+    &:hover {
+      background: ${theme.colors.athensGray3};
     }
   `}
 `;
 
-// Tool Calls Container
+export const ToolCallName = styled.span`
+  ${({ theme }) => css`
+    font-size: 13px;
+    font-weight: 500;
+    color: ${theme.colors.OxfordBlue};
+  `}
+`;
+
+export const ToolCallStatus = styled.span`
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+`;
+
+export const ToolCallDuration = styled.span`
+  ${({ theme }) => css`
+    font-size: 12px;
+    color: ${theme.colors.paleSky};
+  `}
+`;
+
+export const ToolCallDetails = styled.div`
+  ${({ theme }) => css`
+    padding: 0 14px 12px;
+    border-top: 1px solid ${theme.colors.athensGray4};
+  `}
+`;
+
+export const ToolCallJson = styled.pre`
+  ${({ theme }) => css`
+    font-size: 12px;
+    background: ${theme.colors.mirage};
+    color: ${theme.colors.athensGray3};
+    padding: 10px 12px;
+    border-radius: 8px;
+    overflow-x: auto;
+    white-space: pre-wrap;
+    max-height: 200px;
+    overflow-y: auto;
+    margin: 0;
+  `}
+`;
+
 export const ToolCallsContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 8px;
-`;
-
-// SourceChips Styles
-
-export const SourceChipsContainer = styled.div`
-  ${({ theme }) => css`
-    display: flex;
-    flex-direction: column;
-    background: ${theme.colors.athensGray};
-    border-radius: 8px;
-    border: 1px solid ${theme.colors.athensGray2};
-    overflow: hidden;
-  `}
-`;
-
-export const SourceChipsHeader = styled.button<{ $collapsed?: boolean }>`
-  ${({ theme, $collapsed }) => css`
-    width: 100%;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 10px 12px;
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    text-align: left;
-    transition: background-color 0.15s;
-
-    &:hover {
-      background: ${theme.colors.athensGray2};
-    }
-
-    > svg {
-      width: 16px;
-      height: 16px;
-      color: ${theme.colors.fiord};
-      flex-shrink: 0;
-    }
-
-    h4 {
-      margin: 0;
-      font-size: ${theme.fonts.sm};
-      font-weight: 500;
-      color: ${theme.colors.fiord};
-      flex: 1;
-    }
-
-    > span {
-      font-size: ${theme.fonts.xs};
-      color: ${theme.colors.gullGray};
-    }
-
-    ${$collapsed &&
-    css`
-      border-radius: 8px;
-    `}
-  `}
-`;
-
-export const SourceChipsContent = styled.div`
-  ${({ theme }) => css`
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    padding: 0 12px 12px 12px;
-    border-top: 1px solid ${theme.colors.athensGray2};
-    padding-top: 12px;
-  `}
-`;
-
-export const SourceChip = styled.div<{ $expanded?: boolean }>`
-  ${({ theme, $expanded }) => css`
-    background: ${theme.colors.white};
-    border: 1px solid ${theme.colors.athensGray2};
-    border-radius: 8px;
-    overflow: hidden;
-    transition: box-shadow 0.15s;
-
-    ${$expanded &&
-    css`
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-    `}
-  `}
-`;
-
-export const SourceChipHeader = styled.button`
-  ${({ theme }) => css`
-    width: 100%;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 10px 12px;
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    text-align: left;
-
-    &:hover {
-      background: ${theme.colors.athensGray};
-    }
-  `}
-`;
-
-export const SourceTypeIcon = styled.span<{ $type: string }>`
-  ${({ theme, $type }) => css`
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 24px;
-    height: 24px;
-    border-radius: 4px;
-    flex-shrink: 0;
-
-    svg {
-      width: 14px;
-      height: 14px;
-    }
-
-    ${$type === "knowledge" &&
-    css`
-      background: ${theme.colors.athensGray2};
-      color: ${theme.colors.fiord};
-    `}
-
-    ${$type === "document" &&
-    css`
-      background: ${theme.colors.athensGray2};
-      color: ${theme.colors.fiord};
-    `}
-
-    ${$type === "atom" &&
-    css`
-      background: ${theme.colors.selago};
-      color: ${theme.colors.mediumPurple};
-    `}
-
-    ${$type === "taxonomy" &&
-    css`
-      background: ${theme.colors.foam};
-      color: ${theme.colors.mountainMeadow};
-    `}
-
-    ${$type === "role" &&
-    css`
-      background: ${theme.colors.provincialPink};
-      color: ${theme.colors.flamingo};
-    `}
-
-    ${$type === "url" &&
-    css`
-      background: ${theme.colors.lightSkyBlue};
-      color: ${theme.colors.royalBlue};
-    `}
-  `}
-`;
-
-export const SourceChipTitle = styled.span`
-  ${({ theme }) => css`
-    flex: 1;
-    font-size: ${theme.fonts.sm};
-    font-weight: 500;
-    color: ${theme.colors.fiord};
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  `}
-`;
-
-export const SourceChipScore = styled.span`
-  ${({ theme }) => css`
-    font-size: ${theme.fonts.xs};
-    font-weight: 600;
-    color: ${theme.colors.mountainMeadow};
-    background: ${theme.colors.foam};
-    padding: 2px 6px;
-    border-radius: 4px;
-  `}
-`;
-
-export const SourceChipExpandIcon = styled.span<{ $expanded?: boolean }>`
-  ${({ theme, $expanded }) => css`
-    display: flex;
-    align-items: center;
-    color: ${theme.colors.gullGray};
-    transition: transform 0.2s;
-
-    svg {
-      width: 16px;
-      height: 16px;
-    }
-
-    ${$expanded &&
-    css`
-      transform: rotate(180deg);
-    `}
-  `}
-`;
-
-export const SourceChipContent = styled.div`
-  ${({ theme }) => css`
-    padding: 12px;
-    border-top: 1px solid ${theme.colors.athensGray2};
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  `}
-`;
-
-export const SourceChipRow = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-`;
-
-export const SourceChipLabel = styled.span`
-  ${({ theme }) => css`
-    font-size: ${theme.fonts.xs};
-    font-weight: 600;
-    color: ${theme.colors.paleSky};
-    text-transform: uppercase;
-  `}
-`;
-
-export const SourceChipValue = styled.span`
-  ${({ theme }) => css`
-    font-size: ${theme.fonts.sm};
-    color: ${theme.colors.ebony};
-    word-break: break-word;
-  `}
-`;
-
-export const SourceChipExcerpt = styled.p`
-  ${({ theme }) => css`
-    margin: 0;
-    font-size: ${theme.fonts.xs};
-    color: ${theme.colors.shuttleGray};
-    line-height: 1.5;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-  `}
-`;
-
-export const SourceChipLink = styled.a`
-  ${({ theme }) => css`
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    font-size: ${theme.fonts.xs};
-    color: ${theme.colors.royalBlue};
-    text-decoration: none;
-
-    &:hover {
-      text-decoration: underline;
-    }
-
-    svg {
-      width: 12px;
-      height: 12px;
-    }
-  `}
-`;
-
-export const SourceChipTypeBadge = styled.span<{ $type: string }>`
-  ${({ theme, $type }) => css`
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    padding: 3px 8px;
-    border-radius: 4px;
-    font-size: 11px;
-    font-weight: 500;
-    text-transform: capitalize;
-
-    svg {
-      width: 12px;
-      height: 12px;
-    }
-
-    ${$type === "knowledge" &&
-    css`
-      background: ${theme.colors.athensGray2};
-      color: ${theme.colors.fiord};
-    `}
-
-    ${$type === "document" &&
-    css`
-      background: ${theme.colors.athensGray2};
-      color: ${theme.colors.fiord};
-    `}
-
-    ${$type === "atom" &&
-    css`
-      background: ${theme.colors.selago};
-      color: ${theme.colors.mediumPurple};
-    `}
-
-    ${$type === "taxonomy" &&
-    css`
-      background: ${theme.colors.foam};
-      color: ${theme.colors.mountainMeadow};
-    `}
-
-    ${$type === "role" &&
-    css`
-      background: ${theme.colors.provincialPink};
-      color: ${theme.colors.flamingo};
-    `}
-
-    ${$type === "url" &&
-    css`
-      background: ${theme.colors.lightSkyBlue};
-      color: ${theme.colors.royalBlue};
-    `}
-  `}
-`;
-
-export const SourceChipOpenButton = styled.button`
-  ${({ theme }) => css`
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    width: 100%;
-    padding: 8px 12px;
-    background-color: var(--web-control-styles-main_color);
-    color: ${theme.colors.white};
-    border: none;
-    border-radius: 6px;
-    font-size: ${theme.fonts.xs};
-    font-weight: 500;
-    cursor: pointer;
-    transition: background-color 0.15s;
-    margin-top: 4px;
-
-    &:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-    }
-
-    svg {
-      width: 14px;
-      height: 14px;
-    }
-  `}
+  gap: 4px;
 `;

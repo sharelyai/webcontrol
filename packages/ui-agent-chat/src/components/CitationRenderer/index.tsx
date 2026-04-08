@@ -152,3 +152,57 @@ export function createCitationTextComponent(
     );
   };
 }
+
+// Returns ReactMarkdown `components` overrides that replace [N] patterns with CitationBadge
+export function getCitationMarkdownComponents(
+  sources: Source[],
+  onSourceClick?: (sourceId: string) => void,
+) {
+  if (!sources || sources.length === 0) return undefined;
+
+  const CitationText = createCitationTextComponent(sources, onSourceClick);
+
+  const processChildren = (children: ReactNode): ReactNode => {
+    if (children == null) return children;
+    if (typeof children === "string") {
+      return <CitationText>{children}</CitationText>;
+    }
+    if (Array.isArray(children)) {
+      return children.map((child, index) =>
+        typeof child === "string" ? (
+          <CitationText key={index}>{child}</CitationText>
+        ) : (
+          child
+        ),
+      );
+    }
+    return children;
+  };
+
+  return {
+    p: ({ children }: { children?: ReactNode }) => (
+      <p>{processChildren(children)}</p>
+    ),
+    li: ({ children }: { children?: ReactNode }) => (
+      <li>{processChildren(children)}</li>
+    ),
+    h1: ({ children }: { children?: ReactNode }) => (
+      <h1>{processChildren(children)}</h1>
+    ),
+    h2: ({ children }: { children?: ReactNode }) => (
+      <h2>{processChildren(children)}</h2>
+    ),
+    h3: ({ children }: { children?: ReactNode }) => (
+      <h3>{processChildren(children)}</h3>
+    ),
+    h4: ({ children }: { children?: ReactNode }) => (
+      <h4>{processChildren(children)}</h4>
+    ),
+    strong: ({ children }: { children?: ReactNode }) => (
+      <strong>{processChildren(children)}</strong>
+    ),
+    em: ({ children }: { children?: ReactNode }) => (
+      <em>{processChildren(children)}</em>
+    ),
+  };
+}

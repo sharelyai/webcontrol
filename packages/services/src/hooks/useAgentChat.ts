@@ -82,6 +82,9 @@ export function useAgentChat(options: UseAgentChatOptions): UseAgentChatReturn {
   // Error state
   const [error, setError] = useState<string | null>(null);
 
+  // Suggested followups
+  const [suggestedFollowups, setSuggestedFollowups] = useState<string[]>([]);
+
   const { startStream, stopStream } = useAgentSSE();
 
   // Keep refs in sync with state
@@ -418,6 +421,14 @@ export function useAgentChat(options: UseAgentChatOptions): UseAgentChatReturn {
           break;
         }
 
+        case "suggested_followups": {
+          const event = data as { followups: string[] };
+          if (event.followups) {
+            setSuggestedFollowups(event.followups);
+          }
+          break;
+        }
+
         case "error": {
           const event = data as ErrorEvent;
           setError(event.error);
@@ -459,6 +470,8 @@ export function useAgentChat(options: UseAgentChatOptions): UseAgentChatReturn {
   const sendMessage = useCallback(
     async (content: string): Promise<string | null> => {
       if (!content.trim()) return null;
+
+      setSuggestedFollowups([]);
 
       const basePath = getBasePath();
       if (!basePath) {
@@ -540,12 +553,29 @@ export function useAgentChat(options: UseAgentChatOptions): UseAgentChatReturn {
     setStreamingMessageId(null);
     setIsStreaming(false);
     setError(null);
+    setSuggestedFollowups([]);
   }, []);
 
   // Clear error
   const clearError = useCallback(() => {
     setError(null);
   }, []);
+
+  // Retry last failed message
+  const retryLastMessage = useCallback(() => {
+    const msgs = [...messages];
+    // Remove last assistant message (failed/incomplete)
+    while (msgs.length > 0 && msgs[msgs.length - 1].role === "assistant") {
+      msgs.pop();
+    }
+    // Find last user message
+    const lastUserMsg = msgs[msgs.length - 1];
+    if (lastUserMsg?.role === "user" && lastUserMsg.content) {
+      setMessages(msgs.slice(0, -1));
+      setError(null);
+      sendMessage(lastUserMsg.content);
+    }
+  }, [messages, sendMessage]);
 
   // Load initial thread
   useEffect(() => {
@@ -570,5 +600,7 @@ export function useAgentChat(options: UseAgentChatOptions): UseAgentChatReturn {
     loadThread,
     resetChat,
     clearError,
+    suggestedFollowups,
+    retryLastMessage,
   };
 }

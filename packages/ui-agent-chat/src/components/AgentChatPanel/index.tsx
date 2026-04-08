@@ -1,36 +1,84 @@
-import { FormEvent, KeyboardEvent, useEffect, useRef, useState } from "react";
-import { useAgentChat } from "@sharelyai/services";
+import {
+  type FormEvent,
+  type KeyboardEvent,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
+import {
+  useAgentChat,
+  useAgentThreads,
+} from "@sharelyai/services";
+import type { AgentFeedback, Source } from "@sharelyai/services";
 import { AgentMessage } from "../AgentMessage";
 import { StreamingContent } from "../StreamingContent";
-import {
-  AgentChatWrapper,
-  ErrorBanner,
-  InputTextarea,
-  InputWrapper,
-  MessagesContainer,
-  MessageWrapper,
-  MessageAvatar,
-  MessageContent,
-  SendButton,
-  ToolCallsContainer,
-} from "../styles";
 import { ThinkingIndicator } from "../ThinkingIndicator";
 import { ToolCallCard } from "../ToolCallCard";
-import { BotIcon } from "../icons";
 import { SourcesList } from "../SourcesList";
+import { EmptyState } from "../EmptyState";
+import { HistoryModal } from "../HistoryModal";
+import { AllSourcesModal } from "../AllSourcesModal";
+import {
+  ChatWrapper,
+  ChatHeader,
+  ChatArea,
+  MessagesContainer,
+  AiRow,
+  Avatar,
+  AiContent,
+  InputArea,
+  InputRow,
+  InputField,
+  SendButton,
+  DisclaimerText,
+} from "../styles";
+import { IconButton } from "../IconButton";
+import {
+  BotIcon,
+  SendIcon,
+  StopIcon,
+  ChatBubbleIcon,
+  EditIcon,
+  HistoryIcon,
+} from "../icons";
 
 interface AgentChatPanelProps {
   spaceId: string;
   initialThreadId?: string;
   className?: string;
+  avatarSrc?: string;
+  botName?: string;
+  placeholder?: string;
+  disclaimer?: string;
+  emptyTitle?: string;
+  emptyDescription?: string;
+  onThreadChange?: (threadId: string | null) => void;
+  onSourceClick?: (source: Source) => void;
+  onFeedback?: (feedback: AgentFeedback) => void;
+  showHistory?: boolean;
+  showHeader?: boolean;
 }
 
 export function AgentChatPanel({
   spaceId,
   initialThreadId,
   className,
+  avatarSrc,
+  botName,
+  placeholder = "Ask a question...",
+  disclaimer = "AI-generated — always verify with original materials.",
+  emptyTitle,
+  emptyDescription,
+  onThreadChange,
+  onSourceClick,
+  onFeedback,
+  showHistory = true,
+  showHeader = true,
 }: AgentChatPanelProps) {
+  const agentChat = useAgentChat({ spaceId, initialThreadId });
   const {
+    threadId,
     messages,
     isStreaming,
     streamingContent,
@@ -40,103 +88,299 @@ export function AgentChatPanel({
     error,
     sendMessage,
     stopStreaming,
+    resetChat,
     clearError,
-  } = useAgentChat({ spaceId, initialThreadId });
+    suggestedFollowups,
+    retryLastMessage,
+  } = agentChat;
+
+  const { threads, fetchThreads } = useAgentThreads({ spaceId });
 
   const [inputValue, setInputValue] = useState("");
-  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [historyOpen, setHistoryOpen] = useState(false);
+  const [allSourcesData, setAllSourcesData] = useState<Source[] | null>(null);
+  const [elapsed, setElapsed] = useState(0);
 
-  // Auto-scroll to bottom
+  const chatRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLTextAreaElement>(null);
+  const prevThreadIdRef = useRef<string | null>(threadId);
+
+  // Track thread changes
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages, streamingContent, thinkingSteps, activeToolCalls]);
+    if (threadId !== prevThreadIdRef.current) {
+      prevThreadIdRef.current = threadId;
+      onThreadChange?.(threadId);
+    }
+  }, [threadId, onThreadChange]);
 
-  const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
-    if (!inputValue.trim() || isStreaming) return;
+  // Auto-scroll
+  const scroll = useCallback(() => {
+    if (chatRef.current) {
+      requestAnimationFrame(() => {
+        chatRef.current?.scrollTo({
+          top: chatRef.current.scrollHeight,
+          behavior: "smooth",
+        });
+      });
+    }
+  }, []);
 
-    const message = inputValue;
+  useEffect(scroll, [
+    messages.length,
+    streamingContent,
+    thinkingSteps,
+    activeToolCalls,
+    scroll,
+  ]);
+
+  // Elapsed timer during streaming
+  useEffect(() => {
+    if (isStreaming && !streamingContent) {
+      setElapsed(0);
+      const interval = setInterval(() => setElapsed((e) => e + 1), 1000);
+      return () => clearInterval(interval);
+    }
+  }, [isStreaming, streamingContent]);
+
+  // Fetch threads when history opens
+  useEffect(() => {
+    if (historyOpen) {
+      fetchThreads();
+    }
+  }, [historyOpen, fetchThreads]);
+
+  const handleSubmit = async (e?: FormEvent) => {
+    e?.preventDefault();
+    const text = inputValue.trim();
+    if (!text || isStreaming) return;
     setInputValue("");
-    await sendMessage(message);
+    setElapsed(0);
+    await sendMessage(text);
+    setTimeout(() => inputRef.current?.focus(), 100);
   };
 
   const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
-      handleSubmit(e as unknown as FormEvent);
+      handleSubmit();
     }
   };
 
+  const handleFollowup = (text: string) => {
+    setInputValue("");
+    setElapsed(0);
+    sendMessage(text);
+  };
+
+  const handleNewChat = () => {
+    resetChat();
+    setTimeout(() => inputRef.current?.focus(), 100);
+  };
+
+  const handleHistorySelect = (thread: { id: string }) => {
+    agentChat.loadThread(thread.id);
+  };
+
+  const isEmpty = messages.length === 0 && !isStreaming;
+  const canSend = inputValue.trim().length > 0 && !isStreaming;
+  const hasStreamingThinking =
+    isStreaming && thinkingSteps.length > 0 && !streamingContent;
+
   return (
-    <AgentChatWrapper className={className}>
-      {/* Error Banner */}
-      {error && (
-        <ErrorBanner>
-          <span>{error}</span>
-          <button onClick={clearError}>Dismiss</button>
-        </ErrorBanner>
+    <ChatWrapper className={className}>
+      {/* Header */}
+      {showHeader && (
+        <ChatHeader>
+          {showHistory ? (
+            <IconButton
+              icon={<HistoryIcon size={22} />}
+              tooltip="Chat history"
+              ariaLabel="Chat history"
+              onClick={() => setHistoryOpen(true)}
+            />
+          ) : (
+            <div />
+          )}
+          {botName && (
+            <span style={{ fontSize: 14, fontWeight: 600, color: "#101828" }}>
+              {botName}
+            </span>
+          )}
+          <IconButton
+            icon={<EditIcon size={22} />}
+            tooltip="New chat"
+            ariaLabel="New chat"
+            onClick={handleNewChat}
+          />
+        </ChatHeader>
       )}
 
-      {/* Messages */}
-      <MessagesContainer>
-        {messages.map((message) => (
-          <AgentMessage key={message.id} message={message} />
-        ))}
+      {/* History Modal */}
+      <HistoryModal
+        open={historyOpen}
+        onClose={() => setHistoryOpen(false)}
+        threads={threads}
+        activeThreadId={threadId}
+        onSelectThread={handleHistorySelect}
+        onNewChat={handleNewChat}
+      />
 
-        {/* Streaming Message */}
-        {isStreaming && (
-          <MessageWrapper $role="assistant" $isStreaming>
-            <MessageAvatar $role="assistant">
-              <BotIcon />
-            </MessageAvatar>
-            <MessageContent $role="assistant">
-              {thinkingSteps.length > 0 && (
-                <ThinkingIndicator steps={thinkingSteps} />
-              )}
+      {/* All Sources Modal */}
+      <AllSourcesModal
+        open={!!allSourcesData}
+        onClose={() => setAllSourcesData(null)}
+        sources={allSourcesData || []}
+        onSourceClick={onSourceClick}
+      />
 
-              {activeToolCalls.length > 0 && (
-                <ToolCallsContainer>
-                  {activeToolCalls.map((tc) => (
-                    <ToolCallCard key={tc.id} toolCall={tc} />
-                  ))}
-                </ToolCallsContainer>
-              )}
-
-              {streamingContent && (
-                <StreamingContent content={streamingContent} />
-              )}
-
-              {activeSources.length > 0 && (
-                <SourcesList sources={activeSources} />
-              )}
-            </MessageContent>
-          </MessageWrapper>
+      {/* Chat Area */}
+      <ChatArea ref={chatRef} role="log" aria-label="Conversation">
+        {isEmpty && (
+          <EmptyState title={emptyTitle} description={emptyDescription} />
         )}
 
-        <div ref={messagesEndRef} />
-      </MessagesContainer>
+        {messages.length > 0 && (
+          <MessagesContainer>
+            {messages.map((msg, i) => (
+              <AgentMessage
+                key={msg.id}
+                message={msg}
+                avatarSrc={avatarSrc}
+                isLast={i === messages.length - 1}
+                suggestedFollowups={
+                  i === messages.length - 1 ? suggestedFollowups : []
+                }
+                onFollowupSelect={handleFollowup}
+                onSourceClick={onSourceClick}
+                onShowAllSources={setAllSourcesData}
+                onFeedback={onFeedback}
+                onRetry={retryLastMessage}
+              />
+            ))}
+
+            {/* Streaming state */}
+            {isStreaming && (
+              <AiRow>
+                <Avatar>
+                  {avatarSrc ? (
+                    <img src={avatarSrc} alt="" />
+                  ) : (
+                    <BotIcon size={18} />
+                  )}
+                </Avatar>
+                <AiContent>
+                  {(thinkingSteps.length > 0 || activeToolCalls.length > 0) && (
+                    <div
+                      style={{
+                        marginBottom: streamingContent ? 16 : 0,
+                      }}
+                    >
+                      <ThinkingIndicator
+                        steps={thinkingSteps}
+                        toolCalls={activeToolCalls}
+                        collapsed={false}
+                        elapsed={hasStreamingThinking ? elapsed : undefined}
+                      />
+                    </div>
+                  )}
+
+                  {streamingContent && (
+                    <StreamingContent
+                      content={streamingContent}
+                      sources={activeSources}
+                      onSourceClick={(sourceId) => {
+                        const source = activeSources.find(
+                          (s) => s.id === sourceId,
+                        );
+                        if (source) onSourceClick?.(source);
+                      }}
+                    />
+                  )}
+
+                  {activeSources.length > 0 && (
+                    <SourcesList
+                      sources={activeSources}
+                      onSourceClick={onSourceClick}
+                      onShowAllSources={setAllSourcesData}
+                    />
+                  )}
+                </AiContent>
+              </AiRow>
+            )}
+          </MessagesContainer>
+        )}
+
+        {/* Error */}
+        {error && (
+          <div
+            style={{
+              maxWidth: 680,
+              margin: "16px auto",
+              padding: "12px 16px",
+              background: "rgba(240,68,56,0.06)",
+              borderRadius: 12,
+              border: "1px solid rgba(240,68,56,0.2)",
+              fontSize: 14,
+              color: "#F04438",
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            <span>{error}</span>
+            <button
+              onClick={clearError}
+              style={{
+                background: "none",
+                border: "none",
+                color: "#F04438",
+                cursor: "pointer",
+                fontWeight: 500,
+              }}
+            >
+              Dismiss
+            </button>
+          </div>
+        )}
+
+        <div style={{ flex: 1, minHeight: 20 }} aria-hidden="true" />
+      </ChatArea>
 
       {/* Input */}
-      <InputWrapper onSubmit={handleSubmit}>
-        <InputTextarea
-          value={inputValue}
-          onChange={(e) => setInputValue(e.target.value)}
-          placeholder="Ask a question..."
-          disabled={isStreaming}
-          onKeyDown={handleKeyDown}
-          rows={1}
-        />
-
-        {isStreaming ? (
-          <SendButton type="button" onClick={stopStreaming} $variant="danger">
-            Stop
-          </SendButton>
-        ) : (
-          <SendButton type="submit" disabled={!inputValue.trim()}>
-            Send
-          </SendButton>
-        )}
-      </InputWrapper>
-    </AgentChatWrapper>
+      <InputArea>
+        <InputRow>
+          <InputField
+            ref={inputRef}
+            value={inputValue}
+            onChange={(e) => setInputValue(e.target.value)}
+            placeholder={isStreaming ? "Generating response..." : placeholder}
+            disabled={isStreaming}
+            onKeyDown={handleKeyDown}
+            rows={1}
+            aria-label={placeholder}
+          />
+          {isStreaming ? (
+            <SendButton
+              type="button"
+              onClick={stopStreaming}
+              $variant="danger"
+              aria-label="Stop generating"
+            >
+              <StopIcon size={18} />
+            </SendButton>
+          ) : (
+            <SendButton
+              type="button"
+              onClick={() => handleSubmit()}
+              disabled={!canSend}
+              aria-label="Send message"
+            >
+              <SendIcon size={18} />
+            </SendButton>
+          )}
+        </InputRow>
+        <DisclaimerText>{disclaimer}</DisclaimerText>
+      </InputArea>
+    </ChatWrapper>
   );
 }

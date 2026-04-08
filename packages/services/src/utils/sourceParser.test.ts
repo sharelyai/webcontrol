@@ -17,12 +17,12 @@ describe('parseSourceString', () => {
 
   it('handles filename with colons', () => {
     const result = parseSourceString('0:file:with:colons.html:uuid-456');
-    expect(result).toEqual({ pageNumber: 0, filename: 'file:with:colons.html', knowledgeId: 'uuid-456' });
+    expect(result).toEqual({ pageNumber: 1, filename: 'file:with:colons.html', knowledgeId: 'uuid-456' });
   });
 
-  it('defaults pageNumber to 0 for non-numeric first part', () => {
+  it('defaults pageNumber to 1 for non-numeric first part', () => {
     const result = parseSourceString('abc:file.pdf:uuid');
-    expect(result.pageNumber).toBe(0);
+    expect(result.pageNumber).toBe(1);
   });
 });
 

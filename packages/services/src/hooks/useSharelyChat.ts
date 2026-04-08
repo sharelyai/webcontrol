@@ -382,5 +382,7 @@ export function useSharelyChat(
     loadThread,
     resetChat,
     clearError,
+    suggestedFollowups: [],
+    retryLastMessage: () => {},
   };
 }

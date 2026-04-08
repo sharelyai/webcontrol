@@ -56,6 +56,8 @@ export const Anchor = ({ node, ...props }: any) => {
     constants.PAGE_NUMBER_DOCUMENT_DOWNLOAD_URL,
   );
   const title = (() => {
+    const metadataTitle = findSourceMetadata?.metadata?.title;
+    if (metadataTitle) return metadataTitle;
     const source = findSourceMetadata?.metadata?.source;
     const pdfTitle = findSourceMetadata?.metadata?.["pdf.info.Title"];
     if (pdfTitle) return pdfTitle;
@@ -64,7 +66,9 @@ export const Anchor = ({ node, ...props }: any) => {
     }
     return source;
   })();
-  const pageNumber = findSourceMetadata?.metadata?.["loc.pageNumber"];
+  const pageNumber =
+    findSourceMetadata?.metadata?.["loc.pageNumber"] ??
+    findSourceMetadata?.metadata?.pageNumber;
   const relevancePercentage = (findSourceMetadata?.score * 100).toFixed(3);
   const rawPreview = findSourceMetadata?.metadata?.text;
   const contentPreview = rawPreview

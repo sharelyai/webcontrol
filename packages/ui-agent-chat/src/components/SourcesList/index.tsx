@@ -1,237 +1,91 @@
-import { useState, useCallback } from "react";
 import type { Source } from "@sharelyai/services";
 import { useSourceDownload } from "@sharelyai/services";
 import {
-  SourceChipsContainer,
-  SourceChipsHeader,
-  SourceChipsContent,
-  SourceChip,
-  SourceChipHeader,
-  SourceTypeIcon,
+  SourcesSection,
+  SourcesSectionLabel,
+  SourceChipsRow,
+  SourceChipButton,
   SourceChipTitle,
-  SourceChipScore,
-  SourceChipExpandIcon,
-  SourceChipContent,
-  SourceChipRow,
-  SourceChipLabel,
-  SourceChipValue,
-  SourceChipExcerpt,
-  SourceChipLink,
-  SourceChipTypeBadge,
-  SourceChipOpenButton,
+  SourceChipRelevance,
+  SourceMoreChip,
 } from "../styles";
-import {
-  FileTextIcon,
-  AtomIcon,
-  TagIcon,
-  UsersIcon,
-  LinkIcon,
-  ChevronDownIcon,
-  ChevronUpIcon,
-  ExternalLinkIcon,
-  LoaderIcon,
-} from "../icons";
+import { LinkIcon, FileTextIcon } from "../icons";
 
-interface SourcesListProps {
-  sources: Source[];
-  highlightedSourceId?: string | null;
-  defaultCollapsed?: boolean;
-}
+const MAX_VISIBLE = 5;
 
-function getSourceTypeIcon(type: Source["type"]) {
-  switch (type) {
-    case "knowledge":
-    case "document":
-      return <FileTextIcon />;
-    case "atom":
-      return <AtomIcon />;
-    case "taxonomy":
-      return <TagIcon />;
-    case "role":
-      return <UsersIcon />;
-    case "url":
-      return <LinkIcon />;
-    default:
-      return <FileTextIcon />;
-  }
-}
-
-function truncateTitle(title: string, maxLength = 40): string {
+function truncateTitle(title: string, maxLength = 30): string {
   if (title.length <= maxLength) return title;
   return title.slice(0, maxLength) + "...";
 }
 
+interface SourcesListProps {
+  sources: Source[];
+  onSourceClick?: (source: Source) => void;
+  onShowAllSources?: (sources: Source[]) => void;
+  /** @deprecated No longer used in new design */
+  defaultCollapsed?: boolean;
+  /** @deprecated No longer used in new design */
+  highlightedSourceId?: string | null;
+}
+
 export function SourcesList({
   sources,
-  highlightedSourceId,
-  defaultCollapsed = true,
+  onSourceClick,
+  onShowAllSources,
 }: SourcesListProps) {
-  const [isCollapsed, setIsCollapsed] = useState(defaultCollapsed);
-  const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
-  const { downloadSource, isLoading } = useSourceDownload();
-
-  const toggleCollapsed = useCallback(() => {
-    setIsCollapsed((prev) => !prev);
-  }, []);
-
-  const toggleExpanded = useCallback((sourceId: string) => {
-    setExpandedIds((prev) => {
-      const next = new Set(prev);
-      if (next.has(sourceId)) {
-        next.delete(sourceId);
-      } else {
-        next.add(sourceId);
-      }
-      return next;
-    });
-  }, []);
-
-  const handleOpenDocument = useCallback(
-    (e: React.MouseEvent, source: Source) => {
-      e.stopPropagation();
-      downloadSource(source);
-    },
-    [downloadSource],
-  );
+  const { downloadSource } = useSourceDownload();
 
   if (sources.length === 0) return null;
 
+  const sorted = [...sources].sort((a, b) => {
+    const aScore = a.metadata?.similarity ?? 0;
+    const bScore = b.metadata?.similarity ?? 0;
+    return bScore - aScore;
+  });
+  const visible = sorted.slice(0, MAX_VISIBLE);
+  const remaining = sorted.length - MAX_VISIBLE;
+
+  const handleClick = (source: Source) => {
+    if (onSourceClick) {
+      onSourceClick(source);
+    } else {
+      downloadSource(source);
+    }
+  };
+
   return (
-    <SourceChipsContainer>
-      <SourceChipsHeader onClick={toggleCollapsed} $collapsed={isCollapsed}>
-        <FileTextIcon />
-        <h4>Sources</h4>
-        <span>({sources.length})</span>
-        <SourceChipExpandIcon $expanded={!isCollapsed}>
-          {isCollapsed ? <ChevronDownIcon /> : <ChevronUpIcon />}
-        </SourceChipExpandIcon>
-      </SourceChipsHeader>
+    <SourcesSection>
+      <SourcesSectionLabel>
+        <LinkIcon size={18} />
+        Sources
+        <span style={{ opacity: 0.7 }}>({sources.length})</span>
+      </SourcesSectionLabel>
+      <SourceChipsRow>
+        {visible.map((source) => {
+          const similarity = source.metadata?.similarity;
+          const pct =
+            similarity !== undefined ? Math.round(similarity * 100) : null;
 
-      {!isCollapsed && (
-        <SourceChipsContent>
-          {sources.map((source, index) => {
-            const isExpanded = expandedIds.has(source.id);
-            const isHighlighted = highlightedSourceId === source.id;
-            const similarity = source.metadata?.similarity;
-            const similarityPercent =
-              similarity !== undefined ? Math.round(similarity * 100) : null;
-
-            return (
-              <SourceChip
-                key={source.id}
-                $expanded={isExpanded}
-                id={`source-${source.id}`}
-                style={{
-                  boxShadow: isHighlighted
-                    ? "0 0 0 2px var(--color-cornflowerBlue, #6495ED)"
-                    : undefined,
-                }}
-              >
-                <SourceChipHeader onClick={() => toggleExpanded(source.id)}>
-                  <SourceTypeIcon $type={source.type}>
-                    {getSourceTypeIcon(source.type)}
-                  </SourceTypeIcon>
-
-                  <SourceChipTitle>
-                    [{index + 1}] {truncateTitle(source.title)}
-                  </SourceChipTitle>
-
-                  {similarityPercent !== null && (
-                    <SourceChipScore>{similarityPercent}%</SourceChipScore>
-                  )}
-
-                  <SourceChipExpandIcon $expanded={isExpanded}>
-                    <ChevronDownIcon />
-                  </SourceChipExpandIcon>
-                </SourceChipHeader>
-
-                {isExpanded && (
-                  <SourceChipContent>
-                    <SourceChipRow>
-                      <SourceChipLabel>Type</SourceChipLabel>
-                      <SourceChipTypeBadge $type={source.type}>
-                        {getSourceTypeIcon(source.type)}
-                        {source.type}
-                      </SourceChipTypeBadge>
-                    </SourceChipRow>
-
-                    <SourceChipRow>
-                      <SourceChipLabel>Title</SourceChipLabel>
-                      <SourceChipValue>{source.title}</SourceChipValue>
-                    </SourceChipRow>
-
-                    {source.metadata?.filename && (
-                      <SourceChipRow>
-                        <SourceChipLabel>File</SourceChipLabel>
-                        <SourceChipValue>
-                          {source.metadata.filename}
-                        </SourceChipValue>
-                      </SourceChipRow>
-                    )}
-
-                    {source.metadata?.pageNumber && (
-                      <SourceChipRow>
-                        <SourceChipLabel>Page</SourceChipLabel>
-                        <SourceChipValue>
-                          {source.metadata.pageNumber}
-                        </SourceChipValue>
-                      </SourceChipRow>
-                    )}
-
-                    {source.metadata?.knowledgeType && (
-                      <SourceChipRow>
-                        <SourceChipLabel>Knowledge Type</SourceChipLabel>
-                        <SourceChipValue>
-                          {source.metadata.knowledgeType}
-                        </SourceChipValue>
-                      </SourceChipRow>
-                    )}
-
-                    {source.metadata?.atomType && (
-                      <SourceChipRow>
-                        <SourceChipLabel>Atom Type</SourceChipLabel>
-                        <SourceChipValue>
-                          {source.metadata.atomType}
-                        </SourceChipValue>
-                      </SourceChipRow>
-                    )}
-
-                    {(source.snippet || source.excerpt) && (
-                      <SourceChipRow>
-                        <SourceChipLabel>Excerpt</SourceChipLabel>
-                        <SourceChipExcerpt>
-                          {source.snippet || source.excerpt}
-                        </SourceChipExcerpt>
-                      </SourceChipRow>
-                    )}
-
-                    {source.url && (
-                      <SourceChipLink
-                        href={source.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        <LinkIcon />
-                        Open link
-                      </SourceChipLink>
-                    )}
-
-                    {(source.metadata?.knowledgeId || source.id) && (
-                      <SourceChipOpenButton
-                        onClick={(e) => handleOpenDocument(e, source)}
-                        disabled={isLoading}
-                      >
-                        {isLoading ? <LoaderIcon /> : <ExternalLinkIcon />}
-                        {isLoading ? "Opening..." : "Open Document"}
-                      </SourceChipOpenButton>
-                    )}
-                  </SourceChipContent>
-                )}
-              </SourceChip>
-            );
-          })}
-        </SourceChipsContent>
-      )}
-    </SourceChipsContainer>
+          return (
+            <SourceChipButton
+              key={source.id}
+              onClick={() => handleClick(source)}
+              aria-label={`${source.title}${pct !== null ? `, ${pct}% relevant` : ""}`}
+            >
+              <FileTextIcon size={18} />
+              <SourceChipTitle>{truncateTitle(source.title)}</SourceChipTitle>
+              {pct !== null && (
+                <SourceChipRelevance>{pct}%</SourceChipRelevance>
+              )}
+            </SourceChipButton>
+          );
+        })}
+        {remaining > 0 && (
+          <SourceMoreChip onClick={() => onShowAllSources?.(sources)}>
+            +{remaining} more
+          </SourceMoreChip>
+        )}
+      </SourceChipsRow>
+    </SourcesSection>
   );
 }

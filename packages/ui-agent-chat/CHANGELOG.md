@@ -1,5 +1,25 @@
 # @sharelyai/ui-agent-chat
 
+## 0.0.10
+
+### Patch Changes
+
+- Updated dependencies
+  - @sharelyai/services@0.0.12
+  - @sharelyai/ui-shared@0.0.10
+
+## 0.0.9
+
+### Patch Changes
+
+- - ui-shared: Fix ReactMarkdown component merging so consumer `components` prop merges with built-in Anchor/Li instead of overriding them
+  - ui-shared: Add metadata title and pageNumber fallbacks to Anchor component
+  - ui-agent-chat: Use ReactMarkdown from ui-shared instead of raw react-markdown (adds emoji, GFM, rehypeRaw support)
+  - ui-agent-chat: Fix citation rendering - [N] patterns now render as CitationBadge components with hover popovers
+  - ui-agent-chat: Enrich ThinkingIndicator to show tool calls (search queries, result counts) instead of generic "Continuing reasoning" steps
+- Updated dependencies
+  - @sharelyai/ui-shared@0.0.9
+
 ## 0.0.8
 
 ### Patch Changes

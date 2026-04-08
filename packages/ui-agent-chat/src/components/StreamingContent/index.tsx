@@ -1,15 +1,31 @@
-import ReactMarkdown from "react-markdown";
-import { Cursor, StreamingWrapper } from "../styles";
+import { useMemo } from "react";
+import { ReactMarkdown } from "@sharelyai/ui-shared";
+import type { Source } from "@sharelyai/services";
+import { ResponseText, Cursor } from "../styles";
+import { getCitationMarkdownComponents } from "../CitationRenderer";
 
 interface StreamingContentProps {
   content: string;
+  sources?: Source[];
+  onSourceClick?: (sourceId: string) => void;
 }
 
-export function StreamingContent({ content }: StreamingContentProps) {
+export function StreamingContent({
+  content,
+  sources,
+  onSourceClick,
+}: StreamingContentProps) {
+  const markdownComponents = useMemo(
+    () => getCitationMarkdownComponents(sources || [], onSourceClick),
+    [sources, onSourceClick],
+  );
+
   return (
-    <StreamingWrapper>
-      <ReactMarkdown>{content}</ReactMarkdown>
+    <ResponseText>
+      <ReactMarkdown components={markdownComponents}>
+        {content}
+      </ReactMarkdown>
       <Cursor />
-    </StreamingWrapper>
+    </ResponseText>
   );
 }

@@ -45,10 +45,13 @@ export type ReactMarkdownProps = Parameters<typeof ReactMarkdownLibrary>[0] & {
 };
 
 export const ReactMarkdown = (props: ReactMarkdownProps) => {
-  const { customProps = {}, ...rest } = props;
+  const { customProps = {}, components: consumerComponents, ...rest } = props;
   return (
     <ReactMarkdownLibrary
-      components={getMarkdownComponents(customProps)}
+      components={{
+        ...getMarkdownComponents(customProps),
+        ...consumerComponents,
+      }}
       remarkPlugins={[emoji, remarkGfm]}
       rehypePlugins={[rehypeRaw]}
       skipHtml={false}

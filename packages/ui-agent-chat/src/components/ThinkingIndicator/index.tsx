@@ -1,85 +1,290 @@
-import { useState } from "react";
-import ReactMarkdown from "react-markdown";
-import type { ThinkingStep } from "@sharelyai/services";
+import { useState, useMemo } from "react";
+import type { ThinkingStep, ToolCall } from "@sharelyai/services";
 import {
-  BrainIcon,
-  CheckIcon,
-  ChevronDownIcon,
-  ChevronUpIcon,
-  SpinnerIcon,
-  XIcon,
-} from "../icons";
-import {
-  ExpandIcon,
-  StepContent,
-  StepDuration,
-  StepHeader,
-  StepStatus,
-  StepTitle,
-  ThinkingHeader,
-  ThinkingIcon,
-  ThinkingStepItem,
-  ThinkingStepsList,
-  ThinkingTitle,
-  ThinkingWrapper,
+  ThinkingToggle,
+  ThinkingText,
+  ThinkingSpinner,
+  ThinkingCard,
+  ThinkingTimeline,
+  ThinkingTimelineItem,
+  ThinkingTimelineIcon,
 } from "../styles";
+import { CheckIcon, XIcon, ExpandMoreIcon } from "../icons";
 
 interface ThinkingIndicatorProps {
   steps: ThinkingStep[];
+  toolCalls?: ToolCall[];
   collapsed?: boolean;
+  sourceCount?: number;
+  elapsed?: number;
+  failed?: boolean;
+}
+
+// Format a tool call name for display: "search_knowledge" → "Search Knowledge"
+function formatToolName(name: string): string {
+  return name
+    .replace(/_/g, " ")
+    .replace(/\b\w/g, (c) => c.toUpperCase());
+}
+
+// Extract a short description from tool call input
+function getToolSummary(tc: ToolCall): string {
+  const label = formatToolName(tc.name);
+  const input = tc.input;
+  // Show the query/text for search-like tools
+  const query =
+    (input?.query as string) ||
+    (input?.text as string) ||
+    (input?.knowledgeId as string);
+  if (query) {
+    const truncated =
+      query.length > 50 ? query.slice(0, 47) + "..." : query;
+    return `${label}: "${truncated}"`;
+  }
+  return label;
+}
+
+// Extract result count from tool output
+function getResultInfo(tc: ToolCall): string | null {
+  if (tc.status !== "completed" || !tc.output) return null;
+  const out = tc.output as Record<string, unknown>;
+  if (typeof out.totalResults === "number") {
+    return `${out.totalResults} result${out.totalResults !== 1 ? "s" : ""}`;
+  }
+  if (Array.isArray(out.sources)) {
+    return `${out.sources.length} source${out.sources.length !== 1 ? "s" : ""}`;
+  }
+  if (Array.isArray(out.sourcesMetadata)) {
+    return `${out.sourcesMetadata.length} source${out.sourcesMetadata.length !== 1 ? "s" : ""}`;
+  }
+  if (out.title) {
+    const title = out.title as string;
+    return title.length > 40 ? title.slice(0, 37) + "..." : title;
+  }
+  return null;
 }
 
 export function ThinkingIndicator({
   steps,
-  collapsed = false,
+  toolCalls = [],
+  collapsed: initialCollapsed = true,
+  sourceCount,
+  elapsed,
+  failed = false,
 }: ThinkingIndicatorProps) {
-  const [isExpanded, setIsExpanded] = useState(!collapsed);
+  const [open, setOpen] = useState(!initialCollapsed);
 
-  const activeStep = steps.find((s) => s.status === "running");
-  const completedCount = steps.filter((s) => s.status === "completed").length;
+  // Use tool calls as timeline items when available, fall back to thinking steps
+  const useToolCalls = toolCalls.length > 0;
 
-  if (steps.length === 0) return null;
+  const completedCount = useToolCalls
+    ? toolCalls.filter((tc) => tc.status === "completed").length
+    : steps.filter((s) => s.status === "completed").length;
+
+  const totalItems = useToolCalls ? toolCalls.length : steps.length;
+
+  const isAllDone = useToolCalls
+    ? toolCalls.length > 0 &&
+      toolCalls.every((tc) => tc.status !== "running") &&
+      steps.every((s) => s.status !== "running")
+    : steps.length > 0 && steps.every((s) => s.status !== "running");
+
+  const hasRunning = useToolCalls
+    ? toolCalls.some((tc) => tc.status === "running") ||
+      steps.some((s) => s.status === "running")
+    : steps.some((s) => s.status === "running");
+
+  if (steps.length === 0 && toolCalls.length === 0) return null;
+
+  const statusText = failed
+    ? "Couldn't complete search"
+    : isAllDone
+      ? sourceCount !== undefined
+        ? `Answered from ${sourceCount} sources`
+        : `Completed ${completedCount} steps`
+      : useToolCalls
+        ? toolCalls.find((tc) => tc.status === "running")
+          ? formatToolName(
+              toolCalls.find((tc) => tc.status === "running")!.name,
+            )
+          : "Processing..."
+        : steps.find((s) => s.status === "running")?.title || "Processing...";
 
   return (
-    <ThinkingWrapper>
-      <ThinkingHeader onClick={() => setIsExpanded(!isExpanded)}>
-        <ThinkingIcon $spinning={!!activeStep}>
-          {activeStep ? <SpinnerIcon /> : <BrainIcon />}
-        </ThinkingIcon>
-        <ThinkingTitle>
-          {activeStep
-            ? activeStep.title
-            : `Completed ${completedCount} reasoning step${completedCount !== 1 ? "s" : ""}`}
-        </ThinkingTitle>
-        <ExpandIcon>
-          {isExpanded ? <ChevronUpIcon /> : <ChevronDownIcon />}
-        </ExpandIcon>
-      </ThinkingHeader>
+    <div>
+      <ThinkingToggle
+        onClick={() => setOpen(!open)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            setOpen(!open);
+          }
+        }}
+        aria-expanded={open}
+        aria-label={`${statusText}. Click to see details.`}
+      >
+        <ThinkingText
+          key={failed ? "fail" : isAllDone ? "done" : completedCount}
+          style={failed ? { color: "#F04438" } : undefined}
+        >
+          {statusText}
+        </ThinkingText>
+        {hasRunning && !failed && <ThinkingSpinner />}
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 6,
+            flexShrink: 0,
+          }}
+        >
+          {hasRunning && !failed && elapsed !== undefined && elapsed > 2 && (
+            <span style={{ fontSize: 14, color: "#98A2B3" }}>{elapsed}s</span>
+          )}
+          <ExpandMoreIcon
+            size={22}
+            style={{
+              color: "#98A2B3",
+              transform: open ? "rotate(180deg)" : "rotate(0deg)",
+              transition: "transform 0.2s ease",
+            }}
+          />
+        </div>
+      </ThinkingToggle>
 
-      {isExpanded && (
-        <ThinkingStepsList>
-          {steps.map((step) => (
-            <ThinkingStepItem key={step.id} $status={step.status}>
-              <StepHeader className="step-header">
-                <StepStatus $status={step.status}>
-                  {step.status === "running" && <SpinnerIcon />}
-                  {step.status === "completed" && <CheckIcon />}
-                  {step.status === "failed" && <XIcon />}
-                </StepStatus>
-                <StepTitle>{step.title}</StepTitle>
-                {step.durationMs !== undefined && (
-                  <StepDuration>{step.durationMs}ms</StepDuration>
-                )}
-              </StepHeader>
-              {step.content && (
-                <StepContent>
-                  <ReactMarkdown>{step.content}</ReactMarkdown>
-                </StepContent>
-              )}
-            </ThinkingStepItem>
-          ))}
-        </ThinkingStepsList>
+      {open && (
+        <ThinkingCard role="list" aria-label="Processing steps">
+          <ThinkingTimeline>
+            {useToolCalls
+              ? toolCalls.map((tc) => {
+                  const isCompleted = tc.status === "completed";
+                  const isRunning = tc.status === "running";
+                  const isError = tc.status === "error";
+                  const resultInfo = getResultInfo(tc);
+
+                  return (
+                    <ThinkingTimelineItem key={tc.id} role="listitem">
+                      <ThinkingTimelineIcon>
+                        {isCompleted ? (
+                          <CheckIcon
+                            size={18}
+                            style={{ color: "#12B76A" }}
+                          />
+                        ) : isRunning ? (
+                          <ThinkingSpinner
+                            style={{ width: 14, height: 14 }}
+                          />
+                        ) : isError ? (
+                          <XIcon size={18} style={{ color: "#F04438" }} />
+                        ) : (
+                          <span
+                            style={{
+                              width: 6,
+                              height: 6,
+                              borderRadius: "50%",
+                              background: "#D0D5DD",
+                            }}
+                          />
+                        )}
+                      </ThinkingTimelineIcon>
+                      <span
+                        style={{
+                          fontSize: 14,
+                          color: isCompleted
+                            ? "#344054"
+                            : isError
+                              ? "#F04438"
+                              : "#667085",
+                          flex: 1,
+                          minWidth: 0,
+                        }}
+                      >
+                        {getToolSummary(tc)}
+                        {resultInfo && (
+                          <span
+                            style={{
+                              marginLeft: 6,
+                              fontSize: 12,
+                              color: "#98A2B3",
+                            }}
+                          >
+                            → {resultInfo}
+                          </span>
+                        )}
+                        {tc.durationMs !== undefined && isCompleted && (
+                          <span
+                            style={{
+                              marginLeft: 8,
+                              fontSize: 12,
+                              color: "#98A2B3",
+                            }}
+                          >
+                            {(tc.durationMs / 1000).toFixed(1)}s
+                          </span>
+                        )}
+                      </span>
+                    </ThinkingTimelineItem>
+                  );
+                })
+              : steps.map((step) => {
+                  const isCompleted = step.status === "completed";
+                  const isRunning = step.status === "running";
+                  const isFailed = step.status === "failed";
+
+                  return (
+                    <ThinkingTimelineItem key={step.id} role="listitem">
+                      <ThinkingTimelineIcon>
+                        {isCompleted ? (
+                          <CheckIcon
+                            size={18}
+                            style={{ color: "#12B76A" }}
+                          />
+                        ) : isRunning ? (
+                          <ThinkingSpinner
+                            style={{ width: 14, height: 14 }}
+                          />
+                        ) : isFailed ? (
+                          <XIcon size={18} style={{ color: "#F04438" }} />
+                        ) : (
+                          <span
+                            style={{
+                              width: 6,
+                              height: 6,
+                              borderRadius: "50%",
+                              background: "#D0D5DD",
+                            }}
+                          />
+                        )}
+                      </ThinkingTimelineIcon>
+                      <span
+                        style={{
+                          fontSize: 14,
+                          color: isCompleted
+                            ? "#344054"
+                            : isFailed
+                              ? "#F04438"
+                              : "#667085",
+                        }}
+                      >
+                        {step.title}
+                        {step.durationMs !== undefined && isCompleted && (
+                          <span
+                            style={{
+                              marginLeft: 8,
+                              fontSize: 12,
+                              color: "#98A2B3",
+                            }}
+                          >
+                            {(step.durationMs / 1000).toFixed(1)}s
+                          </span>
+                        )}
+                      </span>
+                    </ThinkingTimelineItem>
+                  );
+                })}
+          </ThinkingTimeline>
+        </ThinkingCard>
       )}
-    </ThinkingWrapper>
+    </div>
   );
 }

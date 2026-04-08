@@ -8,14 +8,13 @@ import {
   XIcon,
 } from "../icons";
 import {
-  ExpandIcon,
-  ToolCallDetails,
-  ToolCallHeader,
   ToolCallWrapper,
-  ToolDuration,
-  ToolIconStyled,
-  ToolName,
-  ToolSection,
+  ToolCallHeader,
+  ToolCallName,
+  ToolCallStatus,
+  ToolCallDuration,
+  ToolCallDetails,
+  ToolCallJson,
 } from "../styles";
 
 interface ToolCallCardProps {
@@ -36,32 +35,38 @@ export function ToolCallCard({ toolCall }: ToolCallCardProps) {
   }[toolCall.status];
 
   return (
-    <ToolCallWrapper $status={toolCall.status}>
+    <ToolCallWrapper $error={toolCall.status === "error"}>
       <ToolCallHeader onClick={() => setIsExpanded(!isExpanded)}>
-        <ToolIconStyled $status={toolCall.status}>{statusIcon}</ToolIconStyled>
-        <ToolName>{formatToolName(toolCall.name)}</ToolName>
+        <ToolCallStatus>{statusIcon}</ToolCallStatus>
+        <ToolCallName>{formatToolName(toolCall.name)}</ToolCallName>
         {toolCall.durationMs !== undefined && (
-          <ToolDuration>{toolCall.durationMs}ms</ToolDuration>
+          <ToolCallDuration>
+            {(toolCall.durationMs / 1000).toFixed(1)}s
+          </ToolCallDuration>
         )}
-        <ExpandIcon>
+        <span style={{ marginLeft: "auto", display: "flex" }}>
           {isExpanded ? <ChevronUpIcon /> : <ChevronDownIcon />}
-        </ExpandIcon>
+        </span>
       </ToolCallHeader>
 
       {isExpanded && (
         <ToolCallDetails>
-          <ToolSection>
-            <h4>Input</h4>
-            <pre>{JSON.stringify(toolCall.input, null, 2)}</pre>
-          </ToolSection>
+          <div>
+            <h4 style={{ fontSize: 12, fontWeight: 500, marginBottom: 6, color: "#667085" }}>
+              Input
+            </h4>
+            <ToolCallJson>{JSON.stringify(toolCall.input, null, 2)}</ToolCallJson>
+          </div>
 
           {toolCall.status !== "running" && (
-            <ToolSection>
-              <h4>{toolCall.error ? "Error" : "Output"}</h4>
-              <pre>
+            <div style={{ marginTop: 8 }}>
+              <h4 style={{ fontSize: 12, fontWeight: 500, marginBottom: 6, color: "#667085" }}>
+                {toolCall.error ? "Error" : "Output"}
+              </h4>
+              <ToolCallJson>
                 {toolCall.error || JSON.stringify(toolCall.output, null, 2)}
-              </pre>
-            </ToolSection>
+              </ToolCallJson>
+            </div>
           )}
         </ToolCallDetails>
       )}

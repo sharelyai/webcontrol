@@ -1,76 +1,129 @@
-import ReactMarkdown from "react-markdown";
-import type { AgentMessage as AgentMessageType } from "@sharelyai/services";
-import { BotIcon, UserIcon } from "../icons";
-import { SourcesList } from "../SourcesList";
-import {
-  MessageAvatar,
-  MessageContent,
-  MessageMeta,
-  MessageText,
-  MessageWrapper,
-  ToolCallsContainer,
-} from "../styles";
+import { useMemo, useCallback } from "react";
+import { ReactMarkdown } from "@sharelyai/ui-shared";
+import type { AgentMessage as AgentMessageType, AgentFeedback, Source } from "@sharelyai/services";
+import { UserBubble, AiRow, Avatar, AiContent, ResponseText } from "../styles";
 import { ThinkingIndicator } from "../ThinkingIndicator";
 import { ToolCallCard } from "../ToolCallCard";
+import { SourcesList } from "../SourcesList";
+import { ActionBar } from "../ActionBar";
+import { SuggestedFollowups } from "../SuggestedFollowups";
+import { ErrorMessage } from "../ErrorMessage";
+import { BotIcon, UserIcon } from "../icons";
+import { getCitationMarkdownComponents } from "../CitationRenderer";
 
 interface AgentMessageProps {
   message: AgentMessageType;
+  avatarSrc?: string;
+  suggestedFollowups?: string[];
+  onFollowupSelect?: (text: string) => void;
+  onSourceClick?: (source: Source) => void;
+  onShowAllSources?: (sources: Source[]) => void;
+  onFeedback?: (feedback: AgentFeedback) => void;
+  onRetry?: () => void;
+  isLast?: boolean;
 }
 
-function formatTime(dateString: string): string {
-  const date = new Date(dateString);
-  return date.toLocaleTimeString(undefined, {
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-}
-
-export function AgentMessage({ message }: AgentMessageProps) {
+export function AgentMessage({
+  message,
+  avatarSrc,
+  suggestedFollowups = [],
+  onFollowupSelect,
+  onSourceClick,
+  onShowAllSources,
+  onFeedback,
+  onRetry,
+  isLast = false,
+}: AgentMessageProps) {
   const isUser = message.role === "user";
 
+  const handleCitationClick = useCallback(
+    (sourceId: string) => {
+      const source = message.sources.find((s) => s.id === sourceId);
+      if (source) onSourceClick?.(source);
+    },
+    [message.sources, onSourceClick],
+  );
+
+  const markdownComponents = useMemo(
+    () => getCitationMarkdownComponents(message.sources, handleCitationClick),
+    [message.sources, handleCitationClick],
+  );
+
+  if (isUser) {
+    return (
+      <div style={{ display: "flex", justifyContent: "flex-end" }}>
+        <UserBubble>{message.content}</UserBubble>
+      </div>
+    );
+  }
+
+  // Check for error state
+  if (!message.content && message.finishReason === "error") {
+    return (
+      <AiRow>
+        <Avatar>
+          {avatarSrc ? <img src={avatarSrc} alt="" /> : <BotIcon size={18} />}
+        </Avatar>
+        <AiContent>
+          <ErrorMessage onRetry={isLast ? onRetry : undefined} />
+        </AiContent>
+      </AiRow>
+    );
+  }
+
   return (
-    <MessageWrapper $role={message.role}>
-      <MessageAvatar $role={message.role}>
-        {isUser ? <UserIcon /> : <BotIcon />}
-      </MessageAvatar>
-
-      <MessageContent $role={message.role}>
-        {/* Thinking Steps (assistant only) */}
-        {!isUser && message.thinkingSteps.length > 0 && (
-          <ThinkingIndicator steps={message.thinkingSteps} collapsed />
+    <AiRow>
+      <Avatar>
+        {avatarSrc ? <img src={avatarSrc} alt="" /> : <BotIcon size={18} />}
+      </Avatar>
+      <AiContent>
+        {/* Thinking Steps + Tool Calls */}
+        {(message.thinkingSteps.length > 0 || message.toolCalls.length > 0) && (
+          <div style={{ marginBottom: message.content ? 16 : 0 }}>
+            <ThinkingIndicator
+              steps={message.thinkingSteps}
+              toolCalls={message.toolCalls}
+              collapsed
+              sourceCount={message.sources.length || undefined}
+            />
+          </div>
         )}
 
-        {/* Tool Calls (assistant only) */}
-        {!isUser && message.toolCalls.length > 0 && (
-          <ToolCallsContainer>
-            {message.toolCalls.map((tc) => (
-              <ToolCallCard key={tc.id} toolCall={tc} />
-            ))}
-          </ToolCallsContainer>
-        )}
-
-        {/* Message Text */}
+        {/* Message Content */}
         {message.content && (
-          <MessageText $role={message.role}>
-            <ReactMarkdown>{message.content}</ReactMarkdown>
-          </MessageText>
+          <ResponseText>
+            <ReactMarkdown components={markdownComponents}>
+              {message.content}
+            </ReactMarkdown>
+          </ResponseText>
         )}
 
         {/* Sources */}
-        {!isUser && message.sources.length > 0 && (
-          <SourcesList sources={message.sources} />
+        {message.sources.length > 0 && (
+          <SourcesList
+            sources={message.sources}
+            onSourceClick={onSourceClick}
+            onShowAllSources={onShowAllSources}
+          />
         )}
 
-        {/* Metadata */}
-        <MessageMeta>
-          <span className="timestamp">{formatTime(message.createdAt)}</span>
-          {message.tokenUsage && (
-            <span className="tokens">
-              {message.tokenUsage.totalTokens} tokens
-            </span>
-          )}
-        </MessageMeta>
-      </MessageContent>
-    </MessageWrapper>
+        {/* Action Bar */}
+        {message.content && (
+          <ActionBar
+            messageId={message.id}
+            content={message.content}
+            onFeedback={onFeedback}
+          />
+        )}
+
+        {/* Suggested Followups (only for last message) */}
+        {isLast && suggestedFollowups.length > 0 && onFollowupSelect && (
+          <SuggestedFollowups
+            questions={suggestedFollowups}
+            onSelect={onFollowupSelect}
+          />
+        )}
+      </AiContent>
+    </AiRow>
   );
 }
