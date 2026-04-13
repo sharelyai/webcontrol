@@ -96,18 +96,18 @@ export function ThinkingIndicator({
 
   if (steps.length === 0 && toolCalls.length === 0) return null;
 
+  // Show the last running tool's full summary, or the last completed one
+  const runningTool = [...toolCalls].reverse().find((tc) => tc.status === "running");
+  const lastTool = runningTool || [...toolCalls].reverse().find((tc) => tc.status === "completed");
+
   const statusText = failed
     ? "Couldn't complete search"
     : isAllDone
       ? sourceCount !== undefined
         ? `Answered from ${sourceCount} sources`
         : `Completed ${completedCount} steps`
-      : useToolCalls
-        ? toolCalls.find((tc) => tc.status === "running")
-          ? formatToolName(
-              toolCalls.find((tc) => tc.status === "running")!.name,
-            )
-          : "Processing..."
+      : useToolCalls && lastTool
+        ? getToolSummary(lastTool) + (runningTool ? "..." : "")
         : steps.find((s) => s.status === "running")?.title || "Processing...";
 
   return (

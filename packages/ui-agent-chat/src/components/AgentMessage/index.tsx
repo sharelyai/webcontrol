@@ -49,6 +49,12 @@ export function AgentMessage({
     [message.sources, handleCitationClick],
   );
 
+  // Strip [N] citation references from content when there are no sources to link
+  const displayContent = useMemo(() => {
+    if (!message.content || message.sources.length > 0) return message.content;
+    return message.content.replace(/\s*\[(\d+(?:[,\-]\d+)*)\]/g, "");
+  }, [message.content, message.sources]);
+
   if (isUser) {
     return (
       <div style={{ display: "flex", justifyContent: "flex-end" }}>
@@ -90,10 +96,10 @@ export function AgentMessage({
         )}
 
         {/* Message Content */}
-        {message.content && (
+        {displayContent && (
           <ResponseText>
             <ReactMarkdown components={markdownComponents}>
-              {message.content}
+              {displayContent}
             </ReactMarkdown>
           </ResponseText>
         )}
@@ -108,10 +114,10 @@ export function AgentMessage({
         )}
 
         {/* Action Bar */}
-        {message.content && (
+        {displayContent && (
           <ActionBar
             messageId={message.id}
-            content={message.content}
+            content={displayContent}
             onFeedback={onFeedback}
           />
         )}

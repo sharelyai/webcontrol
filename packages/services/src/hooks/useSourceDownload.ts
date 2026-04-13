@@ -11,10 +11,21 @@ export function useSourceDownload() {
 
   const downloadSource = useCallback(
     async (source: Source) => {
-      const knowledgeId = source.metadata?.knowledgeId || source.id;
+      // STRING type sources are text-only, skip download
+      const sourceType = source.metadata?.sourceType?.toUpperCase();
+      if (sourceType === "STRING") {
+        if (source.url) {
+          window.open(source.url, "_blank");
+        }
+        return;
+      }
+
+      // Prefer metadata.knowledgeId which is the actual knowledge UUID.
+      // source.id may be a vector/chunk ID that the download API won't accept.
+      const knowledgeId = source.metadata?.knowledgeId;
       const pageNumber = source.metadata?.pageNumber;
 
-      // If no knowledgeId and has URL, just open the URL
+      // If no knowledgeId, try opening URL or skip
       if (!knowledgeId) {
         if (source.url) {
           window.open(source.url, "_blank");

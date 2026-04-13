@@ -8,8 +8,8 @@ interface CitationRendererProps {
   onSourceClick?: (sourceId: string) => void;
 }
 
-// Matches [N] (single) and [N-M] (range) citation patterns
-const CITATION_PATTERN = /\[(\d+)(?:-(\d+))?\]/g;
+// Matches [N], [N-M] (range), and [N,N,N] (comma-separated) citation patterns
+const CITATION_PATTERN = /\[(\d+(?:[,\-]\d+)*)\]/g;
 
 // Process a string to replace citation patterns with CitationBadge components
 function processString(
@@ -30,25 +30,56 @@ function processString(
       parts.push(text.slice(lastIndex, match.index));
     }
 
-    const startNum = parseInt(match[1], 10);
-    const endNum = match[2] ? parseInt(match[2], 10) : startNum;
+    const inner = match[1]; // e.g. "5", "1-6", "5,6", "1,2,3"
 
-    // For ranges like [1-6], show the first valid source as the badge
-    const sourceIndex = startNum - 1; // Citations are 1-indexed
-    const source = sources[sourceIndex];
-
-    if (source) {
-      parts.push(
-        <CitationBadge
-          key={`${keyPrefix}citation-${match.index}-${startNum}`}
-          index={startNum}
-          source={source}
-          onSourceClick={onSourceClick}
-        />,
-      );
+    if (inner.includes(",")) {
+      // Comma-separated list: [5,6] or [1,2,3]
+      const nums = inner.split(",").map((n) => parseInt(n.trim(), 10));
+      nums.forEach((num, i) => {
+        const source = sources[num - 1];
+        if (source) {
+          parts.push(
+            <CitationBadge
+              key={`${keyPrefix}citation-${match!.index}-${num}-${i}`}
+              index={num}
+              source={source}
+              onSourceClick={onSourceClick}
+            />,
+          );
+        }
+      });
+    } else if (inner.includes("-")) {
+      // Range: [1-6] — show first valid source
+      const startNum = parseInt(inner.split("-")[0], 10);
+      const source = sources[startNum - 1];
+      if (source) {
+        parts.push(
+          <CitationBadge
+            key={`${keyPrefix}citation-${match.index}-${startNum}`}
+            index={startNum}
+            source={source}
+            onSourceClick={onSourceClick}
+          />,
+        );
+      } else {
+        parts.push(match[0]);
+      }
     } else {
-      // If no matching source, render as plain text
-      parts.push(match[0]);
+      // Single: [1]
+      const num = parseInt(inner, 10);
+      const source = sources[num - 1];
+      if (source) {
+        parts.push(
+          <CitationBadge
+            key={`${keyPrefix}citation-${match.index}-${num}`}
+            index={num}
+            source={source}
+            onSourceClick={onSourceClick}
+          />,
+        );
+      } else {
+        parts.push(match[0]);
+      }
     }
 
     lastIndex = match.index + match[0].length;

@@ -18,14 +18,13 @@ export function useAgentThreads(
   options: UseAgentThreadsOptions
 ): UseAgentThreadsReturn {
   const { spaceId, autoFetch = true } = options;
-  const { config, workspace } = useGlobalStore();
+  const workspaceId = useGlobalStore(
+    (s) => s.config?.workspaceId || s.workspace?.id,
+  );
 
   const [threads, setThreads] = useState<AgentThread[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  // Get workspaceId from config or workspace
-  const workspaceId = config?.workspaceId || workspace?.id;
 
   // Build base path for agent API
   const getBasePath = useCallback(() => {

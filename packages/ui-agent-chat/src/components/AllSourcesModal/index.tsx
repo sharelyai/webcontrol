@@ -10,8 +10,11 @@ import {
 import { IconButton } from "../IconButton";
 import { CloseIcon, FileTextIcon } from "../icons";
 
-function getSourceIcon(type: Source["type"]) {
-  return <FileTextIcon size={18} />;
+function getFileExtension(source: Source): string | null {
+  const filename = source.metadata?.filename;
+  if (!filename) return null;
+  const match = filename.match(/\.([a-zA-Z0-9]+)$/);
+  return match ? match[1].toUpperCase() : null;
 }
 
 interface AllSourcesModalProps {
@@ -83,10 +86,24 @@ export function AllSourcesModal({
                   (e.currentTarget.style.background = "none")
                 }
               >
-                {getSourceIcon(source.type)}
+                <FileTextIcon size={18} />
                 <span style={{ flex: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                   {source.title}
                 </span>
+                {getFileExtension(source) && (
+                  <span style={{
+                    fontSize: 10,
+                    fontWeight: 600,
+                    color: "#667085",
+                    background: "#F2F4F7",
+                    borderRadius: 4,
+                    padding: "2px 6px",
+                    flexShrink: 0,
+                    textTransform: "uppercase",
+                  }}>
+                    {getFileExtension(source)}
+                  </span>
+                )}
                 {pct !== null && (
                   <SourceChipRelevance>{pct}%</SourceChipRelevance>
                 )}

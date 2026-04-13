@@ -1,5 +1,68 @@
 # @sharelyai/ui-agent-chat
 
+## 0.0.19
+
+### Patch Changes
+
+- update versions
+- Updated dependencies
+  - @sharelyai/ui-shared@0.0.18
+  - @sharelyai/services@0.0.21
+
+## 0.0.18
+
+### Patch Changes
+
+- Bump all packages to sync versions
+- Updated dependencies
+  - @sharelyai/services@0.0.20
+  - @sharelyai/ui-shared@0.0.17
+
+## 0.0.17
+
+### Patch Changes
+
+- Fix citation [N] rendering during streaming, collapse processing by default showing last active tool summary, hide File/Page and Open Document for sources without file extensions
+- Updated dependencies
+  - @sharelyai/services@0.0.19
+  - @sharelyai/ui-shared@0.0.16
+
+## 0.0.16
+
+### Patch Changes
+
+- Fix citation [N] references not rendering during SSE streaming and hide File/Page rows for sources without file extensions
+- Updated dependencies
+  - @sharelyai/services@0.0.18
+  - @sharelyai/ui-shared@0.0.15
+
+## 0.0.15
+
+### Patch Changes
+
+- update sources
+- Updated dependencies
+  - @sharelyai/ui-shared@0.0.14
+  - @sharelyai/services@0.0.17
+
+## 0.0.13
+
+### Patch Changes
+
+- update validations
+- Updated dependencies
+  - @sharelyai/ui-shared@0.0.13
+  - @sharelyai/services@0.0.15
+
+## 0.0.12
+
+### Patch Changes
+
+- update versions
+- Updated dependencies
+  - @sharelyai/ui-shared@0.0.12
+  - @sharelyai/services@0.0.14
+
 ## 0.0.10
 
 ### Patch Changes

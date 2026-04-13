@@ -32,6 +32,7 @@ import {
   InputField,
   SendButton,
   DisclaimerText,
+  ThinkingSpinner,
 } from "../styles";
 import { IconButton } from "../IconButton";
 import {
@@ -236,7 +237,15 @@ export function AgentChatPanel({
       {/* Chat Area */}
       <ChatArea ref={chatRef} role="log" aria-label="Conversation">
         {isEmpty && (
-          <EmptyState title={emptyTitle} description={emptyDescription} />
+          <EmptyState
+            title={emptyTitle}
+            description={emptyDescription}
+            disclaimer={disclaimer}
+            placeholder={placeholder}
+            inputValue={inputValue}
+            onInputChange={setInputValue}
+            onSubmit={() => handleSubmit()}
+          />
         )}
 
         {messages.length > 0 && (
@@ -278,11 +287,18 @@ export function AgentChatPanel({
                       <ThinkingIndicator
                         steps={thinkingSteps}
                         toolCalls={activeToolCalls}
-                        collapsed={false}
+                        collapsed
                         elapsed={hasStreamingThinking ? elapsed : undefined}
                       />
                     </div>
                   )}
+
+                  {/* Pending indicator when streaming just started */}
+                  {!streamingContent &&
+                    thinkingSteps.length === 0 &&
+                    activeToolCalls.length === 0 && (
+                      <ThinkingSpinner />
+                    )}
 
                   {streamingContent && (
                     <StreamingContent
@@ -314,8 +330,8 @@ export function AgentChatPanel({
         {error && (
           <div
             style={{
-              maxWidth: 680,
-              margin: "16px auto",
+              width: "100%",
+              margin: "16px 0",
               padding: "12px 16px",
               background: "rgba(240,68,56,0.06)",
               borderRadius: 12,
@@ -346,41 +362,43 @@ export function AgentChatPanel({
         <div style={{ flex: 1, minHeight: 20 }} aria-hidden="true" />
       </ChatArea>
 
-      {/* Input */}
-      <InputArea>
-        <InputRow>
-          <InputField
-            ref={inputRef}
-            value={inputValue}
-            onChange={(e) => setInputValue(e.target.value)}
-            placeholder={isStreaming ? "Generating response..." : placeholder}
-            disabled={isStreaming}
-            onKeyDown={handleKeyDown}
-            rows={1}
-            aria-label={placeholder}
-          />
-          {isStreaming ? (
-            <SendButton
-              type="button"
-              onClick={stopStreaming}
-              $variant="danger"
-              aria-label="Stop generating"
-            >
-              <StopIcon size={18} />
-            </SendButton>
-          ) : (
-            <SendButton
-              type="button"
-              onClick={() => handleSubmit()}
-              disabled={!canSend}
-              aria-label="Send message"
-            >
-              <SendIcon size={18} />
-            </SendButton>
-          )}
-        </InputRow>
-        <DisclaimerText>{disclaimer}</DisclaimerText>
-      </InputArea>
+      {/* Input — hidden when empty state shows centered input */}
+      {!isEmpty && (
+        <InputArea>
+          <InputRow>
+            <InputField
+              ref={inputRef}
+              value={inputValue}
+              onChange={(e) => setInputValue(e.target.value)}
+              placeholder={isStreaming ? "Generating response..." : placeholder}
+              disabled={isStreaming}
+              onKeyDown={handleKeyDown}
+              rows={1}
+              aria-label={placeholder}
+            />
+            {isStreaming ? (
+              <SendButton
+                type="button"
+                onClick={stopStreaming}
+                $variant="danger"
+                aria-label="Stop generating"
+              >
+                <StopIcon size={18} />
+              </SendButton>
+            ) : (
+              <SendButton
+                type="button"
+                onClick={() => handleSubmit()}
+                disabled={!canSend}
+                aria-label="Send message"
+              >
+                <SendIcon size={18} />
+              </SendButton>
+            )}
+          </InputRow>
+          <DisclaimerText>{disclaimer}</DisclaimerText>
+        </InputArea>
+      )}
     </ChatWrapper>
   );
 }

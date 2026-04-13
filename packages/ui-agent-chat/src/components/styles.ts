@@ -79,8 +79,7 @@ export const MessagesContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 24px;
-  max-width: 680px;
-  margin: 0 auto;
+  width: 100%;
 `;
 
 // ─── Message Components ─────────────────────────────────────────────────────────
@@ -104,6 +103,8 @@ export const AiRow = styled.div`
   flex-direction: row;
   gap: 12px;
   align-items: flex-start;
+  align-self: flex-start;
+  width: 100%;
 `;
 
 export const Avatar = styled.div`
@@ -734,58 +735,63 @@ export const FollowupButton = styled.button`
 
 export const InputArea = styled.div`
   ${({ theme }) => css`
-    padding: 12px 16px;
-    border-top: 1px solid ${theme.colors.athensGray4};
+    padding: 20px;
+    padding-top: 12px;
     background: ${theme.colors.white};
   `}
 `;
 
 export const InputRow = styled.div`
   ${({ theme }) => css`
-    display: flex;
-    flex-direction: row;
-    align-items: flex-end;
-    gap: 8px;
-    padding: 8px 12px;
-    border-radius: 24px;
-    border: 1px solid ${theme.colors.mischka};
-    background: ${theme.colors.white};
+    border-radius: 50px;
+    border: 1px solid ${theme.colors.athensGray2};
+    background-color: ${theme.colors.white};
+    display: grid;
+    align-items: center;
+    grid-template-columns: 1fr auto;
+    grid-gap: 16px;
+    padding: 12px;
+    width: 100%;
     transition: border-color 0.15s;
 
     &:focus-within {
-      border-color: var(
-        --web-control-styles-main_color,
-        ${theme.colors.mediumPurple}
-      );
+      border: 1px solid
+        var(--web-control-styles-main_color, ${theme.colors.indigo});
     }
   `}
 `;
 
 export const InputField = styled.textarea`
   ${({ theme }) => css`
-    flex: 1;
     border: none;
     outline: none;
-    font-size: ${theme.fonts.sm};
+    font-size: ${theme.fonts.base};
     font-family: inherit;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 20px;
     resize: none;
-    min-height: 24px;
+    min-height: 20px;
     max-height: 120px;
-    line-height: 1.5;
     color: ${theme.colors.ebony};
     background: transparent;
 
     &::placeholder {
       color: ${theme.colors.gullGray};
     }
+
+    &:disabled {
+      background-color: ${theme.colors.white};
+      color: ${theme.colors.paleSky};
+    }
   `}
 `;
 
 export const SendButton = styled.button<{ $variant?: "danger" }>`
   ${({ theme, $variant }) => css`
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    border-radius: 50px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -793,11 +799,11 @@ export const SendButton = styled.button<{ $variant?: "danger" }>`
     cursor: pointer;
     transition: all 0.15s;
     flex-shrink: 0;
-    padding: 0;
+    padding: 8px;
 
     background: var(
       --web-control-styles-main_color,
-      ${theme.colors.mediumPurple}
+      ${theme.colors.indigo}
     );
     color: ${theme.colors.white};
 
@@ -807,8 +813,12 @@ export const SendButton = styled.button<{ $variant?: "danger" }>`
     `}
 
     &:disabled {
-      opacity: 0.4;
+      background-color: ${theme.colors.athensGray3};
       cursor: default;
+
+      svg {
+        fill: ${theme.colors.gullGray};
+      }
     }
   `}
 `;
@@ -816,61 +826,11 @@ export const SendButton = styled.button<{ $variant?: "danger" }>`
 export const DisclaimerText = styled.div`
   ${({ theme }) => css`
     text-align: center;
-    font-size: 11px;
-    color: ${theme.colors.gullGray};
-    margin-top: 8px;
-  `}
-`;
-
-// ─── Empty State ────────────────────────────────────────────────────────────────
-
-export const EmptyStateWrapper = styled.div`
-  ${({ theme }) => css`
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 32px 24px;
-    text-align: center;
-  `}
-`;
-
-export const EmptyStateIcon = styled.div`
-  ${({ theme }) => css`
-    width: 48px;
-    height: 48px;
-    color: var(
-      --web-control-styles-main_color,
-      ${theme.colors.mediumPurple}
-    );
-    margin-bottom: 16px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    svg {
-      width: 100%;
-      height: 100%;
-    }
-  `}
-`;
-
-export const EmptyStateTitle = styled.div`
-  ${({ theme }) => css`
-    font-size: ${theme.fonts.lg};
-    font-weight: 600;
-    color: ${theme.colors.ebony};
-    margin-bottom: 8px;
-  `}
-`;
-
-export const EmptyStateDescription = styled.div`
-  ${({ theme }) => css`
     font-size: ${theme.fonts.sm};
+    font-style: italic;
     color: ${theme.colors.paleSky};
-    max-width: 360px;
-    line-height: 1.5;
+    font-weight: 500;
+    margin-top: 8px;
   `}
 `;
 

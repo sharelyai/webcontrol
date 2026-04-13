@@ -92,19 +92,25 @@ export function mergeSourcesWithRawData(
 ): Source[] {
   return sources.map((source) => {
     const rawData = rawDataMap.get(source.id);
+    const cleanSnippet = source.snippet ? stripHtml(source.snippet) : source.snippet;
+    const cleanExcerpt = (source as any).excerpt ? stripHtml((source as any).excerpt) : (source as any).excerpt;
     if (rawData) {
       return {
         ...source,
+        snippet: cleanSnippet,
+        excerpt: cleanExcerpt,
         metadata: {
           ...source.metadata,
           pageNumber: rawData.pageNumber,
-          filename: rawData.filename,
+          filename: rawData.filename || source.metadata?.filename,
           knowledgeId: source.id,
         },
       };
     }
     return {
       ...source,
+      snippet: cleanSnippet,
+      excerpt: cleanExcerpt,
       metadata: {
         ...source.metadata,
         knowledgeId: source.id,
@@ -119,6 +125,12 @@ export function mergeSourcesWithRawData(
 export function stripHtml(html: string): string {
   return html
     .replace(/<[^>]*>/g, "")
+    .replace(/<[^>]*$/, "")
+    .replace(/&amp;/g, "&")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&quot;/g, '"')
+    .replace(/&#039;/g, "'")
     .trim()
     .slice(0, 200);
 }
@@ -145,6 +157,7 @@ export function extractSourcesFromSemanticSearch(
       metadata: {
         knowledgeId: meta.knowledgeId || entry.knowledgeId || entry.id,
         knowledgeType: meta.type,
+        sourceType: meta.type,
         similarity: score,
       },
     };
@@ -165,7 +178,8 @@ export function extractSourcesFromSearchKnowledge(
     snippet: result.content ? stripHtml(result.content) : undefined,
     metadata: {
       knowledgeId: result.id,
-      filename: result.filename,
+      filename: result.filename || undefined,
+      sourceType: result.type || undefined,
     },
   }));
 }
@@ -192,6 +206,7 @@ export function processLoadedMessageSources(message: {
   if (!message.toolCalls || message.toolCalls.length === 0) {
     return sources.map((source) => ({
       ...source,
+      snippet: source.snippet ? stripHtml(source.snippet) : source.snippet,
       metadata: {
         ...source.metadata,
         knowledgeId: source.metadata?.knowledgeId || source.id,
@@ -254,6 +269,7 @@ export function processLoadedMessageSources(message: {
 
   return combinedSources.map((source) => ({
     ...source,
+    snippet: source.snippet ? stripHtml(source.snippet) : source.snippet,
     metadata: {
       ...source.metadata,
       knowledgeId: source.metadata?.knowledgeId || source.id,

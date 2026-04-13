@@ -1,27 +1,78 @@
+import { KeyboardEvent, useRef } from "react";
 import {
   EmptyStateWrapper,
+  EmptyStateGreeting,
   EmptyStateTitle,
   EmptyStateDescription,
-  EmptyStateIcon,
-} from "../styles";
-import { AutoAwesomeIcon } from "../icons";
+  EmptyStateInputSection,
+  EmptyStateInputWrapper,
+  EmptyStateSendButton,
+  EmptyStateNote,
+} from "./styles";
+import { SendIcon } from "../icons";
 
 interface EmptyStateProps {
   title?: string;
   description?: string;
+  disclaimer?: string;
+  placeholder?: string;
+  inputValue?: string;
+  onInputChange?: (value: string) => void;
+  onSubmit?: () => void;
 }
 
 export function EmptyState({
-  title = "What can we help you find?",
-  description = "Search across all available resources.",
+  title = "Chat",
+  description,
+  disclaimer,
+  placeholder = "Ask a question...",
+  inputValue = "",
+  onInputChange,
+  onSubmit,
 }: EmptyStateProps) {
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const canSend = inputValue.trim().length > 0;
+
+  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter" && !e.shiftKey && canSend) {
+      e.preventDefault();
+      onSubmit?.();
+    }
+  };
+
   return (
     <EmptyStateWrapper>
-      <EmptyStateIcon>
-        <AutoAwesomeIcon size={48} />
-      </EmptyStateIcon>
-      <EmptyStateTitle>{title}</EmptyStateTitle>
-      <EmptyStateDescription>{description}</EmptyStateDescription>
+      <EmptyStateGreeting>
+        <EmptyStateTitle>{title}</EmptyStateTitle>
+        {description && (
+          <EmptyStateDescription>{description}</EmptyStateDescription>
+        )}
+      </EmptyStateGreeting>
+      {onInputChange && (
+        <EmptyStateInputSection>
+          <EmptyStateInputWrapper>
+            <input
+              ref={inputRef}
+              placeholder={placeholder}
+              value={inputValue}
+              onChange={(e) => onInputChange(e.target.value)}
+              onKeyDown={handleKeyDown}
+            />
+            <EmptyStateSendButton
+              $disabled={!canSend}
+              onClick={() => canSend && onSubmit?.()}
+            >
+              <SendIcon size={24} />
+            </EmptyStateSendButton>
+          </EmptyStateInputWrapper>
+        </EmptyStateInputSection>
+      )}
+      {disclaimer && (
+        <EmptyStateNote>
+          <span>{disclaimer}</span>
+        </EmptyStateNote>
+      )}
     </EmptyStateWrapper>
   );
 }

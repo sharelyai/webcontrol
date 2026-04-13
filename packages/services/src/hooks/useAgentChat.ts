@@ -25,6 +25,7 @@ import {
   transformRawSourcesToMap,
   mergeSourcesWithRawData,
   processLoadedMessages,
+  processLoadedMessageSources,
   extractSourcesFromSemanticSearch,
   extractSourcesFromSearchKnowledge,
 } from "../utils/sourceParser";
@@ -52,6 +53,8 @@ export function useAgentChat(options: UseAgentChatOptions): UseAgentChatReturn {
 
   // Use refs to track current state for callbacks (avoid stale closures)
   const threadIdRef = useRef<string | null>(initialThreadId || null);
+  // Track threads created internally to avoid re-loading them when the prop echoes back
+  const internallyCreatedThreadRef = useRef<Set<string>>(new Set());
   const streamingMessageIdRef = useRef<string | null>(null);
   const streamingContentRef = useRef<string>("");
   const thinkingStepsRef = useRef<ThinkingStep[]>([]);
@@ -87,30 +90,51 @@ export function useAgentChat(options: UseAgentChatOptions): UseAgentChatReturn {
 
   const { startStream, stopStream } = useAgentSSE();
 
-  // Keep refs in sync with state
-  useEffect(() => {
-    threadIdRef.current = threadId;
-  }, [threadId]);
+  // Helpers that update both state and ref atomically so the `done`
+  // handler always reads fresh values even when events are batched.
+  const updateStreamingContent = useCallback(
+    (updater: (prev: string) => string) => {
+      setStreamingContent((prev) => {
+        const next = updater(prev);
+        streamingContentRef.current = next;
+        return next;
+      });
+    },
+    [],
+  );
 
-  useEffect(() => {
-    streamingMessageIdRef.current = streamingMessageId;
-  }, [streamingMessageId]);
+  const updateThinkingSteps = useCallback(
+    (updater: (prev: ThinkingStep[]) => ThinkingStep[]) => {
+      setThinkingSteps((prev) => {
+        const next = updater(prev);
+        thinkingStepsRef.current = next;
+        return next;
+      });
+    },
+    [],
+  );
 
-  useEffect(() => {
-    streamingContentRef.current = streamingContent;
-  }, [streamingContent]);
+  const updateActiveToolCalls = useCallback(
+    (updater: (prev: ToolCall[]) => ToolCall[]) => {
+      setActiveToolCalls((prev) => {
+        const next = updater(prev);
+        activeToolCallsRef.current = next;
+        return next;
+      });
+    },
+    [],
+  );
 
-  useEffect(() => {
-    thinkingStepsRef.current = thinkingSteps;
-  }, [thinkingSteps]);
-
-  useEffect(() => {
-    activeToolCallsRef.current = activeToolCalls;
-  }, [activeToolCalls]);
-
-  useEffect(() => {
-    activeSourcesRef.current = activeSources;
-  }, [activeSources]);
+  const updateActiveSources = useCallback(
+    (updater: (prev: Source[]) => Source[]) => {
+      setActiveSources((prev) => {
+        const next = updater(prev);
+        activeSourcesRef.current = next;
+        return next;
+      });
+    },
+    [],
+  );
 
   // Build base path for agent API
   const getBasePath = useCallback(() => {
@@ -155,6 +179,7 @@ export function useAgentChat(options: UseAgentChatOptions): UseAgentChatReturn {
           ...(languageId ? { languageId } : {}),
         }),
       });
+      internallyCreatedThreadRef.current.add(data.id);
       threadIdRef.current = data.id;
       setThreadId(data.id);
       setMessages([]);
@@ -170,10 +195,11 @@ export function useAgentChat(options: UseAgentChatOptions): UseAgentChatReturn {
         case "message_start": {
           const event = data as MessageStartEvent;
           setStreamingMessageId(event.messageId);
-          setStreamingContent("");
-          setThinkingSteps([]);
-          setActiveToolCalls([]);
-          setActiveSources([]);
+          streamingMessageIdRef.current = event.messageId;
+          updateStreamingContent(() => "");
+          updateThinkingSteps(() => []);
+          updateActiveToolCalls(() => []);
+          updateActiveSources(() => []);
           // Clear raw source data for new message
           rawSourceDataRef.current.clear();
           break;
@@ -182,7 +208,7 @@ export function useAgentChat(options: UseAgentChatOptions): UseAgentChatReturn {
         // New backend format: single "thinking" event with content
         case "thinking": {
           const event = data as ThinkingEvent;
-          setThinkingSteps((prev) => {
+          updateThinkingSteps((prev) => {
             if (prev.length === 0) {
               return [{
                 id: `thinking-${Date.now()}`,
@@ -203,7 +229,7 @@ export function useAgentChat(options: UseAgentChatOptions): UseAgentChatReturn {
         // New backend format: "tool_use" event when tool is called
         case "tool_use": {
           const event = data as ToolUseEvent;
-          setActiveToolCalls((prev) => [
+          updateActiveToolCalls((prev) => [
             ...prev,
             {
               id: `tool-${event.tool}-${Date.now()}`,
@@ -237,7 +263,7 @@ export function useAgentChat(options: UseAgentChatOptions): UseAgentChatReturn {
             const extracted = extractSourcesFromSemanticSearch(
               output.sourcesMetadata as any[],
             );
-            setActiveSources((prev) => [...prev, ...extracted]);
+            updateActiveSources((prev) => [...prev, ...extracted]);
           }
 
           // Extract sources from search_knowledge results
@@ -245,10 +271,10 @@ export function useAgentChat(options: UseAgentChatOptions): UseAgentChatReturn {
             const extracted = extractSourcesFromSearchKnowledge(
               output.results as any[],
             );
-            setActiveSources((prev) => [...prev, ...extracted]);
+            updateActiveSources((prev) => [...prev, ...extracted]);
           }
 
-          setActiveToolCalls((prev) =>
+          updateActiveToolCalls((prev) =>
             prev.map((tc) =>
               tc.name === event.tool && tc.status === "running"
                 ? {
@@ -259,7 +285,7 @@ export function useAgentChat(options: UseAgentChatOptions): UseAgentChatReturn {
                 : tc,
             ),
           );
-          setThinkingSteps((prev) =>
+          updateThinkingSteps((prev) =>
             prev.map((step) =>
               step.status === "running"
                 ? { ...step, status: "completed" }
@@ -272,14 +298,14 @@ export function useAgentChat(options: UseAgentChatOptions): UseAgentChatReturn {
         // New backend format: single "source" event per source
         case "source": {
           const event = data as SourceEvent;
-          setActiveSources((prev) => [...prev, event.source]);
+          updateActiveSources((prev) => [...prev, event.source]);
           break;
         }
 
         // Legacy format: thinking_start
         case "thinking_start": {
           const event = data as ThinkingStartEvent;
-          setThinkingSteps((prev) => [
+          updateThinkingSteps((prev) => [
             ...prev,
             {
               id: event.thinkingId,
@@ -294,7 +320,7 @@ export function useAgentChat(options: UseAgentChatOptions): UseAgentChatReturn {
         // Legacy format: thinking_delta
         case "thinking_delta": {
           const event = data as ThinkingDeltaEvent;
-          setThinkingSteps((prev) =>
+          updateThinkingSteps((prev) =>
             prev.map((step) =>
               step.id === event.thinkingId
                 ? { ...step, content: step.content + event.delta }
@@ -307,7 +333,7 @@ export function useAgentChat(options: UseAgentChatOptions): UseAgentChatReturn {
         // Legacy format: thinking_end
         case "thinking_end": {
           const event = data as ThinkingEndEvent;
-          setThinkingSteps((prev) =>
+          updateThinkingSteps((prev) =>
             prev.map((step) =>
               step.id === event.thinkingId
                 ? {
@@ -324,7 +350,7 @@ export function useAgentChat(options: UseAgentChatOptions): UseAgentChatReturn {
         // Legacy format: tool_call_start
         case "tool_call_start": {
           const event = data as ToolCallStartEvent;
-          setActiveToolCalls((prev) => [
+          updateActiveToolCalls((prev) => [
             ...prev,
             {
               id: event.toolCallId,
@@ -358,7 +384,7 @@ export function useAgentChat(options: UseAgentChatOptions): UseAgentChatReturn {
             const extracted = extractSourcesFromSemanticSearch(
               toolOutput.sourcesMetadata as any[],
             );
-            setActiveSources((prev) => [...prev, ...extracted]);
+            updateActiveSources((prev) => [...prev, ...extracted]);
           }
 
           // Extract sources from search_knowledge results
@@ -366,10 +392,10 @@ export function useAgentChat(options: UseAgentChatOptions): UseAgentChatReturn {
             const extracted = extractSourcesFromSearchKnowledge(
               toolOutput.results as any[],
             );
-            setActiveSources((prev) => [...prev, ...extracted]);
+            updateActiveSources((prev) => [...prev, ...extracted]);
           }
 
-          setActiveToolCalls((prev) =>
+          updateActiveToolCalls((prev) =>
             prev.map((tc) =>
               tc.id === event.toolCallId
                 ? {
@@ -387,31 +413,33 @@ export function useAgentChat(options: UseAgentChatOptions): UseAgentChatReturn {
 
         case "content_delta": {
           const event = data as ContentDeltaEvent;
-          setStreamingContent((prev) => prev + event.delta);
+          updateStreamingContent((prev) => prev + event.delta);
           break;
         }
 
         // Legacy format: sources (plural)
         case "sources": {
           const event = data as SourcesEvent;
-          // Merge with raw data from tool_call_end/tool_result events
-          const mergedSources = mergeSourcesWithRawData(
-            event.sources,
-            rawSourceDataRef.current
-          );
-          setActiveSources(mergedSources);
+          updateActiveSources((prev) => {
+            if (prev.length > 0) {
+              // Already have sources from tool outputs (sourcesMetadata) - enrich with raw data
+              return mergeSourcesWithRawData(prev, rawSourceDataRef.current);
+            }
+            // No prior sources - use the sources event as fallback
+            return mergeSourcesWithRawData(event.sources, rawSourceDataRef.current);
+          });
           break;
         }
 
         case "message_end": {
-          setThinkingSteps((prev) =>
+          updateThinkingSteps((prev) =>
             prev.map((step) =>
               step.status === "running"
                 ? { ...step, status: "completed" }
                 : step,
             ),
           );
-          setActiveToolCalls((prev) =>
+          updateActiveToolCalls((prev) =>
             prev.map((tc) =>
               tc.status === "running"
                 ? { ...tc, status: "completed" }
@@ -444,7 +472,10 @@ export function useAgentChat(options: UseAgentChatOptions): UseAgentChatReturn {
               content: streamingContentRef.current,
               thinkingSteps: thinkingStepsRef.current,
               toolCalls: activeToolCallsRef.current,
-              sources: activeSourcesRef.current,
+              sources: processLoadedMessageSources({
+                sources: activeSourcesRef.current,
+                toolCalls: activeToolCallsRef.current,
+              }),
               tokenUsage: null,
               model: null,
               finishReason: "end_turn",
@@ -453,17 +484,17 @@ export function useAgentChat(options: UseAgentChatOptions): UseAgentChatReturn {
             return [...prev, assistantMessage];
           });
 
-          setStreamingContent("");
-          setThinkingSteps([]);
-          setActiveToolCalls([]);
-          setActiveSources([]);
+          updateStreamingContent(() => "");
+          updateThinkingSteps(() => []);
+          updateActiveToolCalls(() => []);
+          updateActiveSources(() => []);
           setStreamingMessageId(null);
           setIsStreaming(false);
           break;
         }
       }
     },
-    [],
+    [updateStreamingContent, updateThinkingSteps, updateActiveToolCalls, updateActiveSources],
   );
 
   // Send message - returns the threadId used
@@ -546,15 +577,15 @@ export function useAgentChat(options: UseAgentChatOptions): UseAgentChatReturn {
     threadIdRef.current = null;
     setThreadId(null);
     setMessages([]);
-    setStreamingContent("");
-    setThinkingSteps([]);
-    setActiveToolCalls([]);
-    setActiveSources([]);
+    updateStreamingContent(() => "");
+    updateThinkingSteps(() => []);
+    updateActiveToolCalls(() => []);
+    updateActiveSources(() => []);
     setStreamingMessageId(null);
     setIsStreaming(false);
     setError(null);
     setSuggestedFollowups([]);
-  }, []);
+  }, [updateStreamingContent, updateThinkingSteps, updateActiveToolCalls, updateActiveSources]);
 
   // Clear error
   const clearError = useCallback(() => {
@@ -577,12 +608,19 @@ export function useAgentChat(options: UseAgentChatOptions): UseAgentChatReturn {
     }
   }, [messages, sendMessage]);
 
-  // Load initial thread
+  // Load initial thread or reset when cleared
   useEffect(() => {
     if (initialThreadId) {
-      loadThread(initialThreadId);
+      // Skip if this thread was just created internally (prop echoed back via onThreadChange)
+      if (internallyCreatedThreadRef.current.has(initialThreadId)) {
+        internallyCreatedThreadRef.current.delete(initialThreadId);
+      } else {
+        loadThread(initialThreadId);
+      }
+    } else if (threadIdRef.current !== null) {
+      resetChat();
     }
-  }, [initialThreadId, loadThread]);
+  }, [initialThreadId, loadThread, resetChat]);
 
   return {
     threadId,

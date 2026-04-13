@@ -1,6 +1,6 @@
 {
   "name": "@sharelyai/services",
-  "version": "0.0.12",
+  "version": "0.0.21",
   "author": "Sharely AI",
   "publishConfig": {
     "access": "restricted"

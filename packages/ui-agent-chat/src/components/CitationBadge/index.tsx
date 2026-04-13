@@ -30,6 +30,22 @@ interface CitationBadgeProps {
   onSourceClick?: (sourceId: string) => void;
 }
 
+function getFileExtension(source: Source): string | null {
+  const filename = source.metadata?.filename;
+  if (!filename) return null;
+  const match = filename.match(/\.([a-zA-Z0-9]+)$/);
+  return match ? match[1].toUpperCase() : null;
+}
+
+function isDownloadableSource(source: Source): boolean {
+  const sourceType = source.metadata?.sourceType?.toUpperCase();
+  // STRING type sources are text-only, not downloadable files
+  if (sourceType === "STRING") return false;
+  // Must have a knowledgeId and a filename with an extension to be downloadable
+  if (source.metadata?.knowledgeId && getFileExtension(source)) return true;
+  return false;
+}
+
 function getSourceTypeIcon(type: Source["type"]) {
   switch (type) {
     case "knowledge":
@@ -127,7 +143,7 @@ export function CitationBadge({
           <HoverCardHeader>
             <TypeBadge $type={source.type}>
               {getSourceTypeIcon(source.type)}
-              {source.type}
+              {getFileExtension(source) || source.metadata?.sourceType || source.type}
             </TypeBadge>
             {similarityPercent !== null && (
               <SimilarityScore>{similarityPercent}% match</SimilarityScore>
@@ -139,14 +155,14 @@ export function CitationBadge({
             <HoverCardValue>{source.title}</HoverCardValue>
           </HoverCardRow>
 
-          {source.metadata?.filename && (
+          {source.metadata?.filename && getFileExtension(source) && (
             <HoverCardRow>
               <HoverCardLabel>File</HoverCardLabel>
               <HoverCardValue>{source.metadata.filename}</HoverCardValue>
             </HoverCardRow>
           )}
 
-          {source.metadata?.pageNumber && (
+          {source.metadata?.pageNumber && getFileExtension(source) && (
             <HoverCardRow>
               <HoverCardLabel>Page</HoverCardLabel>
               <HoverCardValue>{source.metadata.pageNumber}</HoverCardValue>
@@ -157,7 +173,15 @@ export function CitationBadge({
             <HoverCardRow>
               <HoverCardLabel>Preview</HoverCardLabel>
               <HoverCardValue>
-                {source.snippet || source.excerpt}
+                {(source.snippet || source.excerpt || "")
+                  .replace(/<[^>]*>/g, "")
+                  .replace(/<[^>]*$/, "")
+                  .replace(/&amp;/g, "&")
+                  .replace(/&lt;/g, "<")
+                  .replace(/&gt;/g, ">")
+                  .replace(/&quot;/g, '"')
+                  .replace(/&#039;/g, "'")
+                  .trim()}
               </HoverCardValue>
             </HoverCardRow>
           )}
@@ -173,7 +197,7 @@ export function CitationBadge({
             </HoverCardLink>
           )}
 
-          {(source.metadata?.knowledgeId || source.id) && (
+          {source.metadata?.knowledgeId && isDownloadableSource(source) && (
             <HoverCardOpenButton
               onClick={handleOpenDocument}
               disabled={isLoading}

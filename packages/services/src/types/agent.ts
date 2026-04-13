@@ -57,6 +57,7 @@ export interface Source {
     atomType?: string;
     pageNumber?: number;
     knowledgeId?: string;
+    sourceType?: string;
   };
 }
 

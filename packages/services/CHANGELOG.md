@@ -1,5 +1,47 @@
 # @sharelyai/services
 
+## 0.0.21
+
+### Patch Changes
+
+- update versions
+
+## 0.0.20
+
+### Patch Changes
+
+- Bump all packages to sync versions
+
+## 0.0.19
+
+### Patch Changes
+
+- Fix citation [N] rendering during streaming, collapse processing by default showing last active tool summary, hide File/Page and Open Document for sources without file extensions
+
+## 0.0.18
+
+### Patch Changes
+
+- Fix citation [N] references not rendering during SSE streaming and hide File/Page rows for sources without file extensions
+
+## 0.0.17
+
+### Patch Changes
+
+- update sources
+
+## 0.0.15
+
+### Patch Changes
+
+- update validations
+
+## 0.0.14
+
+### Patch Changes
+
+- update versions
+
 ## 0.0.12
 
 ### Patch Changes
