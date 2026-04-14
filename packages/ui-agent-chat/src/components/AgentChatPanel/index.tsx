@@ -1,5 +1,5 @@
 import {
-  type FormEvent,
+  type SubmitEvent,
   type KeyboardEvent,
   useCallback,
   useEffect,
@@ -9,12 +9,12 @@ import {
 import {
   useAgentChat,
   useAgentThreads,
+  useAutoRenameThread,
 } from "@sharelyai/services";
 import type { AgentFeedback, Source } from "@sharelyai/services";
 import { AgentMessage } from "../AgentMessage";
 import { StreamingContent } from "../StreamingContent";
 import { ThinkingIndicator } from "../ThinkingIndicator";
-import { ToolCallCard } from "../ToolCallCard";
 import { SourcesList } from "../SourcesList";
 import { EmptyState } from "../EmptyState";
 import { HistoryModal } from "../HistoryModal";
@@ -35,14 +35,7 @@ import {
   ThinkingSpinner,
 } from "../styles";
 import { IconButton } from "../IconButton";
-import {
-  BotIcon,
-  SendIcon,
-  StopIcon,
-  ChatBubbleIcon,
-  EditIcon,
-  HistoryIcon,
-} from "../icons";
+import { BotIcon, SendIcon, StopIcon, EditIcon, HistoryIcon } from "../icons";
 
 interface AgentChatPanelProps {
   spaceId: string;
@@ -95,7 +88,18 @@ export function AgentChatPanel({
     retryLastMessage,
   } = agentChat;
 
-  const { threads, fetchThreads } = useAgentThreads({ spaceId });
+  const { threads, fetchThreads, updateThread } = useAgentThreads({ spaceId });
+
+  const currentThread = threadId
+    ? threads.find((t) => t.id === threadId)
+    : null;
+
+  useAutoRenameThread({
+    threadId,
+    messages,
+    updateThread,
+    currentTitle: currentThread?.title ?? null,
+  });
 
   const [inputValue, setInputValue] = useState("");
   const [historyOpen, setHistoryOpen] = useState(false);
@@ -150,7 +154,7 @@ export function AgentChatPanel({
     }
   }, [historyOpen, fetchThreads]);
 
-  const handleSubmit = async (e?: FormEvent) => {
+  const handleSubmit = async (e?: SubmitEvent) => {
     e?.preventDefault();
     const text = inputValue.trim();
     if (!text || isStreaming) return;
@@ -296,9 +300,7 @@ export function AgentChatPanel({
                   {/* Pending indicator when streaming just started */}
                   {!streamingContent &&
                     thinkingSteps.length === 0 &&
-                    activeToolCalls.length === 0 && (
-                      <ThinkingSpinner />
-                    )}
+                    activeToolCalls.length === 0 && <ThinkingSpinner />}
 
                   {streamingContent && (
                     <StreamingContent

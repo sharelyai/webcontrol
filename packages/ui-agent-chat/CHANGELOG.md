@@ -1,5 +1,14 @@
 # @sharelyai/ui-agent-chat
 
+## 0.0.22
+
+### Patch Changes
+
+- Add auto-rename for agent chat threads after 3 user messages
+- Updated dependencies
+  - @sharelyai/services@0.0.22
+  - @sharelyai/ui-shared@0.0.22
+
 ## 0.0.19
 
 ### Patch Changes

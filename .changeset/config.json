@@ -3,7 +3,7 @@
   "changelog": "@changesets/cli/changelog",
   "commit": false,
   "fixed": [],
-  "linked": [],
+  "linked": [["@sharelyai/services", "@sharelyai/ui-shared", "@sharelyai/ui-agent-chat", "@sharelyai/ui-chat", "@sharelyai/ui-search", "@sharelyai/ui-browse"]],
   "access": "restricted",
   "baseBranch": "main",
   "updateInternalDependencies": "patch",

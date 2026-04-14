@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import type { ThinkingStep, ToolCall } from "@sharelyai/services";
 import {
   ThinkingToggle,
@@ -22,9 +22,7 @@ interface ThinkingIndicatorProps {
 
 // Format a tool call name for display: "search_knowledge" → "Search Knowledge"
 function formatToolName(name: string): string {
-  return name
-    .replace(/_/g, " ")
-    .replace(/\b\w/g, (c) => c.toUpperCase());
+  return name.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
 }
 
 // Extract a short description from tool call input
@@ -37,8 +35,7 @@ function getToolSummary(tc: ToolCall): string {
     (input?.text as string) ||
     (input?.knowledgeId as string);
   if (query) {
-    const truncated =
-      query.length > 50 ? query.slice(0, 47) + "..." : query;
+    const truncated = query.length > 50 ? query.slice(0, 47) + "..." : query;
     return `${label}: "${truncated}"`;
   }
   return label;
@@ -55,7 +52,9 @@ function getResultInfo(tc: ToolCall): string | null {
     return `${out.sources.length} source${out.sources.length !== 1 ? "s" : ""}`;
   }
   if (Array.isArray(out.sourcesMetadata)) {
-    return `${out.sourcesMetadata.length} source${out.sourcesMetadata.length !== 1 ? "s" : ""}`;
+    return `${out.sourcesMetadata.length} source${
+      out.sourcesMetadata.length !== 1 ? "s" : ""
+    }`;
   }
   if (out.title) {
     const title = out.title as string;
@@ -97,18 +96,22 @@ export function ThinkingIndicator({
   if (steps.length === 0 && toolCalls.length === 0) return null;
 
   // Show the last running tool's full summary, or the last completed one
-  const runningTool = [...toolCalls].reverse().find((tc) => tc.status === "running");
-  const lastTool = runningTool || [...toolCalls].reverse().find((tc) => tc.status === "completed");
+  const runningTool = [...toolCalls]
+    .reverse()
+    .find((tc) => tc.status === "running");
+  const lastTool =
+    runningTool ||
+    [...toolCalls].reverse().find((tc) => tc.status === "completed");
 
   const statusText = failed
     ? "Couldn't complete search"
     : isAllDone
-      ? sourceCount !== undefined
-        ? `Answered from ${sourceCount} sources`
-        : `Completed ${completedCount} steps`
-      : useToolCalls && lastTool
-        ? getToolSummary(lastTool) + (runningTool ? "..." : "")
-        : steps.find((s) => s.status === "running")?.title || "Processing...";
+    ? sourceCount !== undefined
+      ? `Answered from ${sourceCount} sources`
+      : `Completed ${completedCount} steps`
+    : useToolCalls && lastTool
+    ? getToolSummary(lastTool) + (runningTool ? "..." : "")
+    : steps.find((s) => s.status === "running")?.title || "Processing...";
 
   return (
     <div>
@@ -166,14 +169,9 @@ export function ThinkingIndicator({
                     <ThinkingTimelineItem key={tc.id} role="listitem">
                       <ThinkingTimelineIcon>
                         {isCompleted ? (
-                          <CheckIcon
-                            size={18}
-                            style={{ color: "#12B76A" }}
-                          />
+                          <CheckIcon size={18} style={{ color: "#12B76A" }} />
                         ) : isRunning ? (
-                          <ThinkingSpinner
-                            style={{ width: 14, height: 14 }}
-                          />
+                          <ThinkingSpinner style={{ width: 14, height: 14 }} />
                         ) : isError ? (
                           <XIcon size={18} style={{ color: "#F04438" }} />
                         ) : (
@@ -193,8 +191,8 @@ export function ThinkingIndicator({
                           color: isCompleted
                             ? "#344054"
                             : isError
-                              ? "#F04438"
-                              : "#667085",
+                            ? "#F04438"
+                            : "#667085",
                           flex: 1,
                           minWidth: 0,
                         }}
@@ -235,14 +233,9 @@ export function ThinkingIndicator({
                     <ThinkingTimelineItem key={step.id} role="listitem">
                       <ThinkingTimelineIcon>
                         {isCompleted ? (
-                          <CheckIcon
-                            size={18}
-                            style={{ color: "#12B76A" }}
-                          />
+                          <CheckIcon size={18} style={{ color: "#12B76A" }} />
                         ) : isRunning ? (
-                          <ThinkingSpinner
-                            style={{ width: 14, height: 14 }}
-                          />
+                          <ThinkingSpinner style={{ width: 14, height: 14 }} />
                         ) : isFailed ? (
                           <XIcon size={18} style={{ color: "#F04438" }} />
                         ) : (
@@ -262,8 +255,8 @@ export function ThinkingIndicator({
                           color: isCompleted
                             ? "#344054"
                             : isFailed
-                              ? "#F04438"
-                              : "#667085",
+                            ? "#F04438"
+                            : "#667085",
                         }}
                       >
                         {step.title}

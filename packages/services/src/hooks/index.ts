@@ -17,5 +17,6 @@ export * from './useKnowledgeResources';
 export * from './useSpace';
 export * from './useAgentChat';
 export * from './useAgentThreads';
+export * from './useAutoRenameThread';
 export * from './useSourceDownload';
 export * from './useSharelyChat';
