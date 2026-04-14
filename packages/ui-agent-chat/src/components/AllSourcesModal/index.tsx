@@ -87,20 +87,46 @@ export function AllSourcesModal({
                 }
               >
                 <FileTextIcon size={18} />
-                <span style={{ flex: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                <span
+                  style={{
+                    flex: 1,
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    whiteSpace: "nowrap",
+                    width: "70%",
+                  }}
+                >
                   {source.title}
                 </span>
+                {source.metadata?.pageNumber != null && (
+                  <span
+                    style={{
+                      fontSize: 10,
+                      fontWeight: 600,
+                      color: "#667085",
+                      background: "#F2F4F7",
+                      borderRadius: 4,
+                      padding: "2px 6px",
+                      flexShrink: 0,
+                      textTransform: "uppercase",
+                    }}
+                  >
+                    p. {source.metadata.pageNumber}
+                  </span>
+                )}
                 {getFileExtension(source) && (
-                  <span style={{
-                    fontSize: 10,
-                    fontWeight: 600,
-                    color: "#667085",
-                    background: "#F2F4F7",
-                    borderRadius: 4,
-                    padding: "2px 6px",
-                    flexShrink: 0,
-                    textTransform: "uppercase",
-                  }}>
+                  <span
+                    style={{
+                      fontSize: 10,
+                      fontWeight: 600,
+                      color: "#667085",
+                      background: "#F2F4F7",
+                      borderRadius: 4,
+                      padding: "2px 6px",
+                      flexShrink: 0,
+                      textTransform: "uppercase",
+                    }}
+                  >
                     {getFileExtension(source)}
                   </span>
                 )}

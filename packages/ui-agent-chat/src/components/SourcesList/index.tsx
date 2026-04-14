@@ -73,7 +73,12 @@ export function SourcesList({
               aria-label={`${source.title}${pct !== null ? `, ${pct}% relevant` : ""}`}
             >
               <FileTextIcon size={18} />
-              <SourceChipTitle>{truncateTitle(source.title)}</SourceChipTitle>
+              <SourceChipTitle>
+                {truncateTitle(source.title)}
+                {source.metadata?.pageNumber != null && (
+                  <span style={{ color: "#667085", fontWeight: 400 }}> — p. {source.metadata.pageNumber}</span>
+                )}
+              </SourceChipTitle>
               {pct !== null && (
                 <SourceChipRelevance>{pct}%</SourceChipRelevance>
               )}
