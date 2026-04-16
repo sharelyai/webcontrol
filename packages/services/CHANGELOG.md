@@ -1,5 +1,16 @@
 # @sharelyai/services
 
+## 0.0.23
+
+### Patch Changes
+
+- Fix agent response spinner not stopping after done event and add hover cards to source chips
+
+  - Fix ThinkingIndicator spinner continuing to spin after the agent response completes by finalizing all running steps/tool calls in the done handler
+  - Add safety fallback in onComplete to handle stream closing without a done event
+  - Fix SSE buffer flush to process remaining content when stream ends without trailing delimiter
+  - Add hover cards to source chips in SourcesList showing full title, file, page, preview, and similarity score
+
 ## 0.0.22
 
 ### Patch Changes

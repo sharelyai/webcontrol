@@ -97,6 +97,19 @@ export function useAgentSSE() {
           });
         }
 
+        // Flush any remaining content in the buffer (e.g. if the final
+        // SSE message wasn't terminated with \n\n before the stream closed)
+        if (buffer.trim()) {
+          parseSSEMessages(buffer + "\n\n", (eventType, dataContent) => {
+            try {
+              const data = JSON.parse(dataContent);
+              options.onEvent(eventType as SSEEventType, data);
+            } catch (e) {
+              console.error("[useAgentSSE] Failed to parse remaining SSE data:", e, dataContent);
+            }
+          });
+        }
+
         options.onComplete();
       } catch (error) {
         if ((error as Error).name !== "AbortError") {

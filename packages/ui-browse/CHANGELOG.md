@@ -1,5 +1,14 @@
 # @sharelyai/ui-browse
 
+## 0.0.23
+
+### Patch Changes
+
+- Updated dependencies
+  - @sharelyai/services@0.0.23
+  - @sharelyai/ui-search@0.0.23
+  - @sharelyai/ui-shared@0.0.23
+
 ## 0.0.22
 
 ### Patch Changes

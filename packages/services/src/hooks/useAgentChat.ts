@@ -60,6 +60,9 @@ export function useAgentChat(options: UseAgentChatOptions): UseAgentChatReturn {
   const thinkingStepsRef = useRef<ThinkingStep[]>([]);
   const activeToolCallsRef = useRef<ToolCall[]>([]);
   const activeSourcesRef = useRef<Source[]>([]);
+  // Tracks whether the "done" SSE event was received so that onComplete
+  // can act as a fallback without double-committing.
+  const doneReceivedRef = useRef(false);
 
   // Ref for raw source data from tool_call_end/tool_result events
   const rawSourceDataRef = useRef<
@@ -196,6 +199,7 @@ export function useAgentChat(options: UseAgentChatOptions): UseAgentChatReturn {
           const event = data as MessageStartEvent;
           setStreamingMessageId(event.messageId);
           streamingMessageIdRef.current = event.messageId;
+          doneReceivedRef.current = false;
           updateStreamingContent(() => "");
           updateThinkingSteps(() => []);
           updateActiveToolCalls(() => []);
@@ -465,16 +469,33 @@ export function useAgentChat(options: UseAgentChatOptions): UseAgentChatReturn {
         }
 
         case "done": {
+          doneReceivedRef.current = true;
+
+          // Finalize any steps/tool calls still in "running" state.
+          // The backend may not always send "message_end" before "done",
+          // which would leave items as "running" in the committed message
+          // and cause the ThinkingIndicator spinner to spin indefinitely.
+          const finalThinkingSteps = thinkingStepsRef.current.map((step) =>
+            step.status === "running"
+              ? { ...step, status: "completed" as const }
+              : step,
+          );
+          const finalToolCalls = activeToolCallsRef.current.map((tc) =>
+            tc.status === "running"
+              ? { ...tc, status: "completed" as const }
+              : tc,
+          );
+
           setMessages((prev) => {
             const assistantMessage: AgentMessage = {
               id: streamingMessageIdRef.current || `msg-${Date.now()}`,
               role: "assistant",
               content: streamingContentRef.current,
-              thinkingSteps: thinkingStepsRef.current,
-              toolCalls: activeToolCallsRef.current,
+              thinkingSteps: finalThinkingSteps,
+              toolCalls: finalToolCalls,
               sources: processLoadedMessageSources({
                 sources: activeSourcesRef.current,
-                toolCalls: activeToolCallsRef.current,
+                toolCalls: finalToolCalls,
               }),
               tokenUsage: null,
               model: null,
@@ -552,7 +573,12 @@ export function useAgentChat(options: UseAgentChatOptions): UseAgentChatReturn {
               setIsStreaming(false);
             },
             onComplete: () => {
-              // Handled by 'done' event
+              // Normally handled by the 'done' SSE event. This is a safety
+              // fallback in case the stream closes without sending 'done'
+              // (e.g. network interruption, server timeout).
+              if (!doneReceivedRef.current) {
+                handleEvent("done" as SSEEventType, {});
+              }
             },
           },
         );
