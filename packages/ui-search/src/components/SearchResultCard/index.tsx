@@ -308,8 +308,10 @@ export const SearchResultCard = (props: any) => {
   
   const isChunk = item?.metadata?.["chunkType"] === "CHUNK";
   const isPdf = blobType === "application/pdf";
+  const sourceUrl = item?.metadata?.["sourceUrl"];
+  const hasSourceUrl = Boolean(sourceUrl);
   const isDownloadable = Object.keys(MAP_BLOB_TYPE_TO_ICON).includes(blobType) || (isChunk && blobType !== "LINK");
-  const hasToShowOpenInFullView = isPdf || blobType === "LINK";
+  const hasToShowOpenInFullView = isPdf || blobType === "LINK" || hasSourceUrl;
   
   const title =
     item?.metadata?.["title"] ??
@@ -360,6 +362,10 @@ export const SearchResultCard = (props: any) => {
 
   const handleOpenInFullView = (e: any) => {
     e.stopPropagation();
+    if (hasSourceUrl) {
+      window.open(sourceUrl, "_blank");
+      return;
+    }
     if (item?.metadata?.["type"] === "LINK") {
       const newWindow = window.open(item?.["content"] || item?.metadata?.["content"] || item?.metadata?.["link"] || "", "_blank");
       return;

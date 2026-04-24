@@ -379,10 +379,13 @@ export const ListSearchItem = (props: ComponentProps) => {
   const showOpenInFullView = customConfig?.showOpenInFullView ?? true;
   const isChunk = item?.metadata?.["chunkType"] === "CHUNK";
   const isPdf = blobType === "application/pdf";
+  const sourceUrl = item?.metadata?.["sourceUrl"];
+  const hasSourceUrl = Boolean(sourceUrl);
   const isDownloadable =
     Object.keys(MAP_BLOB_TYPE_TO_ICON).includes(blobType) ||
     (isChunk && blobType !== "LINK");
-  const hasToShowOpenInFullView = isPdf || blobType === "LINK";
+  const hasToShowOpenInFullView =
+    isPdf || blobType === "LINK" || hasSourceUrl;
   const title =
     item?.metadata?.["title"] ??
     item?.metadata?.["text"] ??
@@ -443,6 +446,12 @@ export const ListSearchItem = (props: ComponentProps) => {
 
   const handleOpenInFullView = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
+
+    if (hasSourceUrl) {
+      const newWindow = window.open("about:blank", "_blank");
+      if (newWindow) newWindow.location.href = sourceUrl;
+      return;
+    }
 
     if (item?.metadata?.["type"] === "LINK") {
       const newWindow = window.open("about:blank", "_blank");
