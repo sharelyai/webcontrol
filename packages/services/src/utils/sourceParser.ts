@@ -148,16 +148,25 @@ export function extractSourcesFromSemanticSearch(
     const meta = entry.metadata || entry;
     const score = entry.score ?? (meta as any).score;
     const title = ((meta.title || "") as string).replace(/&#038;/g, "&").replace(/&amp;/g, "&");
+    // The backend's `source` field is overloaded: it can be either a URL
+    // (for URL-based knowledge) or a chunked-file token like
+    // "pageNumber:filename:knowledgeId" (for uploaded files). Treat it as
+    // the source URL only when it actually looks like an http(s) URL.
+    const rawSource = typeof meta.source === "string" ? meta.source : undefined;
+    const sourceFieldUrl =
+      rawSource && /^https?:\/\//i.test(rawSource) ? rawSource : undefined;
+    const url = meta.sourceUrl || sourceFieldUrl || undefined;
     return {
       id: meta.knowledgeId || entry.knowledgeId || entry.id,
       type: "knowledge" as const,
       title,
-      url: meta.sourceUrl || undefined,
+      url,
       snippet: meta.text ? stripHtml(meta.text as string) : undefined,
       metadata: {
         knowledgeId: meta.knowledgeId || entry.knowledgeId || entry.id,
         knowledgeType: meta.type,
         sourceType: meta.type,
+        sourceUrl: url,
         similarity: score,
       },
     };
@@ -170,18 +179,22 @@ export function extractSourcesFromSemanticSearch(
 export function extractSourcesFromSearchKnowledge(
   results: SearchKnowledgeResult[],
 ): Source[] {
-  return results.map((result) => ({
-    id: result.id,
-    type: "knowledge" as const,
-    title: (result.title || "").replace(/&#038;/g, "&").replace(/&amp;/g, "&"),
-    url: result.sourceUrl || undefined,
-    snippet: result.content ? stripHtml(result.content) : undefined,
-    metadata: {
-      knowledgeId: result.id,
-      filename: result.filename || undefined,
-      sourceType: result.type || undefined,
-    },
-  }));
+  return results.map((result) => {
+    const url = result.sourceUrl || undefined;
+    return {
+      id: result.id,
+      type: "knowledge" as const,
+      title: (result.title || "").replace(/&#038;/g, "&").replace(/&amp;/g, "&"),
+      url,
+      snippet: result.content ? stripHtml(result.content) : undefined,
+      metadata: {
+        knowledgeId: result.id,
+        filename: result.filename || undefined,
+        sourceType: result.type || undefined,
+        sourceUrl: url,
+      },
+    };
+  });
 }
 
 /**

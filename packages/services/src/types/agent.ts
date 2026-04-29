@@ -58,6 +58,7 @@ export interface Source {
     pageNumber?: number;
     knowledgeId?: string;
     sourceType?: string;
+    sourceUrl?: string;
   };
 }
 

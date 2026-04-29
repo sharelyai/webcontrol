@@ -1,4 +1,5 @@
 import type { Source } from "@sharelyai/services";
+import { useSourceDownload } from "@sharelyai/services";
 import {
   ModalBackdrop,
   ModalContainer,
@@ -30,6 +31,8 @@ export function AllSourcesModal({
   sources,
   onSourceClick,
 }: AllSourcesModalProps) {
+  const { downloadSource } = useSourceDownload();
+
   if (!open) return null;
 
   const sorted = [...sources].sort((a, b) => {
@@ -37,6 +40,15 @@ export function AllSourcesModal({
     const bScore = b.metadata?.similarity ?? 0;
     return bScore - aScore;
   });
+
+  const handleSourceClick = (source: Source) => {
+    if (onSourceClick) {
+      onSourceClick(source);
+    } else {
+      downloadSource(source);
+    }
+    onClose();
+  };
 
   return (
     <ModalBackdrop onClick={onClose}>
@@ -75,10 +87,7 @@ export function AllSourcesModal({
                   fontSize: 14,
                   transition: "background 0.15s",
                 }}
-                onClick={() => {
-                  onSourceClick?.(source);
-                  onClose();
-                }}
+                onClick={() => handleSourceClick(source)}
                 onMouseEnter={(e) =>
                   (e.currentTarget.style.background = "#F2F4F7")
                 }

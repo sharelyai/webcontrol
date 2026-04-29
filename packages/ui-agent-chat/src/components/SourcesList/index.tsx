@@ -46,9 +46,14 @@ function getFileExtension(source: Source): string | null {
   return match ? match[1].toUpperCase() : null;
 }
 
+function getExternalUrl(source: Source): string | undefined {
+  return source.url || source.metadata?.sourceUrl;
+}
+
 function isDownloadableSource(source: Source): boolean {
   const sourceType = source.metadata?.sourceType?.toUpperCase();
   if (sourceType === "STRING") return false;
+  if (getExternalUrl(source)) return false;
   if (source.metadata?.knowledgeId && getFileExtension(source)) return true;
   return false;
 }
@@ -192,14 +197,14 @@ function SourceChipWithHover({ source, onClick }: SourceChipWithHoverProps) {
             </HoverCardRow>
           )}
 
-          {source.url && (
+          {getExternalUrl(source) && (
             <HoverCardLink
-              href={source.url}
+              href={getExternalUrl(source)}
               target="_blank"
               rel="noopener noreferrer"
               onClick={(e) => e.stopPropagation()}
             >
-              {source.url}
+              {getExternalUrl(source)}
             </HoverCardLink>
           )}
 

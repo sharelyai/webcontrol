@@ -37,10 +37,16 @@ function getFileExtension(source: Source): string | null {
   return match ? match[1].toUpperCase() : null;
 }
 
+function getExternalUrl(source: Source): string | undefined {
+  return source.url || source.metadata?.sourceUrl;
+}
+
 function isDownloadableSource(source: Source): boolean {
   const sourceType = source.metadata?.sourceType?.toUpperCase();
   // STRING type sources are text-only, not downloadable files
   if (sourceType === "STRING") return false;
+  // Sources that expose an external URL should be opened, not downloaded
+  if (getExternalUrl(source)) return false;
   // Must have a knowledgeId and a filename with an extension to be downloadable
   if (source.metadata?.knowledgeId && getFileExtension(source)) return true;
   return false;
@@ -186,14 +192,14 @@ export function CitationBadge({
             </HoverCardRow>
           )}
 
-          {source.url && (
+          {getExternalUrl(source) && (
             <HoverCardLink
-              href={source.url}
+              href={getExternalUrl(source)}
               target="_blank"
               rel="noopener noreferrer"
               onClick={(e) => e.stopPropagation()}
             >
-              {source.url}
+              {getExternalUrl(source)}
             </HoverCardLink>
           )}
 

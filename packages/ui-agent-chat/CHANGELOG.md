@@ -1,5 +1,23 @@
 # @sharelyai/ui-agent-chat
 
+## 0.0.25
+
+### Patch Changes
+
+- update rename chat functions
+- Updated dependencies
+  - @sharelyai/ui-shared@0.0.25
+  - @sharelyai/services@0.0.25
+
+## 0.0.24
+
+### Patch Changes
+
+- update sources references
+- Updated dependencies
+  - @sharelyai/services@0.0.24
+  - @sharelyai/ui-shared@0.0.24
+
 ## 0.0.23
 
 ### Patch Changes

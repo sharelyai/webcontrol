@@ -1,5 +1,17 @@
 # @sharelyai/services
 
+## 0.0.25
+
+### Patch Changes
+
+- update rename chat functions
+
+## 0.0.24
+
+### Patch Changes
+
+- update sources references
+
 ## 0.0.23
 
 ### Patch Changes

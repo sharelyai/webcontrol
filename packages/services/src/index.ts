@@ -31,6 +31,7 @@ export * from './api/agentApi';
 export * from './ai';
 
 // Utils
+export * from './utils/conversation';
 export * from './utils/sourceParser';
 export * from './utils/messageAdapters';
 export * from './utils/customEvents';

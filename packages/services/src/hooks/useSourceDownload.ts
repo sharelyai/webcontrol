@@ -11,12 +11,15 @@ export function useSourceDownload() {
 
   const downloadSource = useCallback(
     async (source: Source) => {
-      // STRING type sources are text-only, skip download
+      const externalUrl = source.url || source.metadata?.sourceUrl;
       const sourceType = source.metadata?.sourceType?.toUpperCase();
-      if (sourceType === "STRING") {
-        if (source.url) {
-          window.open(source.url, "_blank");
-        }
+      const filename = source.metadata?.filename;
+
+      // If the source has an external URL and is not a downloadable file
+      // (no filename means it's URL/STRING knowledge), open the URL instead
+      // of attempting to download. STRING-type sources are always opened.
+      if (externalUrl && (sourceType === "STRING" || !filename)) {
+        window.open(externalUrl, "_blank");
         return;
       }
 
@@ -27,8 +30,8 @@ export function useSourceDownload() {
 
       // If no knowledgeId, try opening URL or skip
       if (!knowledgeId) {
-        if (source.url) {
-          window.open(source.url, "_blank");
+        if (externalUrl) {
+          window.open(externalUrl, "_blank");
         }
         return;
       }
