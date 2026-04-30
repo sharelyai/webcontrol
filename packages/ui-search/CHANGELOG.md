@@ -1,5 +1,22 @@
 # @sharelyai/ui-search
 
+## 0.0.27
+
+### Patch Changes
+
+- implement chat role id
+- Updated dependencies
+  - @sharelyai/ui-shared@0.0.27
+  - @sharelyai/services@0.0.27
+
+## 0.0.26
+
+### Patch Changes
+
+- Updated dependencies
+  - @sharelyai/services@0.0.26
+  - @sharelyai/ui-shared@0.0.26
+
 ## 0.0.25
 
 ### Patch Changes

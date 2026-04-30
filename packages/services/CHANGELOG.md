@@ -1,5 +1,17 @@
 # @sharelyai/services
 
+## 0.0.27
+
+### Patch Changes
+
+- implement chat role id
+
+## 0.0.26
+
+### Patch Changes
+
+- update role to threads
+
 ## 0.0.25
 
 ### Patch Changes

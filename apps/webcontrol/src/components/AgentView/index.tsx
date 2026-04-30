@@ -112,8 +112,14 @@ export const AgentView = ({
 }: AgentViewProps) => {
   const [message, setMessage] = useState("");
 
-  const { config, workspace, currentInformation, setCurrentInformation } =
-    useGlobalStore();
+  const {
+    config,
+    workspace,
+    currentInformation,
+    setCurrentInformation,
+    userData,
+  } = useGlobalStore();
+  const customerRoleId = userData?.metadata?.customerRoleId;
   const { t } = useLanguage();
 
   const agentChat = useSharelyChat({
@@ -140,6 +146,23 @@ export const AgentView = ({
 
     prevThreadIdRef.current = currentThreadId;
   }, [currentInformation?.agentThreadId]);
+
+  const prevRoleIdRef = useRef(customerRoleId);
+  useEffect(() => {
+    if (prevRoleIdRef.current !== customerRoleId) {
+      prevRoleIdRef.current = customerRoleId;
+      if (currentInformation?.agentThreadId) {
+        setCurrentInformation({
+          agentThreadId: undefined,
+          agentThreadName: undefined,
+        });
+      }
+    }
+  }, [
+    customerRoleId,
+    currentInformation?.agentThreadId,
+    setCurrentInformation,
+  ]);
 
   const customConfig = workspace?.spaceStyling?.customConfig?.views?.chat;
   const hasCustomConfig = Boolean(customConfig);

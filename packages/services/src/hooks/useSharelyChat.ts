@@ -41,6 +41,9 @@ export function useSharelyChat(
 ): UseAgentChatReturn {
   const { spaceId, initialThreadId } = options;
   const { config, workspace } = useGlobalStore();
+  const customerRoleId = useGlobalStore(
+    (s) => s.userData?.metadata?.customerRoleId,
+  );
 
   const workspaceId = config?.workspaceId || workspace?.id;
 
@@ -213,8 +216,9 @@ export function useSharelyChat(
       (m) =>
         m.role === "user" &&
         m.parts?.some(
-          (p) => p.type === "text" && (p as any).text === pendingUserMessage.content
-        )
+          (p) =>
+            p.type === "text" && (p as any).text === pendingUserMessage.content,
+        ),
     );
 
     if (sdkProgressed && matchingUserMsg) {
@@ -225,7 +229,10 @@ export function useSharelyChat(
 
   // Fallback: clear isCreatingThread once the SDK is actively streaming/submitted
   useEffect(() => {
-    if (isCreatingThread && (chat.status === "streaming" || chat.status === "submitted")) {
+    if (
+      isCreatingThread &&
+      (chat.status === "streaming" || chat.status === "submitted")
+    ) {
       setIsCreatingThread(false);
     }
   }, [chat.status, isCreatingThread]);
@@ -248,7 +255,10 @@ export function useSharelyChat(
 
       agentFetcher<ThreadResponse>(`${basePath}/threads/${tid}`)
         .then((data) => {
-          if (chatRef.current.status === "ready" && threadIdRef.current === tid) {
+          if (
+            chatRef.current.status === "ready" &&
+            threadIdRef.current === tid
+          ) {
             const uiMessages = agentMessagesToUIMessages(data.messages || []);
             chatRef.current.setMessages(uiMessages);
           }
@@ -301,8 +311,8 @@ export function useSharelyChat(
           m.parts?.some(
             (p) =>
               p.type === "text" &&
-              (p as any).text === pendingUserMessage.content
-          )
+              (p as any).text === pendingUserMessage.content,
+          ),
       );
     const effectivePending = sdkHasPendingMsg ? null : pendingUserMessage;
 
@@ -354,6 +364,14 @@ export function useSharelyChat(
     setHookError(null);
     setPendingUserMessage(null);
   }, []);
+
+  const prevRoleIdRef = useRef(customerRoleId);
+  useEffect(() => {
+    if (prevRoleIdRef.current !== customerRoleId) {
+      prevRoleIdRef.current = customerRoleId;
+      resetChat();
+    }
+  }, [customerRoleId, resetChat]);
 
   const error = hookError || (chat.error ? chat.error.message : null);
 

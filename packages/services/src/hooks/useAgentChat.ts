@@ -47,6 +47,9 @@ interface ThreadResponse {
 export function useAgentChat(options: UseAgentChatOptions): UseAgentChatReturn {
   const { spaceId, initialThreadId } = options;
   const { config, workspace } = useGlobalStore();
+  const customerRoleId = useGlobalStore(
+    (s) => s.userData?.metadata?.customerRoleId,
+  );
 
   // Get workspaceId from config or workspace
   const workspaceId = config?.workspaceId || workspace?.id;
@@ -146,25 +149,28 @@ export function useAgentChat(options: UseAgentChatOptions): UseAgentChatReturn {
   }, [workspaceId]);
 
   // Load thread messages
-  const loadThread = useCallback(async (tid: string) => {
-    const basePath = getBasePath();
-    if (!basePath) {
-      return;
-    }
-    try {
-      const data = await agentFetcher<ThreadResponse>(
-        `${basePath}/threads/${tid}`,
-      );
-      threadIdRef.current = tid;
-      setThreadId(tid);
-      // Process loaded messages to merge sources with toolCalls data
-      const processedMessages = processLoadedMessages(data.messages || []);
-      setMessages(processedMessages);
-      setError(null);
-    } catch (e) {
-      setError((e as Error).message);
-    }
-  }, [getBasePath]);
+  const loadThread = useCallback(
+    async (tid: string) => {
+      const basePath = getBasePath();
+      if (!basePath) {
+        return;
+      }
+      try {
+        const data = await agentFetcher<ThreadResponse>(
+          `${basePath}/threads/${tid}`,
+        );
+        threadIdRef.current = tid;
+        setThreadId(tid);
+        // Process loaded messages to merge sources with toolCalls data
+        const processedMessages = processLoadedMessages(data.messages || []);
+        setMessages(processedMessages);
+        setError(null);
+      } catch (e) {
+        setError((e as Error).message);
+      }
+    },
+    [getBasePath],
+  );
 
   // Create new thread
   const createThread = useCallback(
@@ -214,12 +220,14 @@ export function useAgentChat(options: UseAgentChatOptions): UseAgentChatReturn {
           const event = data as ThinkingEvent;
           updateThinkingSteps((prev) => {
             if (prev.length === 0) {
-              return [{
-                id: `thinking-${Date.now()}`,
-                title: "Thinking...",
-                content: event.thinking,
-                status: "running",
-              }];
+              return [
+                {
+                  id: `thinking-${Date.now()}`,
+                  title: "Thinking...",
+                  content: event.thinking,
+                  status: "running",
+                },
+              ];
             }
             return prev.map((step, idx) =>
               idx === prev.length - 1
@@ -263,7 +271,10 @@ export function useAgentChat(options: UseAgentChatOptions): UseAgentChatReturn {
           }
 
           // Extract sources from semantic_search sourcesMetadata
-          if (output?.sourcesMetadata && Array.isArray(output.sourcesMetadata)) {
+          if (
+            output?.sourcesMetadata &&
+            Array.isArray(output.sourcesMetadata)
+          ) {
             const extracted = extractSourcesFromSemanticSearch(
               output.sourcesMetadata as any[],
             );
@@ -371,7 +382,9 @@ export function useAgentChat(options: UseAgentChatOptions): UseAgentChatReturn {
           const event = data as ToolCallEndEvent;
 
           // Capture raw source data if present (for RAG results)
-          const toolOutput = event.output as Record<string, unknown> | undefined;
+          const toolOutput = event.output as
+            | Record<string, unknown>
+            | undefined;
           if (toolOutput?.dataArraySortedWithSource) {
             const rawSources = toolOutput.dataArraySortedWithSource as Array<{
               text: string;
@@ -384,7 +397,10 @@ export function useAgentChat(options: UseAgentChatOptions): UseAgentChatReturn {
           }
 
           // Extract sources from semantic_search sourcesMetadata
-          if (toolOutput?.sourcesMetadata && Array.isArray(toolOutput.sourcesMetadata)) {
+          if (
+            toolOutput?.sourcesMetadata &&
+            Array.isArray(toolOutput.sourcesMetadata)
+          ) {
             const extracted = extractSourcesFromSemanticSearch(
               toolOutput.sourcesMetadata as any[],
             );
@@ -430,7 +446,10 @@ export function useAgentChat(options: UseAgentChatOptions): UseAgentChatReturn {
               return mergeSourcesWithRawData(prev, rawSourceDataRef.current);
             }
             // No prior sources - use the sources event as fallback
-            return mergeSourcesWithRawData(event.sources, rawSourceDataRef.current);
+            return mergeSourcesWithRawData(
+              event.sources,
+              rawSourceDataRef.current,
+            );
           });
           break;
         }
@@ -445,9 +464,7 @@ export function useAgentChat(options: UseAgentChatOptions): UseAgentChatReturn {
           );
           updateActiveToolCalls((prev) =>
             prev.map((tc) =>
-              tc.status === "running"
-                ? { ...tc, status: "completed" }
-                : tc,
+              tc.status === "running" ? { ...tc, status: "completed" } : tc,
             ),
           );
           break;
@@ -515,7 +532,12 @@ export function useAgentChat(options: UseAgentChatOptions): UseAgentChatReturn {
         }
       }
     },
-    [updateStreamingContent, updateThinkingSteps, updateActiveToolCalls, updateActiveSources],
+    [
+      updateStreamingContent,
+      updateThinkingSteps,
+      updateActiveToolCalls,
+      updateActiveSources,
+    ],
   );
 
   // Send message - returns the threadId used
@@ -611,7 +633,12 @@ export function useAgentChat(options: UseAgentChatOptions): UseAgentChatReturn {
     setIsStreaming(false);
     setError(null);
     setSuggestedFollowups([]);
-  }, [updateStreamingContent, updateThinkingSteps, updateActiveToolCalls, updateActiveSources]);
+  }, [
+    updateStreamingContent,
+    updateThinkingSteps,
+    updateActiveToolCalls,
+    updateActiveSources,
+  ]);
 
   // Clear error
   const clearError = useCallback(() => {
@@ -647,6 +674,14 @@ export function useAgentChat(options: UseAgentChatOptions): UseAgentChatReturn {
       resetChat();
     }
   }, [initialThreadId, loadThread, resetChat]);
+
+  const prevRoleIdRef = useRef(customerRoleId);
+  useEffect(() => {
+    if (prevRoleIdRef.current !== customerRoleId) {
+      prevRoleIdRef.current = customerRoleId;
+      resetChat();
+    }
+  }, [customerRoleId, resetChat]);
 
   return {
     threadId,

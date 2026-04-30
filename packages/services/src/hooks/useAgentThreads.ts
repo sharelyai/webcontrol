@@ -21,6 +21,9 @@ export function useAgentThreads(
   const workspaceId = useGlobalStore(
     (s) => s.config?.workspaceId || s.workspace?.id,
   );
+  const customerRoleId = useGlobalStore(
+    (s) => s.userData?.metadata?.customerRoleId,
+  );
 
   const [threads, setThreads] = useState<AgentThread[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -50,7 +53,7 @@ export function useAgentThreads(
     } finally {
       setIsLoading(false);
     }
-  }, [spaceId, workspaceId, getBasePath]);
+  }, [spaceId, workspaceId, getBasePath, customerRoleId]);
 
   const createThread = useCallback(
     async (title?: string): Promise<AgentThread> => {
