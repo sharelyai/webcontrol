@@ -1,7 +1,7 @@
 import { useState, useRef, useCallback, useMemo } from "react";
 import { useFloating, offset, flip, shift } from "@floating-ui/react";
 import type { Source } from "@sharelyai/services";
-import { useSourceDownload } from "@sharelyai/services";
+import { useSourceDownload, resolveSourceUrl } from "@sharelyai/services";
 import {
   SourcesSection,
   SourcesSectionLabel,
@@ -47,7 +47,7 @@ function getFileExtension(source: Source): string | null {
 }
 
 function getExternalUrl(source: Source): string | undefined {
-  return source.url || source.metadata?.sourceUrl;
+  return resolveSourceUrl(source);
 }
 
 function isDownloadableSource(source: Source): boolean {

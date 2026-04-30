@@ -15,6 +15,7 @@ import {
   useGlobalStore,
   useSharelyContext,
   useLanguage,
+  resolveSourceUrl,
 } from "@sharelyai/services";
 import { useAnchorStore } from "./anchorStore";
 import { useResponsive } from "../../../../../hooks/useResponsive";
@@ -48,10 +49,35 @@ export const Anchor = ({ node, ...props }: any) => {
     ?.replace(constants.PAGE_NUMBER_DOCUMENT_DOWNLOAD_URL, "")
     ?.replaceAll("____", " ");
   const sourcesMetadata = props?.sourcesMetadata;
-  const findSourceMetadata = sourcesMetadata?.find(
-    (source: any) => source?.metadata?.source === referenceId,
-  );
+  // Prefer matching by knowledgeId — that's the stable identifier across
+  // sources[] and sourcesMetadata[]. Fall back to metadata.source for legacy
+  // entries where knowledgeId isn't set.
+  const findSourceMetadata =
+    sourcesMetadata?.find(
+      (source: any) => source?.metadata?.knowledgeId === referenceId,
+    ) ||
+    sourcesMetadata?.find(
+      (source: any) => source?.metadata?.source === referenceId,
+    );
   const sourceKnowledgeId = findSourceMetadata?.metadata?.knowledgeId;
+  // Reuse the same URL priority chain used everywhere else (sourceUrl →
+  // source-as-URL → snippet/text-as-URL). The anchor sees a sourcesMetadata
+  // entry (nested under `.metadata`), so build a Source-shaped object that
+  // routes those fields into the helper's expected slots.
+  const externalUrl = findSourceMetadata
+    ? resolveSourceUrl({
+        id: findSourceMetadata.metadata?.knowledgeId || "",
+        type: "knowledge",
+        title: "",
+        snippet:
+          findSourceMetadata.metadata?.snippet ||
+          findSourceMetadata.metadata?.text,
+        metadata: {
+          sourceUrl: findSourceMetadata.metadata?.sourceUrl,
+          source: findSourceMetadata.metadata?.source,
+        },
+      } as any)
+    : undefined;
   const isDocument = props?.href?.includes(
     constants.PAGE_NUMBER_DOCUMENT_DOWNLOAD_URL,
   );
@@ -85,6 +111,14 @@ export const Anchor = ({ node, ...props }: any) => {
 
   const handleDownloadDocument = async (event: any) => {
     event?.stopPropagation();
+
+    // If we resolved a real URL for this source, prefer opening it directly
+    // over hitting the knowledge download endpoint.
+    if (externalUrl) {
+      window.open(externalUrl, "_blank");
+      return;
+    }
+
     const basicHref = isDocument ? undefined : props.href;
 
     if (!isDocument) {

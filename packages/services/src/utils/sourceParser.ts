@@ -120,6 +120,134 @@ export function mergeSourcesWithRawData(
 }
 
 /**
+ * Returns true when the value is a non-empty string starting with http(s)://.
+ * Used to decide whether a free-form field (snippet, source, sourceUrl) actually
+ * contains a URL we can navigate to.
+ */
+export function isLikelyUrl(value: unknown): value is string {
+  return typeof value === "string" && /^https?:\/\//i.test(value.trim());
+}
+
+/**
+ * Resolves the best external URL for a Source using a strict priority chain.
+ * Snippet is the LAST resort and only used when it's a real URL — plain prose
+ * snippets are ignored.
+ */
+export function resolveSourceUrl(source: Source | undefined | null): string | undefined {
+  if (!source) return undefined;
+  const meta = (source.metadata || {}) as Record<string, unknown>;
+  if (isLikelyUrl(source.url)) return source.url;
+  if (isLikelyUrl(meta.sourceUrl)) return meta.sourceUrl as string;
+  if (isLikelyUrl(meta.source)) return meta.source as string;
+  if (isLikelyUrl(source.snippet)) return source.snippet;
+  return undefined;
+}
+
+function pickFirst<T>(...candidates: T[]): T | undefined {
+  for (const c of candidates) {
+    if (c !== undefined && c !== null && c !== "") return c;
+  }
+  return undefined;
+}
+
+/**
+ * Merges a list of Source objects with the sourcesMetadata array emitted by the
+ * semantic_search tool. Matching is by knowledgeId (falling back to source.id).
+ *
+ * Existing non-empty fields on the source win; missing fields are filled in
+ * from the matched metadata entry. URL resolution uses the same priority chain
+ * as resolveSourceUrl so a metadata entry can supply a URL the source lacked.
+ */
+export function mergeSourcesByKnowledgeId(
+  sources: Source[],
+  sourcesMetadata: SemanticSourceMetadataEntry[] | undefined | null,
+): Source[] {
+  if (!sources || sources.length === 0) return sources ?? [];
+  if (!sourcesMetadata || sourcesMetadata.length === 0) {
+    return sources.map((s) => ({
+      ...s,
+      url: resolveSourceUrl(s) ?? s.url,
+      metadata: { ...s.metadata, knowledgeId: s.metadata?.knowledgeId || s.id },
+    }));
+  }
+
+  const byKnowledgeId = new Map<string, SemanticSourceMetadataEntry>();
+  for (const entry of sourcesMetadata) {
+    const meta = entry.metadata || entry;
+    const kid =
+      (entry.knowledgeId as string | undefined) ||
+      (meta.knowledgeId as string | undefined) ||
+      entry.id;
+    if (kid && !byKnowledgeId.has(kid)) byKnowledgeId.set(kid, entry);
+  }
+
+  return sources.map((source) => {
+    const sourceKid = source.metadata?.knowledgeId || source.id;
+    const match = sourceKid ? byKnowledgeId.get(sourceKid) : undefined;
+    if (!match) {
+      return {
+        ...source,
+        url: resolveSourceUrl(source) ?? source.url,
+        metadata: { ...source.metadata, knowledgeId: sourceKid },
+      };
+    }
+
+    const meta = match.metadata || match;
+    const metaSource: Source = {
+      id: source.id,
+      type: source.type,
+      title: (meta.title as string | undefined) || source.title,
+      url: undefined,
+      snippet: meta.text as string | undefined,
+      metadata: {
+        sourceUrl: meta.sourceUrl as string | undefined,
+        source: meta.source as string | undefined,
+      } as Source["metadata"],
+    };
+    const urlFromMeta = resolveSourceUrl(metaSource);
+
+    const mergedTitle = pickFirst(source.title, meta.title as string | undefined) ?? source.title;
+    const mergedSnippet = pickFirst(source.snippet, meta.text as string | undefined);
+    const mergedExcerpt = pickFirst(source.excerpt, (meta as any).excerpt as string | undefined);
+    const mergedUrl = pickFirst(resolveSourceUrl(source), urlFromMeta);
+    const mergedSourceType = pickFirst(
+      source.metadata?.sourceType,
+      meta.type as string | undefined,
+    );
+    const mergedFilename = pickFirst(
+      source.metadata?.filename,
+      (meta as any).filename as string | undefined,
+    );
+    const mergedPageNumber = pickFirst(
+      source.metadata?.pageNumber,
+      (meta as any).pageNumber as number | undefined,
+    );
+    const mergedSimilarity = pickFirst(
+      source.metadata?.similarity,
+      match.score,
+      (meta as any).score as number | undefined,
+    );
+
+    return {
+      ...source,
+      title: mergedTitle,
+      url: mergedUrl,
+      snippet: mergedSnippet,
+      excerpt: mergedExcerpt ?? source.excerpt,
+      metadata: {
+        ...source.metadata,
+        knowledgeId: sourceKid,
+        sourceUrl: mergedUrl ?? source.metadata?.sourceUrl,
+        sourceType: mergedSourceType,
+        filename: mergedFilename,
+        pageNumber: mergedPageNumber,
+        similarity: mergedSimilarity,
+      },
+    };
+  });
+}
+
+/**
  * Strips HTML tags from a string
  */
 export function stripHtml(html: string): string {
@@ -217,14 +345,18 @@ export function processLoadedMessageSources(message: {
   const sources = message.sources || [];
 
   if (!message.toolCalls || message.toolCalls.length === 0) {
-    return sources.map((source) => ({
-      ...source,
-      snippet: source.snippet ? stripHtml(source.snippet) : source.snippet,
-      metadata: {
-        ...source.metadata,
-        knowledgeId: source.metadata?.knowledgeId || source.id,
-      },
-    }));
+    return sources.map((source) => {
+      const cleaned: Source = {
+        ...source,
+        snippet: source.snippet ? stripHtml(source.snippet) : source.snippet,
+        metadata: {
+          ...source.metadata,
+          knowledgeId: source.metadata?.knowledgeId || source.id,
+        },
+      };
+      cleaned.url = resolveSourceUrl(cleaned) ?? cleaned.url;
+      return cleaned;
+    });
   }
 
   // Extract raw source data from toolCalls output (for enrichment)
@@ -232,6 +364,9 @@ export function processLoadedMessageSources(message: {
   // Extract full source lists from tool outputs
   const semanticSources: Source[] = [];
   const searchSources: Source[] = [];
+  // Collect every sourcesMetadata entry across tool calls so we can merge by
+  // knowledgeId regardless of which tool emitted it.
+  const allSemanticMetadata: SemanticSourceMetadataEntry[] = [];
 
   for (const toolCall of message.toolCalls) {
     const output = toolCall.output as Record<string, unknown> | undefined;
@@ -249,9 +384,9 @@ export function processLoadedMessageSources(message: {
 
     // Extract sources from semantic_search output
     if (output.sourcesMetadata && Array.isArray(output.sourcesMetadata)) {
-      const extracted = extractSourcesFromSemanticSearch(
-        output.sourcesMetadata as SemanticSourceMetadataEntry[],
-      );
+      const metadataEntries = output.sourcesMetadata as SemanticSourceMetadataEntry[];
+      allSemanticMetadata.push(...metadataEntries);
+      const extracted = extractSourcesFromSemanticSearch(metadataEntries);
       semanticSources.push(...extracted);
     }
 
@@ -264,15 +399,23 @@ export function processLoadedMessageSources(message: {
     }
   }
 
-  // If we found sources from tool outputs, use them (they match the AI's [N] numbering)
-  // Prefer semantic_search sources since the AI typically references those
+  // Prefer message.sources because that's the canonical list the backend
+  // committed against the message (the [N] markers in content map to it) and
+  // it carries url/title/snippet/sourceUrl. Tool-output sources are used only
+  // as a fallback and for *enriching* message.sources via mergeSourcesByKnowledgeId.
   let combinedSources: Source[];
-  if (semanticSources.length > 0) {
-    combinedSources = semanticSources;
-  } else if (searchSources.length > 0) {
-    combinedSources = searchSources;
-  } else {
+  if (sources.length > 0) {
     combinedSources = sources;
+  } else if (semanticSources.length > 0) {
+    combinedSources = semanticSources;
+  } else {
+    combinedSources = searchSources;
+  }
+
+  // Merge by knowledgeId so sources gain url/title/snippet/etc from the
+  // sourcesMetadata entries that share the same knowledgeId.
+  if (allSemanticMetadata.length > 0) {
+    combinedSources = mergeSourcesByKnowledgeId(combinedSources, allSemanticMetadata);
   }
 
   // Enrich with raw data if available
@@ -283,6 +426,7 @@ export function processLoadedMessageSources(message: {
   return combinedSources.map((source) => ({
     ...source,
     snippet: source.snippet ? stripHtml(source.snippet) : source.snippet,
+    url: resolveSourceUrl(source) ?? source.url,
     metadata: {
       ...source.metadata,
       knowledgeId: source.metadata?.knowledgeId || source.id,

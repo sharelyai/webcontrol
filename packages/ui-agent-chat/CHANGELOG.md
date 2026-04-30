@@ -1,5 +1,14 @@
 # @sharelyai/ui-agent-chat
 
+## 0.0.28
+
+### Patch Changes
+
+- update chat references
+- Updated dependencies
+  - @sharelyai/ui-shared@0.0.28
+  - @sharelyai/services@0.0.28
+
 ## 0.0.27
 
 ### Patch Changes
