@@ -1,5 +1,13 @@
+import { useState } from "react";
 import type { Source } from "@sharelyai/services";
-import { useSourceDownload } from "@sharelyai/services";
+import {
+  useSourceDownload,
+  resolveSourceUrl,
+  getSourcePageNumber,
+  getSourceFileLabel,
+  isPdfSource,
+  isPreviewOnlySource,
+} from "@sharelyai/services";
 import {
   ModalBackdrop,
   ModalContainer,
@@ -9,13 +17,15 @@ import {
   SourceChipRelevance,
 } from "../styles";
 import { IconButton } from "../IconButton";
-import { CloseIcon, FileTextIcon } from "../icons";
+import { CloseIcon, FileTextIcon, PdfIcon, LinkIcon } from "../icons";
+import { SourcePreviewModal } from "../SourcePreviewModal";
 
-function getFileExtension(source: Source): string | null {
-  const filename = source.metadata?.filename;
-  if (!filename) return null;
-  const match = filename.match(/\.([a-zA-Z0-9]+)$/);
-  return match ? match[1].toUpperCase() : null;
+function getSourceIcon(source: Source) {
+  if (isPdfSource(source)) return <PdfIcon size={18} />;
+  // URL articles (a real http(s) URL but not a downloadable file) get the link
+  // icon. PDFs are caught above so a PDF with a URL still renders as PDF.
+  if (resolveSourceUrl(source)) return <LinkIcon size={18} />;
+  return <FileTextIcon size={18} />;
 }
 
 interface AllSourcesModalProps {
@@ -32,6 +42,7 @@ export function AllSourcesModal({
   onSourceClick,
 }: AllSourcesModalProps) {
   const { downloadSource } = useSourceDownload();
+  const [previewSource, setPreviewSource] = useState<Source | null>(null);
 
   if (!open) return null;
 
@@ -42,6 +53,12 @@ export function AllSourcesModal({
   });
 
   const handleSourceClick = (source: Source) => {
+    // Preview-only sources have nothing to download or open externally —
+    // surface the snippet in a small dialog over this modal instead.
+    if (isPreviewOnlySource(source)) {
+      setPreviewSource(source);
+      return;
+    }
     if (onSourceClick) {
       onSourceClick(source);
     } else {
@@ -95,7 +112,7 @@ export function AllSourcesModal({
                   (e.currentTarget.style.background = "none")
                 }
               >
-                <FileTextIcon size={18} />
+                {getSourceIcon(source)}
                 <span
                   style={{
                     flex: 1,
@@ -107,7 +124,26 @@ export function AllSourcesModal({
                 >
                   {source.title}
                 </span>
-                {source.metadata?.pageNumber != null && (
+                {(() => {
+                  const pageNumber = getSourcePageNumber(source);
+                  return pageNumber && pageNumber > 0 ? (
+                    <span
+                      style={{
+                        fontSize: 10,
+                        fontWeight: 600,
+                        color: "#667085",
+                        background: "#F2F4F7",
+                        borderRadius: 4,
+                        padding: "2px 6px",
+                        flexShrink: 0,
+                        textTransform: "uppercase",
+                      }}
+                    >
+                      p. {pageNumber}
+                    </span>
+                  ) : null;
+                })()}
+                {getSourceFileLabel(source) && (
                   <span
                     style={{
                       fontSize: 10,
@@ -120,23 +156,7 @@ export function AllSourcesModal({
                       textTransform: "uppercase",
                     }}
                   >
-                    p. {source.metadata.pageNumber}
-                  </span>
-                )}
-                {getFileExtension(source) && (
-                  <span
-                    style={{
-                      fontSize: 10,
-                      fontWeight: 600,
-                      color: "#667085",
-                      background: "#F2F4F7",
-                      borderRadius: 4,
-                      padding: "2px 6px",
-                      flexShrink: 0,
-                      textTransform: "uppercase",
-                    }}
-                  >
-                    {getFileExtension(source)}
+                    {getSourceFileLabel(source)}
                   </span>
                 )}
                 {pct !== null && (
@@ -147,6 +167,11 @@ export function AllSourcesModal({
           })}
         </ModalBody>
       </ModalContainer>
+      <SourcePreviewModal
+        open={previewSource !== null}
+        source={previewSource}
+        onClose={() => setPreviewSource(null)}
+      />
     </ModalBackdrop>
   );
 }

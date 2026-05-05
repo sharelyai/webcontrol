@@ -1,7 +1,15 @@
 import { useState, useRef, useCallback, useMemo } from "react";
 import { useFloating, offset, flip, shift } from "@floating-ui/react";
 import type { Source } from "@sharelyai/services";
-import { useSourceDownload, resolveSourceUrl } from "@sharelyai/services";
+import {
+  useSourceDownload,
+  resolveSourceUrl,
+  getSourcePageNumber,
+  getSourceFileLabel,
+  isPdfSource,
+  isPreviewOnlySource,
+} from "@sharelyai/services";
+import { SourcePreviewModal } from "../SourcePreviewModal";
 import {
   SourcesSection,
   SourcesSectionLabel,
@@ -30,6 +38,7 @@ import {
   UsersIcon,
   ExternalLinkIcon,
   LoaderIcon,
+  PdfIcon,
 } from "../icons";
 
 const MAX_VISIBLE = 5;
@@ -37,13 +46,6 @@ const MAX_VISIBLE = 5;
 function truncateTitle(title: string, maxLength = 30): string {
   if (title.length <= maxLength) return title;
   return title.slice(0, maxLength) + "...";
-}
-
-function getFileExtension(source: Source): string | null {
-  const filename = source.metadata?.filename;
-  if (!filename) return null;
-  const match = filename.match(/\.([a-zA-Z0-9]+)$/);
-  return match ? match[1].toUpperCase() : null;
 }
 
 function getExternalUrl(source: Source): string | undefined {
@@ -54,12 +56,14 @@ function isDownloadableSource(source: Source): boolean {
   const sourceType = source.metadata?.sourceType?.toUpperCase();
   if (sourceType === "STRING") return false;
   if (getExternalUrl(source)) return false;
-  if (source.metadata?.knowledgeId && getFileExtension(source)) return true;
+  if (source.metadata?.knowledgeId && getSourceFileLabel(source)) return true;
   return false;
 }
 
-function getSourceTypeIcon(type: Source["type"]) {
-  switch (type) {
+function getSourceTypeIcon(source: Source) {
+  if (isPdfSource(source)) return <PdfIcon />;
+  if (resolveSourceUrl(source)) return <LinkIcon />;
+  switch (source.type) {
     case "knowledge":
     case "document":
       return <FileTextIcon />;
@@ -133,12 +137,23 @@ function SourceChipWithHover({ source, onClick }: SourceChipWithHoverProps) {
         onClick={() => onClick(source)}
         aria-label={`${source.title}${pct !== null ? `, ${pct}% relevant` : ""}`}
       >
-        <FileTextIcon size={18} />
+        {isPdfSource(source) ? (
+          <PdfIcon size={18} />
+        ) : resolveSourceUrl(source) ? (
+          <LinkIcon size={18} />
+        ) : (
+          <FileTextIcon size={18} />
+        )}
         <SourceChipTitle>
           {truncateTitle(source.title)}
-          {source.metadata?.pageNumber != null && (
-            <span style={{ color: "#667085", fontWeight: 400 }}> — p. {source.metadata.pageNumber}</span>
-          )}
+          {(() => {
+            const pageNumber = getSourcePageNumber(source);
+            return pageNumber && pageNumber > 0 ? (
+              <span style={{ color: "#667085", fontWeight: 400 }}>
+                {" "}— p. {pageNumber}
+              </span>
+            ) : null;
+          })()}
         </SourceChipTitle>
         {pct !== null && (
           <SourceChipRelevance>{pct}%</SourceChipRelevance>
@@ -153,8 +168,10 @@ function SourceChipWithHover({ source, onClick }: SourceChipWithHoverProps) {
         >
           <HoverCardHeader>
             <TypeBadge $type={source.type}>
-              {getSourceTypeIcon(source.type)}
-              {getFileExtension(source) || source.metadata?.sourceType || source.type}
+              {getSourceTypeIcon(source)}
+              {getSourceFileLabel(source) ||
+                source.metadata?.sourceType ||
+                source.type}
             </TypeBadge>
             {pct !== null && (
               <SimilarityScore>{pct}% match</SimilarityScore>
@@ -166,19 +183,22 @@ function SourceChipWithHover({ source, onClick }: SourceChipWithHoverProps) {
             <HoverCardValue>{source.title}</HoverCardValue>
           </HoverCardRow>
 
-          {source.metadata?.filename && getFileExtension(source) && (
+          {source.metadata?.filename && getSourceFileLabel(source) && (
             <HoverCardRow>
               <HoverCardLabel>File</HoverCardLabel>
               <HoverCardValue>{source.metadata.filename}</HoverCardValue>
             </HoverCardRow>
           )}
 
-          {source.metadata?.pageNumber && getFileExtension(source) && (
-            <HoverCardRow>
-              <HoverCardLabel>Page</HoverCardLabel>
-              <HoverCardValue>{source.metadata.pageNumber}</HoverCardValue>
-            </HoverCardRow>
-          )}
+          {(() => {
+            const pageNumber = getSourcePageNumber(source);
+            return pageNumber && pageNumber > 0 ? (
+              <HoverCardRow>
+                <HoverCardLabel>Page</HoverCardLabel>
+                <HoverCardValue>{pageNumber}</HoverCardValue>
+              </HoverCardRow>
+            ) : null;
+          })()}
 
           {(source.snippet || source.excerpt) && (
             <HoverCardRow>
@@ -239,6 +259,7 @@ export function SourcesList({
   onShowAllSources,
 }: SourcesListProps) {
   const { downloadSource } = useSourceDownload();
+  const [previewSource, setPreviewSource] = useState<Source | null>(null);
 
   if (sources.length === 0) return null;
 
@@ -251,6 +272,12 @@ export function SourcesList({
   const remaining = sorted.length - MAX_VISIBLE;
 
   const handleClick = (source: Source) => {
+    // Preview-only sources have no URL and no downloadable file. Calling the
+    // download endpoint would error, so render an inline detail dialog.
+    if (isPreviewOnlySource(source)) {
+      setPreviewSource(source);
+      return;
+    }
     if (onSourceClick) {
       onSourceClick(source);
     } else {
@@ -279,6 +306,11 @@ export function SourcesList({
           </SourceMoreChip>
         )}
       </SourceChipsRow>
+      <SourcePreviewModal
+        open={previewSource !== null}
+        source={previewSource}
+        onClose={() => setPreviewSource(null)}
+      />
     </SourcesSection>
   );
 }

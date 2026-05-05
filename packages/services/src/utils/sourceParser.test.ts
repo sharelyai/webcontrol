@@ -8,6 +8,11 @@ import {
   processLoadedMessages,
   isLikelyUrl,
   resolveSourceUrl,
+  getSourcePageNumber,
+  getSourceBlobType,
+  getSourceFileLabel,
+  isPdfSource,
+  isPreviewOnlySource,
 } from './sourceParser';
 import type { Source } from '../types/agent';
 
@@ -261,5 +266,135 @@ describe('processLoadedMessageSources pass-through', () => {
     expect(result[1].url).toBeUndefined();
     expect(result[0].title).toBe('U.S. Child Safety Updates');
     expect(result[1].title).toBe('AP/Class Staff Bulletin');
+  });
+});
+
+describe('getSourcePageNumber', () => {
+  it('reads from new shape: metadata.loc.pageNumber', () => {
+    const source: Source = {
+      id: '1', type: 'knowledge', title: 'T',
+      metadata: { loc: { pageNumber: 9, lines: { from: 1, to: 18 } } } as any,
+    };
+    expect(getSourcePageNumber(source)).toBe(9);
+  });
+
+  it('falls back to flat-key metadata["loc.pageNumber"]', () => {
+    const source: Source = {
+      id: '1', type: 'knowledge', title: 'T',
+      metadata: { 'loc.pageNumber': 5 } as any,
+    };
+    expect(getSourcePageNumber(source)).toBe(5);
+  });
+
+  it('falls back to direct metadata.pageNumber', () => {
+    const source: Source = {
+      id: '1', type: 'knowledge', title: 'T',
+      metadata: { pageNumber: 3 },
+    };
+    expect(getSourcePageNumber(source)).toBe(3);
+  });
+
+  it('returns undefined when no page number field present', () => {
+    const source: Source = { id: '1', type: 'knowledge', title: 'T' };
+    expect(getSourcePageNumber(source)).toBeUndefined();
+    expect(getSourcePageNumber(undefined)).toBeUndefined();
+  });
+});
+
+describe('getSourceBlobType + isPdfSource', () => {
+  it('reads metadata.blobType', () => {
+    const source: Source = {
+      id: '1', type: 'knowledge', title: 'T',
+      metadata: { blobType: 'application/pdf' } as any,
+    };
+    expect(getSourceBlobType(source)).toBe('application/pdf');
+    expect(isPdfSource(source)).toBe(true);
+  });
+
+  it('detects PDF via .pdf in title when blobType missing', () => {
+    const source: Source = {
+      id: '1', type: 'knowledge', title: 'My Manual_062025.pdf',
+    };
+    expect(isPdfSource(source)).toBe(true);
+  });
+
+  it('detects PDF via filename extension', () => {
+    const source: Source = {
+      id: '1', type: 'knowledge', title: 'T',
+      metadata: { filename: 'doc.PDF' },
+    };
+    expect(isPdfSource(source)).toBe(true);
+  });
+
+  it('returns false for non-PDFs', () => {
+    expect(isPdfSource({ id: '1', type: 'knowledge', title: 'Article' })).toBe(false);
+    expect(isPdfSource(undefined)).toBe(false);
+  });
+});
+
+describe('getSourceFileLabel', () => {
+  it('uses filename extension first', () => {
+    const source: Source = {
+      id: '1', type: 'knowledge', title: 'T',
+      metadata: { filename: 'doc.pdf' },
+    };
+    expect(getSourceFileLabel(source)).toBe('PDF');
+  });
+
+  it('falls back to title extension', () => {
+    const source: Source = {
+      id: '1', type: 'knowledge', title: 'Manual_062025.pdf',
+    };
+    expect(getSourceFileLabel(source)).toBe('PDF');
+  });
+
+  it('maps blobType to a friendly label when no extension is available', () => {
+    const source: Source = {
+      id: '1', type: 'knowledge', title: 'No ext title',
+      metadata: { blobType: 'application/pdf' } as any,
+    };
+    expect(getSourceFileLabel(source)).toBe('PDF');
+  });
+
+  it('returns null for URL-style sources without file metadata', () => {
+    const source: Source = {
+      id: '1', type: 'knowledge', title: 'Article About Things',
+      url: 'https://example.com/article',
+    };
+    expect(getSourceFileLabel(source)).toBeNull();
+  });
+});
+
+describe('isPreviewOnlySource', () => {
+  it('returns true for the AP/Class Staff Bulletin shape: no url, no file, snippet describes content', () => {
+    const source: Source = {
+      id: 'd2ada252',
+      type: 'semantic',
+      title: 'AP/Class Staff Bulletin',
+      snippet: 'Link: https://lead.bsfinternational.org/bulletin/ Title: AP/Class Staff Bulletin',
+      metadata: { loc: { lines: { from: 1, to: 1 } } } as any,
+    };
+    expect(isPreviewOnlySource(source)).toBe(true);
+  });
+
+  it('returns false when source has a URL', () => {
+    const source: Source = {
+      id: '1', type: 'knowledge', title: 'T',
+      url: 'https://example.com',
+    };
+    expect(isPreviewOnlySource(source)).toBe(false);
+  });
+
+  it('returns false when source has a file label (PDF blobType)', () => {
+    const source: Source = {
+      id: '1', type: 'semantic', title: 'Manual',
+      metadata: { blobType: 'application/pdf' } as any,
+    };
+    expect(isPreviewOnlySource(source)).toBe(false);
+  });
+
+  it('returns false when source has a .pdf-suffixed title', () => {
+    const source: Source = { id: '1', type: 'semantic', title: 'Doc.pdf' };
+    expect(isPreviewOnlySource(source)).toBe(false);
   });
 });

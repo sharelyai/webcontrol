@@ -1,7 +1,13 @@
 import { useState, useRef, useCallback, useMemo } from "react";
 import { useFloating, offset, flip, shift } from "@floating-ui/react";
 import type { Source } from "@sharelyai/services";
-import { useSourceDownload, resolveSourceUrl } from "@sharelyai/services";
+import {
+  useSourceDownload,
+  resolveSourceUrl,
+  getSourcePageNumber,
+  getSourceFileLabel,
+  isPdfSource,
+} from "@sharelyai/services";
 import {
   BadgeWrapper,
   HoverCard,
@@ -22,19 +28,13 @@ import {
   LinkIcon,
   ExternalLinkIcon,
   LoaderIcon,
+  PdfIcon,
 } from "../icons";
 
 interface CitationBadgeProps {
   index: number;
   source: Source;
   onSourceClick?: (sourceId: string) => void;
-}
-
-function getFileExtension(source: Source): string | null {
-  const filename = source.metadata?.filename;
-  if (!filename) return null;
-  const match = filename.match(/\.([a-zA-Z0-9]+)$/);
-  return match ? match[1].toUpperCase() : null;
 }
 
 function getExternalUrl(source: Source): string | undefined {
@@ -47,13 +47,17 @@ function isDownloadableSource(source: Source): boolean {
   if (sourceType === "STRING") return false;
   // Sources that expose an external URL should be opened, not downloaded
   if (getExternalUrl(source)) return false;
-  // Must have a knowledgeId and a filename with an extension to be downloadable
-  if (source.metadata?.knowledgeId && getFileExtension(source)) return true;
+  // Downloadable when we can identify a file (filename ext, title ext, or
+  // blobType) and we have a knowledgeId to fetch it with.
+  if (source.metadata?.knowledgeId && getSourceFileLabel(source)) return true;
   return false;
 }
 
-function getSourceTypeIcon(type: Source["type"]) {
-  switch (type) {
+function getSourceTypeIcon(source: Source) {
+  if (isPdfSource(source)) return <PdfIcon />;
+  // URL-bearing sources (real http(s) URL but not a PDF) render as a link.
+  if (resolveSourceUrl(source)) return <LinkIcon />;
+  switch (source.type) {
     case "knowledge":
     case "document":
       return <FileTextIcon />;
@@ -148,8 +152,10 @@ export function CitationBadge({
         >
           <HoverCardHeader>
             <TypeBadge $type={source.type}>
-              {getSourceTypeIcon(source.type)}
-              {getFileExtension(source) || source.metadata?.sourceType || source.type}
+              {getSourceTypeIcon(source)}
+              {getSourceFileLabel(source) ||
+                source.metadata?.sourceType ||
+                source.type}
             </TypeBadge>
             {similarityPercent !== null && (
               <SimilarityScore>{similarityPercent}% match</SimilarityScore>
@@ -161,19 +167,22 @@ export function CitationBadge({
             <HoverCardValue>{source.title}</HoverCardValue>
           </HoverCardRow>
 
-          {source.metadata?.filename && getFileExtension(source) && (
+          {source.metadata?.filename && getSourceFileLabel(source) && (
             <HoverCardRow>
               <HoverCardLabel>File</HoverCardLabel>
               <HoverCardValue>{source.metadata.filename}</HoverCardValue>
             </HoverCardRow>
           )}
 
-          {source.metadata?.pageNumber && getFileExtension(source) && (
-            <HoverCardRow>
-              <HoverCardLabel>Page</HoverCardLabel>
-              <HoverCardValue>{source.metadata.pageNumber}</HoverCardValue>
-            </HoverCardRow>
-          )}
+          {(() => {
+            const pageNumber = getSourcePageNumber(source);
+            return pageNumber && pageNumber > 0 ? (
+              <HoverCardRow>
+                <HoverCardLabel>Page</HoverCardLabel>
+                <HoverCardValue>{pageNumber}</HoverCardValue>
+              </HoverCardRow>
+            ) : null;
+          })()}
 
           {(source.snippet || source.excerpt) && (
             <HoverCardRow>

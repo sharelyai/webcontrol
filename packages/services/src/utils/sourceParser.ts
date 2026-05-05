@@ -92,8 +92,12 @@ export function mergeSourcesWithRawData(
 ): Source[] {
   return sources.map((source) => {
     const rawData = rawDataMap.get(source.id);
-    const cleanSnippet = source.snippet ? stripHtml(source.snippet) : source.snippet;
-    const cleanExcerpt = (source as any).excerpt ? stripHtml((source as any).excerpt) : (source as any).excerpt;
+    const cleanSnippet = source.snippet
+      ? stripHtml(source.snippet)
+      : source.snippet;
+    const cleanExcerpt = (source as any).excerpt
+      ? stripHtml((source as any).excerpt)
+      : (source as any).excerpt;
     if (rawData) {
       return {
         ...source,
@@ -133,7 +137,9 @@ export function isLikelyUrl(value: unknown): value is string {
  * Snippet is the LAST resort and only used when it's a real URL — plain prose
  * snippets are ignored.
  */
-export function resolveSourceUrl(source: Source | undefined | null): string | undefined {
+export function resolveSourceUrl(
+  source: Source | undefined | null,
+): string | undefined {
   if (!source) return undefined;
   const meta = (source.metadata || {}) as Record<string, unknown>;
   if (isLikelyUrl(source.url)) return source.url;
@@ -141,6 +147,97 @@ export function resolveSourceUrl(source: Source | undefined | null): string | un
   if (isLikelyUrl(meta.source)) return meta.source as string;
   if (isLikelyUrl(source.snippet)) return source.snippet;
   return undefined;
+}
+
+/**
+ * Reads the page number from a Source's metadata across the three shapes the
+ * backend has emitted over time:
+ *   - new (preferred): metadata.loc.pageNumber  (nested loc object)
+ *   - flat-key:        metadata["loc.pageNumber"]
+ *   - direct:          metadata.pageNumber
+ */
+export function getSourcePageNumber(
+  source: Source | undefined | null,
+): number | undefined {
+  if (!source) return undefined;
+  const meta = source.metadata as Record<string, unknown> | undefined;
+  if (!meta) return undefined;
+  const loc = meta.loc as { pageNumber?: unknown } | undefined;
+  if (loc && typeof loc.pageNumber === "number") return loc.pageNumber;
+  const flat = meta["loc.pageNumber"];
+  if (typeof flat === "number") return flat;
+  if (typeof meta.pageNumber === "number") return meta.pageNumber;
+  return undefined;
+}
+
+/** Reads metadata.blobType (MIME type) when present. */
+export function getSourceBlobType(
+  source: Source | undefined | null,
+): string | undefined {
+  const blobType = (source?.metadata as Record<string, unknown> | undefined)
+    ?.blobType;
+  return typeof blobType === "string" ? blobType : undefined;
+}
+
+/**
+ * True when the source represents a PDF document. Detects via blobType
+ * (application/pdf), an explicit .pdf filename, or a .pdf-suffixed title.
+ */
+export function isPdfSource(source: Source | undefined | null): boolean {
+  if (!source) return false;
+  const blobType = getSourceBlobType(source);
+  if (blobType && /pdf/i.test(blobType)) return true;
+  const filename = (source.metadata as any)?.filename;
+  if (typeof filename === "string" && /\.pdf$/i.test(filename)) return true;
+  if (typeof source.title === "string" && /\.pdf$/i.test(source.title))
+    return true;
+  return false;
+}
+
+/**
+ * True when a source can only be shown as an inline preview — no URL to open,
+ * no downloadable file. Calling the download endpoint for these would error,
+ * so the UI should display the snippet/title in a small dialog instead.
+ *
+ * Examples: a string-typed knowledge entry whose snippet describes content
+ * but has no `url`, `metadata.sourceUrl`, `metadata.filename`, or `blobType`.
+ */
+export function isPreviewOnlySource(
+  source: Source | undefined | null,
+): boolean {
+  if (!source) return false;
+  if (resolveSourceUrl(source)) return false;
+  if (getSourceFileLabel(source)) return false;
+  return true;
+}
+
+/**
+ * Returns a short label like "PDF", "DOCX", "PPTX", "TXT" for the source's
+ * file type, derived from filename/title extension or blobType. Returns null
+ * when the source isn't a recognizable file (e.g., URL articles).
+ */
+export function getSourceFileLabel(
+  source: Source | undefined | null,
+): string | null {
+  if (!source) return null;
+  const filename = (source.metadata as any)?.filename;
+  if (typeof filename === "string") {
+    const m = filename.match(/\.([a-zA-Z0-9]+)$/);
+    if (m) return m[1].toUpperCase();
+  }
+  if (typeof source.title === "string") {
+    const m = source.title.match(/\.([a-zA-Z0-9]+)$/);
+    if (m) return m[1].toUpperCase();
+  }
+  const blobType = getSourceBlobType(source);
+  if (blobType) {
+    if (/pdf/i.test(blobType)) return "PDF";
+    if (/wordprocessingml|msword|word/i.test(blobType)) return "DOCX";
+    if (/spreadsheetml|excel|ms-excel/i.test(blobType)) return "XLSX";
+    if (/presentationml|powerpoint/i.test(blobType)) return "PPTX";
+    if (/text\/plain/i.test(blobType)) return "TXT";
+  }
+  return null;
 }
 
 /**
@@ -166,12 +263,13 @@ export function stripHtml(html: string): string {
 export function extractSourcesFromSemanticSearch(
   sourcesMetadata: SemanticSourceMetadataEntry[],
 ): Source[] {
-  return sourcesMetadata
-    .map((entry) => {
+  return sourcesMetadata.map((entry) => {
     // Handle both nested metadata and flat format from the backend
     const meta = entry.metadata || entry;
     const score = entry.score ?? (meta as any).score;
-    const title = ((meta.title || "") as string).replace(/&#038;/g, "&").replace(/&amp;/g, "&");
+    const title = ((meta.title || "") as string)
+      .replace(/&#038;/g, "&")
+      .replace(/&amp;/g, "&");
     // The backend's `source` field is overloaded: it can be either a URL
     // (for URL-based knowledge) or a chunked-file token like
     // "pageNumber:filename:knowledgeId" (for uploaded files). Treat it as
@@ -208,7 +306,9 @@ export function extractSourcesFromSearchKnowledge(
     return {
       id: result.id,
       type: "knowledge" as const,
-      title: (result.title || "").replace(/&#038;/g, "&").replace(/&amp;/g, "&"),
+      title: (result.title || "")
+        .replace(/&#038;/g, "&")
+        .replace(/&amp;/g, "&"),
       url,
       snippet: result.content ? stripHtml(result.content) : undefined,
       metadata: {

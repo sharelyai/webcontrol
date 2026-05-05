@@ -81,6 +81,7 @@ export const Anchor = ({ node, ...props }: any) => {
     return source;
   })();
   const pageNumber =
+    findSourceMetadata?.metadata?.loc?.pageNumber ??
     findSourceMetadata?.metadata?.["loc.pageNumber"] ??
     findSourceMetadata?.metadata?.pageNumber;
   const relevancePercentage = (findSourceMetadata?.score * 100).toFixed(3);

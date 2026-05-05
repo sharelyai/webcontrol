@@ -12,5 +12,6 @@ export { EmptyState } from './components/EmptyState';
 export { ErrorMessage } from './components/ErrorMessage';
 export { HistoryModal } from './components/HistoryModal';
 export { AllSourcesModal } from './components/AllSourcesModal';
+export { SourcePreviewModal } from './components/SourcePreviewModal';
 export { ActionBar } from './components/ActionBar';
 export { IconButton } from './components/IconButton';
