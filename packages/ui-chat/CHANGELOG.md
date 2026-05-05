@@ -1,5 +1,14 @@
 # @sharelyai/ui-chat
 
+## 0.0.30
+
+### Patch Changes
+
+- updated resources process
+- Updated dependencies
+  - @sharelyai/services@0.0.30
+  - @sharelyai/ui-shared@0.0.30
+
 ## 0.0.29
 
 ### Patch Changes
