@@ -24,7 +24,6 @@ export const Anchor = ({ node, ...props }: any) => {
   const anchorUUID = useRef(crypto.randomUUID());
   const { isHovered, setIsHovered, currentHref, knowledgeId, setKnowledgeId } =
     useAnchorStore();
-  const globalStore = useGlobalStore();
   const { apiClient } = useSharelyContext();
   const { refs, floatingStyles } = useFloating({
     placement: props?.sourcesMetadata ? "top-start" : "bottom",
@@ -49,21 +48,10 @@ export const Anchor = ({ node, ...props }: any) => {
     ?.replace(constants.PAGE_NUMBER_DOCUMENT_DOWNLOAD_URL, "")
     ?.replaceAll("____", " ");
   const sourcesMetadata = props?.sourcesMetadata;
-  // Prefer matching by knowledgeId — that's the stable identifier across
-  // sources[] and sourcesMetadata[]. Fall back to metadata.source for legacy
-  // entries where knowledgeId isn't set.
-  const findSourceMetadata =
-    sourcesMetadata?.find(
-      (source: any) => source?.metadata?.knowledgeId === referenceId,
-    ) ||
-    sourcesMetadata?.find(
-      (source: any) => source?.metadata?.source === referenceId,
-    );
+  const findSourceMetadata = sourcesMetadata?.find(
+    (source: any) => source?.metadata?.source === referenceId,
+  );
   const sourceKnowledgeId = findSourceMetadata?.metadata?.knowledgeId;
-  // Reuse the same URL priority chain used everywhere else (sourceUrl →
-  // source-as-URL → snippet/text-as-URL). The anchor sees a sourcesMetadata
-  // entry (nested under `.metadata`), so build a Source-shaped object that
-  // routes those fields into the helper's expected slots.
   const externalUrl = findSourceMetadata
     ? resolveSourceUrl({
         id: findSourceMetadata.metadata?.knowledgeId || "",
@@ -101,7 +89,6 @@ export const Anchor = ({ node, ...props }: any) => {
     ? rawPreview.replace(/<[^>]*>/g, "").trim()
     : "";
   const hasSourceData = !!(findSourceMetadata && (title || contentPreview));
-  // Add uuid to the key to ensure uniqueness
   const keyAnchorElement =
     props?.href + "_" + props?.messageId + "_" + anchorUUID.current;
 
@@ -111,9 +98,6 @@ export const Anchor = ({ node, ...props }: any) => {
 
   const handleDownloadDocument = async (event: any) => {
     event?.stopPropagation();
-
-    // If we resolved a real URL for this source, prefer opening it directly
-    // over hitting the knowledge download endpoint.
     if (externalUrl) {
       window.open(externalUrl, "_blank");
       return;

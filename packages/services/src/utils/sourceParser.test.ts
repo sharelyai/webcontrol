@@ -8,7 +8,6 @@ import {
   processLoadedMessages,
   isLikelyUrl,
   resolveSourceUrl,
-  mergeSourcesByKnowledgeId,
 } from './sourceParser';
 import type { Source } from '../types/agent';
 
@@ -174,124 +173,67 @@ describe('resolveSourceUrl', () => {
   });
 });
 
-describe('mergeSourcesByKnowledgeId', () => {
-  it('matches by metadata.knowledgeId and pulls URL from metadata entry', () => {
-    const sources: Source[] = [
-      { id: 'src1', type: 'knowledge', title: 'Original Title',
-        metadata: { knowledgeId: 'kid-1' } },
-    ];
-    const meta = [
-      { id: 'meta1', knowledgeId: 'kid-1', metadata: {
-        sourceUrl: 'https://merged.com', title: 'Meta Title', text: 'meta text',
-      }, score: 0.8 },
-    ];
-    const result = mergeSourcesByKnowledgeId(sources, meta);
-    expect(result[0].url).toBe('https://merged.com');
-    expect(result[0].metadata?.sourceUrl).toBe('https://merged.com');
-    expect(result[0].metadata?.similarity).toBe(0.8);
-    expect(result[0].title).toBe('Original Title');
-    expect(result[0].snippet).toBe('meta text');
-  });
-
-  it('falls back to source.id when metadata.knowledgeId is missing', () => {
-    const sources: Source[] = [
-      { id: 'kid-1', type: 'knowledge', title: 'T' },
-    ];
-    const meta = [
-      { id: 'meta1', knowledgeId: 'kid-1', metadata: {
-        sourceUrl: 'https://by-id.com',
-      } },
-    ];
-    const result = mergeSourcesByKnowledgeId(sources, meta);
-    expect(result[0].url).toBe('https://by-id.com');
-  });
-
-  it('does not overwrite an existing url on the source', () => {
-    const sources: Source[] = [
-      { id: 'src1', type: 'knowledge', title: 'T',
-        url: 'https://original.com',
-        metadata: { knowledgeId: 'kid-1' } },
-    ];
-    const meta = [
-      { id: 'meta1', knowledgeId: 'kid-1', metadata: {
-        sourceUrl: 'https://from-meta.com',
-      } },
-    ];
-    const result = mergeSourcesByKnowledgeId(sources, meta);
-    expect(result[0].url).toBe('https://original.com');
-  });
-
-  it('leaves unmatched sources alone but normalizes knowledgeId', () => {
-    const sources: Source[] = [
-      { id: 'src-no-match', type: 'knowledge', title: 'Lonely' },
-    ];
-    const meta = [
-      { id: 'unrelated', knowledgeId: 'kid-other', metadata: {} },
-    ];
-    const result = mergeSourcesByKnowledgeId(sources, meta);
-    expect(result[0].title).toBe('Lonely');
-    expect(result[0].metadata?.knowledgeId).toBe('src-no-match');
-  });
-
-  it('uses snippet-as-URL only when nothing else resolves', () => {
-    const sources: Source[] = [
-      { id: 'src1', type: 'knowledge', title: 'T',
-        snippet: 'https://from-snippet.com',
-        metadata: { knowledgeId: 'kid-1' } },
-    ];
-    const result = mergeSourcesByKnowledgeId(sources, []);
-    expect(result[0].url).toBe('https://from-snippet.com');
-  });
-
-  it('returns input untouched when sources is empty', () => {
-    expect(mergeSourcesByKnowledgeId([], [{ id: 'm', metadata: {} }])).toEqual([]);
-  });
-});
-
-describe('processLoadedMessageSources end-to-end merge', () => {
-  it('uses message.sources as the canonical list and enriches via knowledgeId', () => {
+describe('processLoadedMessageSources pass-through', () => {
+  it('strips HTML from snippet and resolves URL via priority chain', () => {
     const result = processLoadedMessageSources({
       sources: [
-        { id: 'kid-1', type: 'knowledge', title: 'From sources',
-          metadata: { knowledgeId: 'kid-1' } },
-      ],
-      toolCalls: [{
-        name: 'semantic_search',
-        output: {
-          sourcesMetadata: [
-            { id: 'meta-1', knowledgeId: 'kid-1', score: 0.91, metadata: {
-              sourceUrl: 'https://doc.example.com/page',
-              title: 'Doc title from semantic',
-              text: 'a relevant chunk',
-              type: 'URL',
-            } },
-          ],
+        {
+          id: 'kid-1',
+          type: 'knowledge',
+          title: 'T',
+          snippet: '<p>Some <b>preview</b></p>',
+          metadata: { sourceUrl: 'https://meta.example.com' },
         },
-      }],
+      ],
     });
-
-    expect(result.length).toBe(1);
-    expect(result[0].url).toBe('https://doc.example.com/page');
+    expect(result[0].snippet).toBe('Some preview');
+    expect(result[0].url).toBe('https://meta.example.com');
     expect(result[0].metadata?.knowledgeId).toBe('kid-1');
-    expect(result[0].metadata?.similarity).toBe(0.91);
-    expect(result[0].title).toBe('From sources');
   });
 
-  it('keeps snippet-as-URL fallback path working when toolCalls have no metadata', () => {
+  it('preserves an existing source.url and does not invoke any merge logic', () => {
     const result = processLoadedMessageSources({
       sources: [
-        { id: 'kid-1', type: 'knowledge', title: 'T',
+        {
+          id: 'a',
+          type: 'knowledge',
+          title: 'A',
+          url: 'https://a.example.com',
+        },
+        {
+          id: 'b',
+          type: 'knowledge',
+          title: 'B',
+          url: 'https://b.example.com',
+        },
+      ],
+      // toolCalls is now ignored — backend already merged sources
+      toolCalls: [
+        { name: 'semantic_search', output: { sourcesMetadata: [{ id: 'x', knowledgeId: 'a' }] } },
+      ],
+    });
+    expect(result).toHaveLength(2);
+    expect(result[0].url).toBe('https://a.example.com');
+    expect(result[1].url).toBe('https://b.example.com');
+  });
+
+  it('snippet-as-URL still wins as the last-resort fallback', () => {
+    const result = processLoadedMessageSources({
+      sources: [
+        {
+          id: 'kid-1',
+          type: 'knowledge',
+          title: 'T',
           snippet: 'https://snippet-only.com',
-          metadata: { knowledgeId: 'kid-1' } },
+        },
       ],
     });
     expect(result[0].url).toBe('https://snippet-only.com');
   });
 
-  // Regression: real BSF bulletin payload — message.sources IDs (search_knowledge
-  // result IDs) and semantic_search knowledgeIds are completely disjoint. URLs
-  // must survive on the rendered sources even though no merge match happens.
-  it('preserves message.sources URLs when sources and sourcesMetadata IDs do not overlap', () => {
+  // Regression: real BSF bulletin payload — backend now ships a single
+  // positional sources[] array. All URLs must come through untouched.
+  it('passes through the unified BSF sources[] with URLs intact (positional)', () => {
     const result = processLoadedMessageSources({
       sources: [
         {
@@ -301,60 +243,23 @@ describe('processLoadedMessageSources end-to-end merge', () => {
           url: 'https://support.mybsf.org/bsf_article/u-s-child-safety-updates/',
           snippet: 'BSF remains deeply committed...',
         },
+        // Position 10 in the original payload — the [11] AP/Class Staff Bulletin
         {
-          id: '33253bc9-7ce5-4359-9f2b-3919213b341b',
-          type: 'knowledge',
-          title: 'Reminder: Upcoming Leaders Meeting Alignment',
-          url: 'https://support.mybsf.org/bsf_article/reminder-upcoming-leaders-meeting-alignment/',
-          snippet: 'BSF is committed...',
-        },
-      ],
-      toolCalls: [
-        {
-          name: 'search_knowledge',
-          output: {
-            results: [
-              {
-                id: '10317c9e-ee45-4695-8779-f7270507ad0f',
-                type: 'STRING',
-                title: 'U.S. Child Safety Updates',
-                content: '<p>...</p>',
-                sourceUrl: 'https://support.mybsf.org/bsf_article/u-s-child-safety-updates/',
-              },
-            ],
-          },
-        },
-        {
-          name: 'semantic_search',
-          output: {
-            sourcesMetadata: [
-              {
-                id: '2b720202-1788-4c47-8cf0-d7748334bfdc',
-                knowledgeId: 'd2ada252-5e7a-425d-9253-3429451326f1',
-                score: 0.874,
-                title: 'AP/Class Staff Bulletin',
-                source: '0:AP/Class Staff Bulletin:d2ada252-5e7a-425d-9253-3429451326f1',
-                text: 'Link: https://lead.bsfinternational.org/bulletin/ Title: AP/Class Staff Bulletin',
-              },
-            ],
-            dataArraySortedWithSource: [
-              {
-                text: 'Link: https://lead.bsfinternational.org/bulletin/ Title: AP/Class Staff Bulletin',
-                source: '0:AP/Class Staff Bulletin:d2ada252-5e7a-425d-9253-3429451326f1',
-              },
-            ],
-          },
+          id: 'd2ada252-5e7a-425d-9253-3429451326f1',
+          type: 'semantic',
+          title: 'AP/Class Staff Bulletin',
+          snippet: 'Link: https://lead.bsfinternational.org/bulletin/ Title: AP/Class Staff Bulletin',
         },
       ],
     });
-
     expect(result).toHaveLength(2);
-    expect(result[0].id).toBe('10317c9e-ee45-4695-8779-f7270507ad0f');
-    expect(result[0].url).toBe('https://support.mybsf.org/bsf_article/u-s-child-safety-updates/');
-    expect(result[1].url).toBe(
-      'https://support.mybsf.org/bsf_article/reminder-upcoming-leaders-meeting-alignment/',
+    expect(result[0].url).toBe(
+      'https://support.mybsf.org/bsf_article/u-s-child-safety-updates/',
     );
+    // Bulletin entry has no url/sourceUrl and snippet is prose-with-URL — the
+    // priority chain rejects "Link: …" snippets. URL stays undefined.
+    expect(result[1].url).toBeUndefined();
     expect(result[0].title).toBe('U.S. Child Safety Updates');
-    expect(result[1].title).toBe('Reminder: Upcoming Leaders Meeting Alignment');
+    expect(result[1].title).toBe('AP/Class Staff Bulletin');
   });
 });

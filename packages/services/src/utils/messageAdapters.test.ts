@@ -42,13 +42,44 @@ describe('agentMessageToBodyMessage', () => {
     expect(result.message).toBe('');
   });
 
-  it('builds sourcesMetadata from sources', () => {
+  it('builds sourcesMetadata keyed by index in sources[]', () => {
     const msg = makeAgentMessage({
-      sources: [{ id: 's1', type: 'knowledge', title: 'Title', url: 'http://x.com', snippet: 'snip' }],
+      sources: [
+        { id: 's1', type: 'knowledge', title: 'First', url: 'http://x.com', snippet: 'snip-1' },
+        { id: 's2', type: 'knowledge', title: 'Second', url: 'http://y.com', snippet: 'snip-2' },
+      ],
     });
     const result = agentMessageToBodyMessage(msg);
-    expect(result.sourcesMetadata).toHaveLength(1);
-    expect(result.sourcesMetadata![0].source).toBe('http://x.com');
+    expect(result.sourcesMetadata).toHaveLength(2);
+    expect(result.sourcesMetadata![0].source).toBe('0');
+    expect(result.sourcesMetadata![0].metadata).toMatchObject({ source: '0', title: 'First' });
+    expect(result.sourcesMetadata![1].source).toBe('1');
+    expect(result.sourcesMetadata![1].metadata).toMatchObject({ source: '1', title: 'Second' });
+  });
+
+  it('rewrites [N] citation markers to markdown links with the index as href', () => {
+    const msg = makeAgentMessage({
+      role: 'assistant',
+      content: 'See [1] and also [3] for context.',
+      sources: [
+        { id: 'a', type: 'knowledge', title: 'First', url: 'http://x.com' },
+        { id: 'b', type: 'knowledge', title: 'Second', url: 'http://y.com' },
+        { id: 'c', type: 'knowledge', title: 'Third', url: 'http://z.com' },
+      ],
+    });
+    const result = agentMessageToBodyMessage(msg);
+    // [1] → sources[0] (index 0); [3] → sources[2] (index 2)
+    expect(result.message).toBe('See [First](0) and also [Third](2) for context.');
+  });
+
+  it('leaves [N] markers untouched when index is out of range', () => {
+    const msg = makeAgentMessage({
+      role: 'assistant',
+      content: 'See [5].',
+      sources: [{ id: 'a', type: 'knowledge', title: 'First', url: 'http://x.com' }],
+    });
+    const result = agentMessageToBodyMessage(msg);
+    expect(result.message).toBe('See [5].');
   });
 });
 

@@ -1,5 +1,11 @@
 # @sharelyai/services
 
+## 0.0.29
+
+### Patch Changes
+
+- updated resources
+
 ## 0.0.28
 
 ### Patch Changes

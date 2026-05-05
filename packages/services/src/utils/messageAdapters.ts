@@ -1,5 +1,10 @@
-import type { AgentMessage, ThinkingStep, ToolCall, Source } from '../types/agent';
-import { CONVERSATIONS_TYPE_USER, CONVERSATIONS_TYPE_AI } from '../constants';
+import type {
+  AgentMessage,
+  ThinkingStep,
+  ToolCall,
+  Source,
+} from "../types/agent";
+import { CONVERSATIONS_TYPE_USER, CONVERSATIONS_TYPE_AI } from "../constants";
 
 export interface BodyMessage {
   id: string;
@@ -24,38 +29,38 @@ export interface BodyMessage {
 export function agentMessageToBodyMessage(msg: AgentMessage): BodyMessage {
   let content = msg.content || "";
 
-  // Build sourcesMetadata with the fields the Anchor component expects:
-  // - metadata.source: used for lookup (must match the referenceId derived from href)
-  // - metadata.knowledgeId, metadata.text, metadata["loc.pageNumber"], score: used for popup
-  const sourcesMetadata = msg.sources?.map((source) => {
-    const sourceId = source.url || source.title;
+  const sourcesMetadata = msg.sources?.map((source, index) => {
+    const indexKey = String(index);
     return {
-      source: sourceId,
+      source: indexKey,
       metadata: {
-        source: sourceId,
+        source: indexKey,
         title: source.title,
         snippet: source.snippet,
         type: source.type,
         text: source.snippet || source.excerpt,
         ...(source.metadata as Record<string, unknown> | undefined),
       },
-      score: (source.metadata as any)?.similarity ?? (source.metadata as any)?.score ?? 0,
+      score:
+        (source.metadata as any)?.similarity ??
+        (source.metadata as any)?.score ??
+        0,
     };
   });
 
-  // Convert inline [N] and [N-M] references to markdown links so the Anchor component
-  // renders them as interactive pills with hover popups (matching regular chat behavior).
   if (msg.sources && msg.sources.length > 0) {
-    content = content.replace(/\[(\d+)(?:-(\d+))?\]/g, (match, startStr, _endStr) => {
-      const index = parseInt(startStr, 10) - 1; // [1] → sources[0], [1-6] → sources[0]
-      if (index >= 0 && index < msg.sources.length) {
-        const source = msg.sources[index];
-        const title = source.title;
-        const identifier = (source.url || source.title).split(" ").join("____");
-        return `[${title}](${identifier})`;
-      }
-      return match;
-    });
+    content = content.replace(
+      /\[(\d+)(?:-(\d+))?\]/g,
+      (match, startStr, _endStr) => {
+        const index = parseInt(startStr, 10) - 1; // [1] → sources[0], [1-6] → sources[0]
+        if (index >= 0 && index < msg.sources.length) {
+          const source = msg.sources[index];
+          const title = source.title;
+          return `[${title}](${index})`;
+        }
+        return match;
+      },
+    );
   }
 
   return {
@@ -87,7 +92,7 @@ export function bodyMessageToAgentMessage(msg: BodyMessage): AgentMessage {
 
 export function mergeAgentMessagesWithBodyMessages(
   agentMessages: AgentMessage[],
-  bodyMessages: BodyMessage[]
+  bodyMessages: BodyMessage[],
 ): BodyMessage[] {
   const bodyMessageMap = new Map(bodyMessages.map((m) => [m.id, m]));
 

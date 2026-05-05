@@ -26,8 +26,6 @@ import {
   mergeSourcesWithRawData,
   processLoadedMessages,
   processLoadedMessageSources,
-  extractSourcesFromSemanticSearch,
-  extractSourcesFromSearchKnowledge,
 } from "../utils/sourceParser";
 import { useAgentSSE } from "./useAgentSSE";
 import { useGlobalStore } from "../stores/globalStore";
@@ -257,7 +255,12 @@ export function useAgentChat(options: UseAgentChatOptions): UseAgentChatReturn {
         case "tool_result": {
           const event = data as ToolResultEvent;
 
-          // Capture raw source data if present (for RAG results)
+          // Capture raw source data if present. Kept for backwards-compat with
+          // legacy "sources" (plural) events that may need pageNumber/filename
+          // enrichment. Do NOT push extracted sources into activeSources — the
+          // backend now delivers the canonical unified sources via "source"
+          // events. Mixing both produced duplicates and missing URLs in the UI
+          // during streaming.
           const output = event.output as Record<string, unknown> | undefined;
           if (output?.dataArraySortedWithSource) {
             const rawSources = output.dataArraySortedWithSource as Array<{
@@ -268,25 +271,6 @@ export function useAgentChat(options: UseAgentChatOptions): UseAgentChatReturn {
             rawMap.forEach((value, key) => {
               rawSourceDataRef.current.set(key, value);
             });
-          }
-
-          // Extract sources from semantic_search sourcesMetadata
-          if (
-            output?.sourcesMetadata &&
-            Array.isArray(output.sourcesMetadata)
-          ) {
-            const extracted = extractSourcesFromSemanticSearch(
-              output.sourcesMetadata as any[],
-            );
-            updateActiveSources((prev) => [...prev, ...extracted]);
-          }
-
-          // Extract sources from search_knowledge results
-          if (output?.results && Array.isArray(output.results)) {
-            const extracted = extractSourcesFromSearchKnowledge(
-              output.results as any[],
-            );
-            updateActiveSources((prev) => [...prev, ...extracted]);
           }
 
           updateActiveToolCalls((prev) =>
@@ -381,7 +365,9 @@ export function useAgentChat(options: UseAgentChatOptions): UseAgentChatReturn {
         case "tool_call_end": {
           const event = data as ToolCallEndEvent;
 
-          // Capture raw source data if present (for RAG results)
+          // Same shape as the new tool_result handler: capture rawData for
+          // legacy "sources" event enrichment, but do NOT extract sources from
+          // tool output. Canonical unified sources arrive via "source" events.
           const toolOutput = event.output as
             | Record<string, unknown>
             | undefined;
@@ -394,25 +380,6 @@ export function useAgentChat(options: UseAgentChatOptions): UseAgentChatReturn {
             rawMap.forEach((value, key) => {
               rawSourceDataRef.current.set(key, value);
             });
-          }
-
-          // Extract sources from semantic_search sourcesMetadata
-          if (
-            toolOutput?.sourcesMetadata &&
-            Array.isArray(toolOutput.sourcesMetadata)
-          ) {
-            const extracted = extractSourcesFromSemanticSearch(
-              toolOutput.sourcesMetadata as any[],
-            );
-            updateActiveSources((prev) => [...prev, ...extracted]);
-          }
-
-          // Extract sources from search_knowledge results
-          if (toolOutput?.results && Array.isArray(toolOutput.results)) {
-            const extracted = extractSourcesFromSearchKnowledge(
-              toolOutput.results as any[],
-            );
-            updateActiveSources((prev) => [...prev, ...extracted]);
           }
 
           updateActiveToolCalls((prev) =>
@@ -440,17 +407,14 @@ export function useAgentChat(options: UseAgentChatOptions): UseAgentChatReturn {
         // Legacy format: sources (plural)
         case "sources": {
           const event = data as SourcesEvent;
-          updateActiveSources((prev) => {
-            if (prev.length > 0) {
-              // Already have sources from tool outputs (sourcesMetadata) - enrich with raw data
-              return mergeSourcesWithRawData(prev, rawSourceDataRef.current);
-            }
-            // No prior sources - use the sources event as fallback
-            return mergeSourcesWithRawData(
-              event.sources,
-              rawSourceDataRef.current,
-            );
-          });
+          // The plural `sources` event is the canonical, unified list the
+          // backend commits against the message — same shape that arrives in
+          // `message.sources` on reload. Always replace activeSources with it
+          // (rawDataMap may add pageNumber/filename for chunked-file ids that
+          // happen to match; URLs on event.sources are preserved as-is).
+          updateActiveSources(() =>
+            mergeSourcesWithRawData(event.sources, rawSourceDataRef.current),
+          );
           break;
         }
 
