@@ -54,7 +54,6 @@ export const ChatArea = styled.div`
     display: flex;
     flex-direction: column;
     overflow-y: auto;
-    padding: 24px 16px;
 
     &::-webkit-scrollbar {
       width: 5px;
@@ -332,10 +331,7 @@ export const CiteButton = styled.button`
     gap: 2px;
     font-size: 12px;
     font-weight: 500;
-    color: var(
-      --web-control-styles-main_color,
-      ${theme.colors.mediumPurple}
-    );
+    color: var(--web-control-styles-main_color, ${theme.colors.mediumPurple});
     cursor: pointer;
     padding: 1px 6px;
     border-radius: 10px;
@@ -367,8 +363,7 @@ export const CitePopover = styled.div`
     max-width: 340px;
     background: ${theme.colors.white};
     border-radius: 12px;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12),
-      0 1px 4px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12), 0 1px 4px rgba(0, 0, 0, 0.08);
     padding: 14px 16px;
     animation: ${fadeIn} 0.3s ease;
   `}
@@ -542,10 +537,7 @@ export const IconBtn = styled.button<{ $active?: boolean }>`
 
     ${$active &&
     css`
-      color: var(
-        --web-control-styles-main_color,
-        ${theme.colors.mediumPurple}
-      );
+      color: var(--web-control-styles-main_color, ${theme.colors.mediumPurple});
     `}
   `}
 `;
@@ -602,10 +594,7 @@ export const FeedbackOption = styled.button<{ $active?: boolean }>`
         var(--web-control-styles-main_color, ${theme.colors.mediumPurple}) 6%,
         transparent
       );
-      color: var(
-        --web-control-styles-main_color,
-        ${theme.colors.mediumPurple}
-      );
+      color: var(--web-control-styles-main_color, ${theme.colors.mediumPurple});
     `}
   `}
 `;
@@ -801,10 +790,7 @@ export const SendButton = styled.button<{ $variant?: "danger" }>`
     flex-shrink: 0;
     padding: 8px;
 
-    background: var(
-      --web-control-styles-main_color,
-      ${theme.colors.indigo}
-    );
+    background: var(--web-control-styles-main_color, ${theme.colors.indigo});
     color: ${theme.colors.white};
 
     ${$variant === "danger" &&
@@ -886,11 +872,7 @@ export const ErrorRetryButton = styled.button`
     transition: all 0.15s;
 
     &:hover {
-      background: color-mix(
-        in srgb,
-        ${theme.colors.flamingo} 8%,
-        transparent
-      );
+      background: color-mix(in srgb, ${theme.colors.flamingo} 8%, transparent);
     }
   `}
 `;

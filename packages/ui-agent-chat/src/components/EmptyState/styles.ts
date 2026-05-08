@@ -10,7 +10,7 @@ export const EmptyStateWrapper = styled.div`
     justify-content: center;
 
     @media (min-width: ${theme.screens.lg}) {
-      gap: 32px;
+      gap: 20px;
     }
   `}
 `;

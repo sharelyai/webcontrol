@@ -1,5 +1,11 @@
 # @sharelyai/ui-agent-chat
 
+## 0.0.31
+
+### Patch Changes
+
+- updated chat styles
+
 ## 0.0.30
 
 ### Patch Changes
