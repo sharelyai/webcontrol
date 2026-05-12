@@ -13,8 +13,8 @@ pnpm test                 # Run tests (vitest) across packages
 pnpm clean                # Remove all dist/ and node_modules/
 
 # Filter to a specific package
-pnpm --filter @sharely/services build
-pnpm --filter @sharely/demo dev
+pnpm --filter @sharelyai/services build
+pnpm --filter @sharelyai/demo dev
 ```
 
 Turbo handles the build graph: packages build in dependency order (`^build`). The `dev` task is persistent and uncached.
@@ -28,17 +28,18 @@ Copy `.env.example` to `.env`. Required variables: `VITE_API_DEFAULT_URL`, `VITE
 This is a **pnpm + Turborepo monorepo** building an embeddable web control widget (Sharely). Packages are organized in a strict dependency layer:
 
 ```
-@sharely/services          ← Foundation: API client, hooks, Zustand store, types, auth, i18n
+@sharelyai/services          ← Foundation: API client, hooks, Zustand store, types, auth, i18n
     ↓
-@sharely/ui-shared         ← Shared UI: base components, theme system, icons
+@sharelyai/ui-shared         ← Shared UI: base components, theme system, icons
     ↓
-@sharely/ui-chat           ← Chat feature: ChatPanel, MessageBubble, Goals, WorkflowProgress
-@sharely/ui-search         ← Search feature: SearchPanel, SearchResults, TagFilter
-@sharely/ui-browse         ← Browse feature: BrowsePanel, CategoryTree, ContentView (depends on ui-search too)
+@sharelyai/ui-chat           ← Chat feature: ChatPanel, MessageBubble, Goals, WorkflowProgress
+@sharelyai/ui-search         ← Search feature: SearchPanel, SearchResults, TagFilter
+@sharelyai/ui-browse         ← Browse feature: BrowsePanel, CategoryTree, ContentView (depends on ui-search too)
+@sharelyai/ui-agent-chat     ← Agent chat: SSE-streamed responses, thinking steps, tool calls, citations
     ↓
-@sharely/webcontrol        ← Shell: composes all features into WebControl component
+@sharelyai/webcontrol        ← Shell: composes all features into WebControl component
     ↓
-@sharely/demo (apps/demo)  ← Vite demo app with multiple integration examples
+@sharelyai/demo (apps/demo)  ← Vite demo app with multiple integration examples
 ```
 
 **Do not introduce upward or circular dependencies between layers.**

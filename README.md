@@ -38,44 +38,50 @@ pnpm build
 Filter to a specific package:
 
 ```bash
-pnpm --filter @sharely/services build
-pnpm --filter @sharely/demo dev
+pnpm --filter @sharelyai/services build
+pnpm --filter @sharelyai/demo dev
 ```
+
+## Deploy your own
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/your-org/your-repo)
+
+Forks build entirely from local sources — no `@sharelyai/*` packages are fetched from npm. The default `vercel.json` deploys the widget bundle (`apps/webcontrol`), which produces a single embeddable `<script>`-ready JS file at `apps/webcontrol/dist/assets/sharelyai.js`. Host it on your own Vercel URL and embed it on any page.
+
+See `CONTRIBUTING.md` for environment setup, the local demo app for integration examples, and customization options.
 
 ## Architecture
 
 Packages are organized in a strict dependency layer:
 
 ```
-@sharely/services            Foundation: API client, hooks, Zustand store, types, auth, i18n
+@sharelyai/services            Foundation: API client, hooks, Zustand store, types, auth, i18n
     |
-@sharely/ui-shared           Shared UI: base components, theme system, icons
+@sharelyai/ui-shared           Shared UI: base components, theme system, icons
     |
-@sharely/ui-chat             Chat feature: ChatPanel, MessageBubble, Goals, WorkflowProgress
-@sharely/ui-search           Search feature: SearchPanel, SearchResults, TagFilter
-@sharely/ui-browse           Browse feature: BrowsePanel, CategoryTree, ContentView
-@sharely/ui-agent-chat       Agent chat feature: SSE-streamed AI chat with thinking steps,
-    |                        tool calls, and source citations
+@sharelyai/ui-chat             Chat feature: ChatPanel, MessageBubble, Goals, WorkflowProgress
+@sharelyai/ui-search           Search feature: SearchPanel, SearchResults, TagFilter
+@sharelyai/ui-browse           Browse feature: BrowsePanel, CategoryTree, ContentView
+@sharelyai/ui-agent-chat       Agent chat feature: SSE-streamed AI chat with thinking steps,
+    |                          tool calls, and source citations
     |
-@sharely/webcontrol          Shell: composes all features into WebControl component
+@sharelyai/webcontrol          Shell: composes all features into WebControl component
     |
-@sharely/demo (apps/demo)    Vite demo app with multiple integration examples
-@sharely/widget (apps/widget) Embeddable single-file widget build
+@sharelyai/demo (apps/demo)    Vite demo app with multiple integration examples
 ```
 
 ### Packages
 
 | Package | Description |
 |---------|-------------|
-| `@sharely/services` | Foundation layer — API client, React hooks, Zustand store, types, auth, i18n |
-| `@sharely/ui-shared` | Shared UI primitives — theme, base components, icons |
-| `@sharely/ui-chat` | Standard chat panel with messages, goals, and workflow progress |
-| `@sharely/ui-search` | Search panel with results and tag filtering |
-| `@sharely/ui-browse` | Browse panel with category tree and content view |
-| `@sharely/ui-agent-chat` | Agent chat panel — SSE-streamed AI responses with thinking indicators, tool call cards, and source citations |
-| `@sharely/webcontrol` | Shell that composes all feature packages into the `WebControl` component |
-| `@sharely/demo` | Vite demo app with integration examples |
-| `@sharely/widget` | Single-file embeddable build |
+| `@sharelyai/services` | Foundation layer — API client, React hooks, Zustand store, types, auth, i18n |
+| `@sharelyai/ui-shared` | Shared UI primitives — theme, base components, icons |
+| `@sharelyai/ui-chat` | Standard chat panel with messages, goals, and workflow progress |
+| `@sharelyai/ui-search` | Search panel with results and tag filtering |
+| `@sharelyai/ui-browse` | Browse panel with category tree and content view |
+| `@sharelyai/ui-agent-chat` | Agent chat panel — SSE-streamed AI responses with thinking indicators, tool call cards, and source citations |
+| `@sharelyai/webcontrol` | Shell that composes all feature packages into the `WebControl` component |
+| `@sharelyai/demo` | Vite demo app with integration examples |
 
 ### Key Patterns
 
@@ -103,11 +109,23 @@ The main `WebControl` component accepts:
 
 ## Distribution
 
-The root `vite.config.ts` builds a single embeddable JS file under the namespace `sharelyai-webcontroller`, enabling `<script>` tag embedding.
+`apps/webcontrol` builds a single embeddable JS file under the namespace `sharelyai-webcontroller`, enabling `<script>` tag embedding. To build it locally:
 
-## Demo App
+```bash
+pnpm --filter @sharelyai/webcontrol build
+```
 
-The demo app (`apps/demo`) provides integration examples at:
+Output lands in `apps/webcontrol/dist/assets/sharelyai.js`. This is the default Vercel target.
+
+## Demo app (local exploration)
+
+`apps/demo` is a Vite SPA that exercises every integration pattern. It's intended for local development and to help you understand the API surface before embedding the widget — not as a deploy target.
+
+```bash
+pnpm --filter @sharelyai/demo dev
+```
+
+Routes:
 
 - `/full-demo` — All features enabled
 - `/chat-only` — Chat panel only
@@ -116,9 +134,13 @@ The demo app (`apps/demo`) provides integration examples at:
 - `/custom-shell` — Custom shell example
 - `/headless-demo` — Headless integration
 
-## Versioning
+---
 
-Uses [Changesets](https://github.com/changesets/changesets):
+## For maintainers
+
+### Versioning & publishing
+
+Uses [Changesets](https://github.com/changesets/changesets). npm packages under the `@sharelyai` scope are **private** (`publishConfig.access: "restricted"`) — only Sharely AI maintainers can publish.
 
 ```bash
 pnpm changeset            # Create a changeset
