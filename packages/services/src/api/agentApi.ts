@@ -25,7 +25,7 @@ export function getStandardApiUrl(): string {
  */
 export function getAuthToken(): string | undefined {
   const state = useGlobalStore.getState();
-  return state.token || state.loginToken || state.temporalToken || undefined;
+  return state.token || state.temporalToken || undefined;
 }
 
 /**

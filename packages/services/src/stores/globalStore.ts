@@ -16,11 +16,9 @@ export interface GlobalState {
 
   // Auth
   token: string | undefined;
-  loginToken: string | undefined;
   temporalToken: string | undefined;
   externalToken: string | undefined;
   setToken: (token: string | undefined) => void;
-  setLoginToken: (token: string | undefined) => void;
   setTemporalToken: (token: string | undefined) => void;
   setExternalToken: (token: string | undefined) => void;
 
@@ -76,11 +74,9 @@ export const useGlobalStore = create<GlobalState>()(
       setConfig: (config) => set({ config }),
 
       token: undefined,
-      loginToken: undefined,
       temporalToken: undefined,
       externalToken: undefined,
       setToken: (token) => set({ token }),
-      setLoginToken: (loginToken) => set({ loginToken }),
       setTemporalToken: (temporalToken) => set({ temporalToken }),
       setExternalToken: (externalToken) => set({ externalToken }),
 
@@ -116,7 +112,6 @@ export const useGlobalStore = create<GlobalState>()(
       reset: () =>
         set({
           token: undefined,
-          loginToken: undefined,
           temporalToken: undefined,
           userData: undefined,
           currentInformation: undefined,
@@ -127,7 +122,6 @@ export const useGlobalStore = create<GlobalState>()(
       name: 'sharely-global',
       partialize: (state) => ({
         token: state.token,
-        loginToken: state.loginToken,
         temporalToken: state.temporalToken,
       }),
     }

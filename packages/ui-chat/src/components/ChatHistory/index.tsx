@@ -16,11 +16,10 @@ import {
   Portal,
   useResponsive
 } from "@sharelyai/ui-shared";
-import { 
-  classNames, 
-  constants, 
-  formatDate, 
-  customEvents,
+import {
+  classNames,
+  constants,
+  formatDate,
   useGlobalStore,
   useSpace,
   useGoals,
@@ -197,18 +196,6 @@ export const ChatHistory = (props: ChatHistoryProps) => {
     return Object.entries(grouped)
       .map(([date, chats]) => ({ date, chats }))
       .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-  };
-
-  const handleOpenSaveConversation = (view: number) => {
-    customEvents.publish(constants.CUSTOM_EVENTS.TOGGLE_SAVE_CONVERSATION, {
-      open: true,
-    });
-    setTimeout(() => {
-      customEvents.publish(
-        constants.CUSTOM_EVENTS.TOGGLE_SAVE_CONVERSATION_VIEW,
-        { view },
-      );
-    }, 0);
   };
 
   const groupedChats = useMemo(() => {
@@ -419,23 +406,6 @@ export const ChatHistory = (props: ChatHistoryProps) => {
           </div>
           {version !== "v2" && (
             <div className="chat-history-footer">
-              {isPublicSpace && (
-                <div className="public-space">
-                  <p>Save your conversation</p>
-                  <div className="buttons">
-                    <button
-                      onClick={() => handleOpenSaveConversation(1)}
-                      className="save-conversation"
-                    >
-                      Save
-                    </button>
-                    <span>or</span>
-                    <button onClick={() => handleOpenSaveConversation(0)}>
-                      Login
-                    </button>
-                  </div>
-                </div>
-              )}
               {!isPublicSpace && (
                 <div
                   className="private-space"

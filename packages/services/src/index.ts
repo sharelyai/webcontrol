@@ -21,9 +21,6 @@ export * from './types';
 // Constants
 export * from './constants';
 
-// Auth
-export { supabaseClient } from './auth/supabaseClient';
-
 // Agent API
 export * from './api/agentApi';
 

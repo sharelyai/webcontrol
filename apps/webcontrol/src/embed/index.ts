@@ -55,7 +55,6 @@ export const sharelyai = {
       ...(Boolean(externalToken) && {
         externalToken: externalToken || state.externalToken,
         token: externalToken || state.token,
-        loginToken: externalToken || state.loginToken,
       }),
     }));
   },

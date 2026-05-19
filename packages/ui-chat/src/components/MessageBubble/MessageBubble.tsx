@@ -10,8 +10,6 @@ import {
 } from "@sharelyai/ui-shared";
 import {
   constants,
-  customEvents,
-  regex,
   replaceMessageValue,
 } from "@sharelyai/services";
 import { MessageFeedback } from "../MessageFeedback";
@@ -218,29 +216,6 @@ export const MessageBubble = (props: IMessageProps) => {
             />
           )}
         </div>
-        {regex.GET_SAVE_TAGS.test(message) && (
-          <div className="chat-content-conversation-text-save-message">
-            <div className="left">
-              <p className="title">Save conversation to continue</p>
-              <p className="description">
-                {regex.GET_SAVE_CONTENT.exec(message)?.[0] ||
-                  "Create an account to keep talking with AI and reach your goals"}
-              </p>
-            </div>
-            <div className="right">
-              <button
-                onClick={() => {
-                  customEvents.publish(
-                    constants.CUSTOM_EVENTS.TOGGLE_SAVE_CONVERSATION,
-                    { open: true },
-                  );
-                }}
-              >
-                Save conversation
-              </button>
-            </div>
-          </div>
-        )}
         <button
           className="sharelyai-webcontroller-message-thread-button-action"
           onClick={() => {}}

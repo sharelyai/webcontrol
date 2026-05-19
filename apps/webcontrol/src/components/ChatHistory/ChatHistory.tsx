@@ -27,7 +27,6 @@ import {
   classNames,
   constants,
   formatDate,
-  customEvents,
 } from "@sharelyai/services";
 
 interface ChatHistoryProps {
@@ -347,18 +346,6 @@ export const ChatHistory = (props: ChatHistoryProps) => {
       .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
   };
 
-  const handleOpenSaveConversation = (view: number) => {
-    customEvents.publish(constants.CUSTOM_EVENTS.TOGGLE_SAVE_CONVERSATION, {
-      open: true,
-    });
-    setTimeout(() => {
-      customEvents.publish(
-        constants.CUSTOM_EVENTS.TOGGLE_SAVE_CONVERSATION_VIEW,
-        { view },
-      );
-    }, 0);
-  };
-
   const groupedChats = useMemo(() => {
     return groupChatsByDate(groups);
   }, [groups, isAgentMode, agentThreads.threads, (space as any)?.spaceGroupConversation]);
@@ -563,23 +550,6 @@ export const ChatHistory = (props: ChatHistoryProps) => {
           </div>
           {version !== "v2" && (
             <div className="chat-history-footer">
-              {isPublicSpace && (
-                <div className="public-space">
-                  <p>Save your conversation</p>
-                  <div className="buttons">
-                    <button
-                      onClick={() => handleOpenSaveConversation(1)}
-                      className="save-conversation"
-                    >
-                      Save
-                    </button>
-                    <span>or</span>
-                    <button onClick={() => handleOpenSaveConversation(0)}>
-                      Login
-                    </button>
-                  </div>
-                </div>
-              )}
               {!isPublicSpace && (
                 <div
                   className="private-space"
