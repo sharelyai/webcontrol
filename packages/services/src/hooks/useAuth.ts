@@ -3,7 +3,6 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useGlobalStore } from "../stores/globalStore";
 import { useSharelyContext } from "../provider";
 import { tokenManager } from "../auth/tokenManager";
-import { supabaseClient } from "../auth/supabaseClient";
 import { SPACE_SOURCE_TYPE_WEB_CONTROL } from "../constants";
 
 export const useAuth = () => {
@@ -12,11 +11,9 @@ export const useAuth = () => {
     config,
     token,
     setToken,
-    setLoginToken,
     setTemporalToken,
     setUserData,
     workspace,
-    setWorkspace,
     setCurrentInformation,
   } = useGlobalStore();
   const { apiClient } = useSharelyContext();
@@ -35,51 +32,23 @@ export const useAuth = () => {
       }
 
       const temporal = tokenManager.getTemporalToken(config.workspaceId);
-      const login = tokenManager.getLoginToken(config.workspaceId);
-
-      if (temporal) setTemporalToken(temporal);
-      if (login) setLoginToken(login);
-
-      const activeToken = login || temporal;
-      if (activeToken) {
-        setToken(activeToken);
-        const decoded = tokenManager.decodeToken(activeToken);
+      if (temporal) {
+        setTemporalToken(temporal);
+        setToken(temporal);
+        const decoded = tokenManager.decodeToken(temporal);
         if (decoded) setUserData(decoded as any);
-
-        if (login) {
-          // Fetch full user data if logged in
-          handleGetUserData(login);
-        }
       }
     };
 
     initTokens();
   }, [config?.workspaceId]);
 
-  const handleGetUserData = async (token: string) => {
-    const decoded = tokenManager.decodeToken(token);
-    const sub = (decoded as any)?.sub;
-    if (!sub) return;
-
-    try {
-      const userResponse = await apiClient.fetcher(`/user/?id=${sub}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setUserData(userResponse as any);
-      return userResponse;
-    } catch (e) {
-      console.error("Failed to fetch user data", e);
-    }
-  };
-
   const signOut = async () => {
-    await supabaseClient.auth.signOut();
     queryClient.clear();
     setUserData(undefined);
-    setLoginToken(undefined);
     tokenManager.removeTokens(config?.workspaceId);
 
-    // Create a new space after sign out if workspaceId exists
+    // Create a new anonymous space after sign out if workspaceId exists
     if (config?.workspaceId) {
       try {
         const createNewSpaceResponse = await apiClient.fetcher<any>(
@@ -87,7 +56,6 @@ export const useAuth = () => {
           {
             method: "POST",
             body: JSON.stringify({
-              externalUserId: config?.externalUserId,
               customSource: SPACE_SOURCE_TYPE_WEB_CONTROL,
             }),
           },
@@ -117,6 +85,5 @@ export const useAuth = () => {
     token,
     isAuthenticated: !!token,
     signOut,
-    handleGetUserData,
   };
 };

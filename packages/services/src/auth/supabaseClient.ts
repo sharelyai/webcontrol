@@ -1,8 +1,0 @@
-import { createClient } from "@supabase/supabase-js";
-
-const env = (import.meta as any).env || {};
-
-export const supabaseClient = createClient(
-  env.VITE_PUBLIC_SUPABASE_URL || "",
-  env.VITE_PUBLIC_SUPABASE_ANON_KEY || "",
-);

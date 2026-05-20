@@ -9,15 +9,16 @@ interface ISpaceProps {
 
 export const useSpace = (props: ISpaceProps) => {
   const { enabled = true, spaceId } = props;
-  const { loginToken } = useGlobalStore();
+  const { externalToken } = useGlobalStore();
   const { apiClient } = useSharelyContext();
   const queryClient = useQueryClient();
 
   const isEnabled = enabled && Boolean(spaceId);
   const queryKey = ["space", spaceId];
-  
-  // original logic used auth?.loginToken to decide between /spaces and /public-spaces
-  const url = loginToken
+
+  // Host-asserted identity uses the authenticated endpoint;
+  // anonymous (temporal token only) uses the public one.
+  const url = externalToken
     ? `/spaces/${spaceId}`
     : `/public-spaces/${spaceId}`;
 

@@ -1,13 +1,13 @@
-import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
-import type { SharelyConfig, Workspace, User } from '../types';
+import { create } from "zustand";
+import { persist } from "zustand/middleware";
+import type { SharelyConfig, Workspace } from "../types";
 import {
   CHAT_VIEW,
   CHAT_STEP,
   POSITION_TOP_CENTER_FLOATING,
   AVATAR_MODE_EXPANDED,
   DISPLAY_MODE,
-} from '../constants';
+} from "../constants";
 
 export interface GlobalState {
   // Config
@@ -48,7 +48,7 @@ export interface GlobalState {
 }
 
 const defaultConfig: SharelyConfig = {
-  baseUrl: 'https://api.sharely.ai',
+  baseUrl: "https://api.sharely.ai",
   saveSpaceNumMgs: 0,
   mode: POSITION_TOP_CENTER_FLOATING,
   avatarmodeDesktop: AVATAR_MODE_EXPANDED,
@@ -56,7 +56,7 @@ const defaultConfig: SharelyConfig = {
   displayMode: {
     OPEN_BY_DEFAULT: false,
     MODE: DISPLAY_MODE.MODE.PUBLIC,
-    Z_INDEX: '9999',
+    Z_INDEX: "9999",
     VIEWS: {
       CHAT: { SHOW: true },
       SEARCH: {
@@ -80,7 +80,8 @@ export const useGlobalStore = create<GlobalState>()(
       temporalToken: undefined,
       externalToken: undefined,
       setToken: (token) => set({ token }),
-      setLoginToken: (loginToken) => set({ loginToken }),
+      setLoginToken: (loginToken) =>
+        set({ loginToken, externalToken: loginToken, token: loginToken }),
       setTemporalToken: (temporalToken) => set({ temporalToken }),
       setExternalToken: (externalToken) => set({ externalToken }),
 
@@ -124,12 +125,12 @@ export const useGlobalStore = create<GlobalState>()(
         }),
     }),
     {
-      name: 'sharely-global',
+      name: "sharely-global",
       partialize: (state) => ({
         token: state.token,
         loginToken: state.loginToken,
         temporalToken: state.temporalToken,
       }),
-    }
-  )
+    },
+  ),
 );

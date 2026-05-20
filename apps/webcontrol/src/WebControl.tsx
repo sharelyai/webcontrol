@@ -13,7 +13,6 @@ import {
   useSharelyContext,
   classNames,
   setCSSVariables,
-  cookieManager,
 } from "@sharelyai/services";
 import type { DisplayModeConfig } from "@sharelyai/services";
 import {
@@ -29,7 +28,6 @@ import {
   Tooltip,
   Close,
   Forum,
-  Menu,
   AddChatBox,
   Restart,
 } from "@sharelyai/ui-shared";
@@ -37,11 +35,9 @@ import { ChatPanel } from "@sharelyai/ui-chat";
 import { SearchPanel } from "@sharelyai/ui-search";
 import { BrowsePanel } from "@sharelyai/ui-browse";
 import { Wrapper } from "./styles";
-import { AuthModal } from "./components/AuthModal";
 import { ViewTabs } from "./components/ViewTabs";
 import { ChatHistory } from "./components/ChatHistory";
 import { AgentView } from "./components/AgentView";
-import { SaveConversation } from "./components/SaveConversation";
 import { RbacBlocker } from "./components/RbacBlocker";
 
 export interface WebControlProps {
@@ -117,7 +113,6 @@ const WebControlInner = (props: WebControlProps) => {
     isInline || config?.displayMode?.OPEN_BY_DEFAULT || false,
   );
   const [status, setStatus] = useState("idle");
-  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
   const [isRbacBlocked, setIsRbacBlocked] = useState(false);
   const [pdfPreview, setPdfPreview] = useState({
@@ -137,13 +132,11 @@ const WebControlInner = (props: WebControlProps) => {
     currentView,
     workspace,
     token,
-    loginToken,
     externalToken,
     setCurrentInformation,
     setStepActive,
     setCurrentView,
     setToken,
-    setLoginToken,
   } = useGlobalStore();
 
   const { isMobile } = useResponsive();
@@ -165,11 +158,6 @@ const WebControlInner = (props: WebControlProps) => {
   const { spaceGoals } = useGoals({
     spaceId: currentInformation?.spaceId,
   });
-
-  // Session/auth derived state
-  const hasSession = Boolean(userData?.name) || Boolean(loginToken);
-  const showSaveConversation =
-    !hasSession && (space as any)?.status === constants.SPACE_STATUS_PUBLIC;
 
   // Avatar compact mode: check desktop/mobile setting
   const avatarCompact =
@@ -228,25 +216,6 @@ const WebControlInner = (props: WebControlProps) => {
     };
   }, []);
 
-  // Save conversation event listener
-  useEffect(() => {
-    const handleToggleSaveConversation = ({ detail }: any) => {
-      setIsAuthModalOpen(detail.open);
-    };
-
-    customEvents.subscribe(
-      constants.CUSTOM_EVENTS.TOGGLE_SAVE_CONVERSATION,
-      handleToggleSaveConversation,
-    );
-
-    return () => {
-      customEvents.unsubscribe(
-        constants.CUSTOM_EVENTS.TOGGLE_SAVE_CONVERSATION,
-        handleToggleSaveConversation,
-      );
-    };
-  }, []);
-
   // RBAC check
   useEffect(() => {
     if (workspace?.rbacStatus === "ACTIVE" && !hasRbacRole(userData)) {
@@ -292,7 +261,6 @@ const WebControlInner = (props: WebControlProps) => {
         !(ref.current as HTMLDivElement).contains(event.target as Node)
       ) {
         handleIsOpen(false);
-        setIsAuthModalOpen(false);
       }
     };
 
@@ -301,16 +269,6 @@ const WebControlInner = (props: WebControlProps) => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [config?.displayMode?.OPEN_BY_DEFAULT]);
-
-  // Auth modal at beginning check
-  useEffect(() => {
-    if (!currentInformation?.spaceId) {
-      setIsAuthModalOpen(
-        workspace?.verificationSpace?.authAction ===
-          constants.AUTH_ACTION_AT_THE_BEGINNING && !hasSession,
-      );
-    }
-  }, [workspace]);
 
   // Auto-open first group on space load
   useEffect(() => {
@@ -350,42 +308,6 @@ const WebControlInner = (props: WebControlProps) => {
   useEffect(() => {
     refetchMessages();
   }, [currentInformation?.currentGroupId]);
-
-  // Iframe postMessage listener for embedded token passing
-  useEffect(() => {
-    const handleMessage = async (event: MessageEvent) => {
-      const authToken = event.data?.auth;
-      if (!authToken) return;
-
-      try {
-        const spaceResponse = await apiClient.fetcher<any[]>(
-          `/spaces?` +
-            new URLSearchParams({
-              roles: JSON.stringify(["GUEST"]),
-              sortBy: "desc",
-              lastMessageSortBy: "true",
-              workspaces: JSON.stringify([config?.workspaceId]),
-            }).toString(),
-        );
-
-        setLoginToken(authToken);
-        setToken(authToken);
-
-        if (spaceResponse?.[0]?.id) {
-          setCurrentInformation({
-            spaceId: spaceResponse[0].id,
-          });
-        }
-      } catch (e) {
-        console.error("[Sharely] postMessage auth error:", e);
-      }
-    };
-
-    window.addEventListener("message", handleMessage);
-    return () => {
-      window.removeEventListener("message", handleMessage);
-    };
-  }, [config?.workspaceId]);
 
   // Hide interfering elements on mobile
   useEffect(() => {
@@ -486,20 +408,26 @@ const WebControlInner = (props: WebControlProps) => {
 
   const handleCreateNewSpace = async () => {
     try {
+      // Only assert externalUserId when we also have a host-asserted token.
+      // Otherwise sending it would tag an anonymous space with that userId —
+      // impersonation-by-string. Server must also enforce this.
+      const body: Record<string, unknown> = {
+        customSource: constants.SPACE_SOURCE_TYPE_WEB_CONTROL,
+      };
+      if (externalToken && config?.externalUserId) {
+        body.externalUserId = config.externalUserId;
+      }
+
       const res = await apiClient.fetcher<any>(
         `/workspaces/${config?.workspaceId}/spaces`,
         {
           method: "POST",
-          body: JSON.stringify({
-            externalUserId: config?.externalUserId,
-            customSource: constants.SPACE_SOURCE_TYPE_WEB_CONTROL,
-          }),
+          body: JSON.stringify(body),
         },
       );
 
       if (res?.id) {
         setToken(res.token);
-        setLoginToken(undefined);
         setCurrentInformation({
           spaceId: res.id,
           temporalUserId: res.temporalUserId,
@@ -535,28 +463,8 @@ const WebControlInner = (props: WebControlProps) => {
         return;
       }
 
-      // Check for existing token and space from cookie
+      // Resume from an existing anonymous temporal token, if any
       if (token) {
-        const spaceFromAdmin = cookieManager.get(
-          cookieManager.getCookieName([
-            constants.COOKIES_KEYS.MY_ACCESS_SPACE,
-            config.workspaceId,
-          ]),
-        );
-
-        if (spaceFromAdmin) {
-          setLoginToken(token);
-          setCurrentInformation({
-            spaceId: spaceFromAdmin,
-            temporalUserId: undefined,
-            startMode:
-              workspace?.webControlStartMode ?? constants.START_MODE_QUESTIONS,
-          });
-          await refetchMessages();
-          setStatus("resolved");
-          return;
-        }
-
         const validation = await handleInitWithToken();
         if (validation?.spaceId || validation?.[0]?.id) {
           setStatus("resolved");
@@ -584,12 +492,6 @@ const WebControlInner = (props: WebControlProps) => {
     setIsOpen(value);
     if (value) {
       setStepActive(constants.CHAT_STEP);
-    }
-    if (currentInformation?.spaceId) {
-      setIsAuthModalOpen(
-        workspace?.verificationSpace?.authAction ===
-          constants.AUTH_ACTION_AT_THE_BEGINNING && !hasSession,
-      );
     }
   };
 
@@ -642,7 +544,6 @@ const WebControlInner = (props: WebControlProps) => {
           "is-inline": isInline,
           "display-private sharelyai-webcontroller-displayMode-privated":
             isPrivate,
-          "sharelyai-webcontroller-is-open-auth": isAuthModalOpen,
         },
       )}
       style={containerStyle}
@@ -683,137 +584,119 @@ const WebControlInner = (props: WebControlProps) => {
 
       {!isLoadingWorkspace && isWidgetOpen && !isRbacBlocked && (
         <div className="web-control-container sharelyai-webcontroller-container">
-          {isAuthModalOpen && (
-            <AuthModal
-              onClose={() => setIsAuthModalOpen(false)}
-              handleInitWithToken={handleInitWithToken}
-            />
-          )}
-
-          {!isAuthModalOpen && (
-            <>
-              {showSaveConversation && (
-                <SaveConversation handleIsModalOpen={setIsAuthModalOpen} />
-              )}
-
-              <div className="web-control-header">
-                <div className="web-control-header-grid">
-                  <div className="header-left">
-                    {(isChatView || isAgentView) && isNotGoalsStep && (
-                      <>
-                        <Tooltip text="Threads" placement="bottom">
-                          <button
-                            className={classNames("header-threads-btn", {
-                              disabled: isChatView && !hasGroups,
-                            })}
-                            onClick={() =>
-                              isAgentView
-                                ? setShowAgentChatHistory(!showAgentChatHistory)
-                                : setShowChatHistory(!showChatHistory)
-                            }
-                            disabled={isChatView && !hasGroups}
-                          >
-                            <Forum />
-                          </button>
-                        </Tooltip>
-                        <div className="header-logo-info">
-                          <div className="header-logo">
-                            {workspace?.photo ? (
-                              <img src={workspace.photo} alt="AI" />
-                            ) : workspace?.id ? (
-                              <Logo />
-                            ) : (
-                              <Skeleton width={40} height={40} />
-                            )}
-                          </div>
-                          <span className="header-title">
-                            {workspace?.organizationName || workspace?.name || (
-                              <Skeleton width={100} height={20} />
-                            )}
-                          </span>
-                        </div>
-                      </>
-                    )}
-                  </div>
-                  <div className="header-center">
-                    <ViewTabs />
-                  </div>
-                  <div className="header-right">
-                    {isNotGoalsStep && isChatView && isGoal && (
-                      <Tooltip text="Restart goal" placement="bottom">
-                        <button
-                          className={classNames("header-action-btn", {
-                            disabled: !hasGroups,
-                          })}
-                          onClick={handleCreateGoalThread}
-                          disabled={!hasGroups}
-                        >
-                          <Restart />
-                        </button>
-                      </Tooltip>
-                    )}
-                    {isNotGoalsStep && (isChatView || isAgentView) && (
-                      <Tooltip text="New chat" placement="bottom">
-                        <button
-                          className={classNames("header-action-btn", {
-                            disabled: isChatView && !hasGroups,
-                          })}
-                          onClick={() => {
-                            if (isAgentView) {
-                              setShowAgentChatHistory(false);
-                              setCurrentInformation({
-                                agentThreadId: undefined,
-                                agentThreadName: undefined,
-                              });
-                            } else {
-                              handleCreateNewChat();
-                            }
-                          }}
-                          disabled={isChatView && !hasGroups}
-                        >
-                          <AddChatBox />
-                        </button>
-                      </Tooltip>
-                    )}
-                    {!isInline && (
-                      <Tooltip text="Close" placement="bottom">
-                        <button
-                          className="header-action-btn"
-                          onClick={() => {
-                            setIsAuthModalOpen(false);
-                            handleIsOpen(false);
-                          }}
-                        >
-                          <Close />
-                        </button>
-                      </Tooltip>
-                    )}
-                  </div>
-                </div>
-              </div>
-
-              <div className="web-control-content">
-                {currentView === constants.CHAT_VIEW && (
-                  <ChatPanel
-                    spaceId={currentInformation?.spaceId || ""}
-                    status={status}
-                    isLoading={status === "pending"}
-                    setStatus={setStatus}
-                  />
+          <div className="web-control-header">
+            <div className="web-control-header-grid">
+              <div className="header-left">
+                {(isChatView || isAgentView) && isNotGoalsStep && (
+                  <>
+                    <Tooltip text="Threads" placement="bottom">
+                      <button
+                        className={classNames("header-threads-btn", {
+                          disabled: isChatView && !hasGroups,
+                        })}
+                        onClick={() =>
+                          isAgentView
+                            ? setShowAgentChatHistory(!showAgentChatHistory)
+                            : setShowChatHistory(!showChatHistory)
+                        }
+                        disabled={isChatView && !hasGroups}
+                      >
+                        <Forum />
+                      </button>
+                    </Tooltip>
+                    <div className="header-logo-info">
+                      <div className="header-logo">
+                        {workspace?.photo ? (
+                          <img src={workspace.photo} alt="AI" />
+                        ) : workspace?.id ? (
+                          <Logo />
+                        ) : (
+                          <Skeleton width={40} height={40} />
+                        )}
+                      </div>
+                      <span className="header-title">
+                        {workspace?.organizationName || workspace?.name || (
+                          <Skeleton width={100} height={20} />
+                        )}
+                      </span>
+                    </div>
+                  </>
                 )}
-                {currentView === constants.AGENT_VIEW && (
-                  <AgentView
-                    spaceId={currentInformation?.spaceId || ""}
-                    showChatHistory={showAgentChatHistory}
-                    onCloseChatHistory={() => setShowAgentChatHistory(false)}
-                    onCreateNewChat={() => setShowAgentChatHistory(false)}
-                  />
-                )}
-                {currentView === constants.SEARCH_VIEW && <SearchPanel />}
-                {currentView === constants.BROWSE_VIEW && <BrowsePanel />}
               </div>
-            </>
-          )}
+              <div className="header-center">
+                <ViewTabs />
+              </div>
+              <div className="header-right">
+                {isNotGoalsStep && isChatView && isGoal && (
+                  <Tooltip text="Restart goal" placement="bottom">
+                    <button
+                      className={classNames("header-action-btn", {
+                        disabled: !hasGroups,
+                      })}
+                      onClick={handleCreateGoalThread}
+                      disabled={!hasGroups}
+                    >
+                      <Restart />
+                    </button>
+                  </Tooltip>
+                )}
+                {isNotGoalsStep && (isChatView || isAgentView) && (
+                  <Tooltip text="New chat" placement="bottom">
+                    <button
+                      className={classNames("header-action-btn", {
+                        disabled: isChatView && !hasGroups,
+                      })}
+                      onClick={() => {
+                        if (isAgentView) {
+                          setShowAgentChatHistory(false);
+                          setCurrentInformation({
+                            agentThreadId: undefined,
+                            agentThreadName: undefined,
+                          });
+                        } else {
+                          handleCreateNewChat();
+                        }
+                      }}
+                      disabled={isChatView && !hasGroups}
+                    >
+                      <AddChatBox />
+                    </button>
+                  </Tooltip>
+                )}
+                {!isInline && (
+                  <Tooltip text="Close" placement="bottom">
+                    <button
+                      className="header-action-btn"
+                      onClick={() => handleIsOpen(false)}
+                    >
+                      <Close />
+                    </button>
+                  </Tooltip>
+                )}
+              </div>
+            </div>
+          </div>
+
+          <div className="web-control-content">
+            {currentView === constants.CHAT_VIEW && (
+              <ChatPanel
+                spaceId={currentInformation?.spaceId || ""}
+                status={status}
+                isLoading={status === "pending"}
+                setStatus={setStatus}
+              />
+            )}
+            {currentView === constants.AGENT_VIEW && (
+              <AgentView
+                spaceId={currentInformation?.spaceId || ""}
+                showChatHistory={showAgentChatHistory}
+                onCloseChatHistory={() => setShowAgentChatHistory(false)}
+                onCreateNewChat={() => setShowAgentChatHistory(false)}
+              />
+            )}
+            {currentView === constants.SEARCH_VIEW && <SearchPanel />}
+            {currentView === constants.BROWSE_VIEW && <BrowsePanel />}
+          </div>
 
           {showChatHistory && isChatView && (
             <ChatHistory
