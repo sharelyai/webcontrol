@@ -1,6 +1,6 @@
 import React from 'react';
 import { useSpaceMessages, useSendMessage, SharelyProvider } from '@sharelyai/services';
-import { Button, Input } from '@sharelyai/ui-shared';
+import { Button, Input, ThemeProvider, GlobalStyle } from '@sharelyai/ui-shared';
 
 function HeadlessDemo() {
   const [spaceId] = React.useState('');
@@ -10,15 +10,18 @@ function HeadlessDemo() {
 
   return (
     <SharelyProvider>
-      <HeadlessDemoInner
-        spaceId={spaceId}
-        groupId={groupId}
-        setGroupId={setGroupId}
-        messageContent={messageContent}
-        setMessageContent={setMessageContent}
-        status={status}
-        setStatus={setStatus}
-      />
+      <ThemeProvider>
+        <GlobalStyle />
+        <HeadlessDemoInner
+          spaceId={spaceId}
+          groupId={groupId}
+          setGroupId={setGroupId}
+          messageContent={messageContent}
+          setMessageContent={setMessageContent}
+          status={status}
+          setStatus={setStatus}
+        />
+      </ThemeProvider>
     </SharelyProvider>
   );
 }

@@ -3,35 +3,38 @@ import { SharelyProvider } from '@sharelyai/services';
 import { ChatPanel } from '@sharelyai/ui-chat';
 import { SearchPanel } from '@sharelyai/ui-search';
 import { BrowsePanel } from '@sharelyai/ui-browse';
-import { Button } from '@sharelyai/ui-shared';
+import { Button, ThemeProvider, GlobalStyle } from '@sharelyai/ui-shared';
 
 function CustomShell() {
   const [activeView, setActiveView] = React.useState('chat');
 
   return (
     <SharelyProvider>
-      <div style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
-        <h2>Custom Shell Demo</h2>
-        <p>This demo shows how to create a custom shell using the modular components.</p>
+      <ThemeProvider>
+        <GlobalStyle />
+        <div style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
+          <h2>Custom Shell Demo</h2>
+          <p>This demo shows how to create a custom shell using the modular components.</p>
 
-        <div style={{ display: 'flex', gap: '10px' }}>
-          <Button onClick={() => setActiveView('chat')} variant={activeView === 'chat' ? 'primary' : 'outline'}>Chat</Button>
-          <Button onClick={() => setActiveView('search')} variant={activeView === 'search' ? 'primary' : 'outline'}>Search</Button>
-          <Button onClick={() => setActiveView('browse')} variant={activeView === 'browse' ? 'primary' : 'outline'}>Browse</Button>
-        </div>
+          <div style={{ display: 'flex', gap: '10px' }}>
+            <Button onClick={() => setActiveView('chat')} variant={activeView === 'chat' ? 'primary' : 'outline'}>Chat</Button>
+            <Button onClick={() => setActiveView('search')} variant={activeView === 'search' ? 'primary' : 'outline'}>Search</Button>
+            <Button onClick={() => setActiveView('browse')} variant={activeView === 'browse' ? 'primary' : 'outline'}>Browse</Button>
+          </div>
 
-        <div style={{ height: '500px', width: '800px', border: '1px solid #ccc', margin: '0 auto', display: 'flex' }}>
-          {activeView === 'chat' && (
-            <ChatPanel spaceId="" status="idle" isLoading={false} setStatus={() => {}} />
-          )}
-          {activeView === 'search' && (
-            <SearchPanel />
-          )}
-          {activeView === 'browse' && (
-            <BrowsePanel />
-          )}
+          <div style={{ height: '500px', width: '800px', border: '1px solid #ccc', margin: '0 auto', display: 'flex' }}>
+            {activeView === 'chat' && (
+              <ChatPanel spaceId="" status="idle" isLoading={false} setStatus={() => {}} />
+            )}
+            {activeView === 'search' && (
+              <SearchPanel />
+            )}
+            {activeView === 'browse' && (
+              <BrowsePanel />
+            )}
+          </div>
         </div>
-      </div>
+      </ThemeProvider>
     </SharelyProvider>
   );
 }

@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@sharelyai/services": "workspace:*",
+    "@sharelyai/ui-agent-chat": "workspace:*",
     "@sharelyai/ui-browse": "workspace:*",
     "@sharelyai/ui-chat": "workspace:*",
     "@sharelyai/ui-search": "workspace:*",
