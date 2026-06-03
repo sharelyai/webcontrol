@@ -1,3 +1,26 @@
+/**
+ * Styled components for the agent chat UI, grouped by the sub-component they
+ * dress. Section map (search for the banner comments to jump):
+ *
+ *   - Keyframe Animations     spin / fadeIn / cursorBlink (shared by many below)
+ *   - Chat shell              ChatWrapper, ChatHeader, ChatArea, MessagesContainer
+ *   - Messages                UserBubble, AiRow, Avatar, AiContent, ResponseText
+ *   - Thinking indicator      ThinkingToggle, ThinkingCard, ThinkingTimeline*
+ *   - Citations               CiteButton, CitePopover*
+ *   - Sources                 SourcesSection, SourceChip*, SourceMoreChip
+ *   - Action bar              ActionBarWrapper, IconBtn
+ *   - Feedback                FeedbackWrapper, FeedbackOption*, FeedbackBtn
+ *   - Followups               FollowupsRow, FollowupButton
+ *   - Input                   InputArea, InputRow, InputField, SendButton
+ *   - Error                   ErrorCard, ErrorIcon, ErrorRetryButton
+ *   - History modal           ModalBackdrop, ModalContainer, ModalThreadItem
+ *   - Streaming               StreamingWrapper, Cursor
+ *   - Tool calls              ToolCallWrapper, ToolCallHeader, ToolCallJson
+ *
+ * If this keeps growing, the clean split is one file per group under a `styles/`
+ * directory re-exported from an `index.ts` barrel (keyframes shared via their
+ * own module) — importers use `./styles`, so no call sites would change.
+ */
 import styled, { css, keyframes } from "styled-components";
 
 // ─── Keyframe Animations ────────────────────────────────────────────────────────

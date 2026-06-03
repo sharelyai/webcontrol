@@ -8,7 +8,6 @@ import {
   useWorkspace,
   useSpaceMessages,
   constants,
-  customEvents,
   useAuth,
   useSharelyContext,
   classNames,
@@ -20,25 +19,21 @@ import {
   GlobalStyle,
   Alert,
   Done,
-  Logo,
-  Skeleton,
   Spinner as AppLoader,
   PDFPreview,
   useResponsive,
-  Tooltip,
-  Close,
-  Forum,
-  AddChatBox,
-  Restart,
 } from "@sharelyai/ui-shared";
 import { ChatPanel } from "@sharelyai/ui-chat";
 import { SearchPanel } from "@sharelyai/ui-search";
 import { BrowsePanel } from "@sharelyai/ui-browse";
 import { Wrapper } from "./styles";
-import { ViewTabs } from "./components/ViewTabs";
 import { ChatHistory } from "./components/ChatHistory";
 import { AgentView } from "./components/AgentView";
 import { RbacBlocker } from "./components/RbacBlocker";
+import { Launcher } from "./components/Launcher";
+import { WebControlHeader } from "./components/WebControlHeader";
+import { usePdfPreview } from "./hooks/usePdfPreview";
+import { useHideInterferingElements } from "./hooks/useHideInterferingElements";
 
 export interface WebControlProps {
   workspaceId?: string;
@@ -115,12 +110,7 @@ const WebControlInner = (props: WebControlProps) => {
   const [status, setStatus] = useState("idle");
   const [showAlert, setShowAlert] = useState(false);
   const [isRbacBlocked, setIsRbacBlocked] = useState(false);
-  const [pdfPreview, setPdfPreview] = useState({
-    open: false,
-    url: "",
-    fileName: "",
-    pageNumber: 1,
-  });
+  const { pdfPreview, closePdfPreview } = usePdfPreview();
   const [showChatHistory, setShowChatHistory] = useState(false);
   const [showAgentChatHistory, setShowAgentChatHistory] = useState(false);
 
@@ -180,41 +170,6 @@ const WebControlInner = (props: WebControlProps) => {
   const isChatView = currentView === constants.CHAT_VIEW;
   const isAgentView = currentView === constants.AGENT_VIEW;
   const hasGroups = groups && groups.length > 0;
-
-  // PDF Preview handling
-  useEffect(() => {
-    const handleOpenPdf = (event: any) => {
-      const { url, fileName, pageNumber } = event.detail;
-      setPdfPreview({
-        open: true,
-        url,
-        fileName: fileName || "Document",
-        pageNumber: pageNumber || 1,
-      });
-    };
-    const handleClosePdf = () =>
-      setPdfPreview((prev) => ({ ...prev, open: false }));
-
-    customEvents.subscribe(
-      constants.CUSTOM_EVENTS.OPEN_PDF_PREVIEW,
-      handleOpenPdf,
-    );
-    customEvents.subscribe(
-      constants.CUSTOM_EVENTS.CLOSE_PDF_PREVIEW,
-      handleClosePdf,
-    );
-
-    return () => {
-      customEvents.unsubscribe(
-        constants.CUSTOM_EVENTS.OPEN_PDF_PREVIEW,
-        handleOpenPdf,
-      );
-      customEvents.unsubscribe(
-        constants.CUSTOM_EVENTS.CLOSE_PDF_PREVIEW,
-        handleClosePdf,
-      );
-    };
-  }, []);
 
   // RBAC check
   useEffect(() => {
@@ -309,49 +264,8 @@ const WebControlInner = (props: WebControlProps) => {
     refetchMessages();
   }, [currentInformation?.currentGroupId]);
 
-  // Hide interfering elements on mobile
-  useEffect(() => {
-    let intervalId: ReturnType<typeof setInterval> | null = null;
-    let timeoutId: ReturnType<typeof setTimeout> | null = null;
-
-    const elementsToHide = [
-      "bsf-footer",
-      "#INDshadowRootWrap",
-      "#launcher-frame",
-    ];
-
-    const hideElements = () => {
-      if (isMobile) {
-        elementsToHide.forEach((selector) => {
-          const element = document.querySelector(selector);
-          if (element && element instanceof HTMLElement) {
-            element.style.display = "none";
-          }
-        });
-      }
-    };
-
-    const showElements = () => {
-      elementsToHide.forEach((selector) => {
-        const element = document.querySelector(selector);
-        if (element && element instanceof HTMLElement) {
-          element.style.display = "";
-        }
-      });
-    };
-
-    hideElements();
-    intervalId = setInterval(hideElements, 500);
-    timeoutId = setTimeout(() => {
-      if (intervalId) clearInterval(intervalId);
-    }, 5 * 60 * 1000);
-
-    return () => {
-      if (intervalId) clearInterval(intervalId);
-      if (timeoutId) clearTimeout(timeoutId);
-      showElements();
-    };
-  }, []);
+  // Hide host-page elements that overlap the widget on mobile.
+  useHideInterferingElements(isMobile);
 
   const handleInitWithToken = async (authToken?: string) => {
     const currentToken = authToken || token;
@@ -522,6 +436,25 @@ const WebControlInner = (props: WebControlProps) => {
     setStepActive(constants.GOALS_DETAIL_PAGE);
   };
 
+  // Header actions — toggle the threads drawer / start a new chat for the
+  // active view (chat vs agent).
+  const handleToggleThreads = () =>
+    isAgentView
+      ? setShowAgentChatHistory(!showAgentChatHistory)
+      : setShowChatHistory(!showChatHistory);
+
+  const handleHeaderNewChat = () => {
+    if (isAgentView) {
+      setShowAgentChatHistory(false);
+      setCurrentInformation({
+        agentThreadId: undefined,
+        agentThreadName: undefined,
+      });
+    } else {
+      handleCreateNewChat();
+    }
+  };
+
   const containerStyle: React.CSSProperties = {
     ...(displayMode?.Z_INDEX
       ? { zIndex: parseInt(displayMode.Z_INDEX, 10) }
@@ -559,23 +492,13 @@ const WebControlInner = (props: WebControlProps) => {
       )}
 
       {!isInline && (
-        <div
-          className="sharely-launcher sharelyai-webcontroller-small-chat"
-          onClick={() => handleIsOpen(!isOpen)}
-        >
-          <div className="launcher-logo sharelyai-webcontroller-logo">
-            {workspace?.photo ? (
-              <img src={workspace.photo} alt="AI" />
-            ) : (
-              <Logo />
-            )}
-          </div>
-          {!isOpen && (
-            <p className="launcher-text sharelyai-webcontroller-text">
-              {config?.closedText || t("IndexSmallChatText")}
-            </p>
-          )}
-        </div>
+        <Launcher
+          workspace={workspace}
+          isOpen={isOpen}
+          closedText={config?.closedText}
+          defaultText={t("IndexSmallChatText")}
+          onToggle={() => handleIsOpen(!isOpen)}
+        />
       )}
 
       {isLoadingWorkspace && isWidgetOpen && <AppLoader />}
@@ -584,98 +507,19 @@ const WebControlInner = (props: WebControlProps) => {
 
       {!isLoadingWorkspace && isWidgetOpen && !isRbacBlocked && (
         <div className="web-control-container sharelyai-webcontroller-container">
-          <div className="web-control-header">
-            <div className="web-control-header-grid">
-              <div className="header-left">
-                {(isChatView || isAgentView) && isNotGoalsStep && (
-                  <>
-                    <Tooltip text="Threads" placement="bottom">
-                      <button
-                        className={classNames("header-threads-btn", {
-                          disabled: isChatView && !hasGroups,
-                        })}
-                        onClick={() =>
-                          isAgentView
-                            ? setShowAgentChatHistory(!showAgentChatHistory)
-                            : setShowChatHistory(!showChatHistory)
-                        }
-                        disabled={isChatView && !hasGroups}
-                      >
-                        <Forum />
-                      </button>
-                    </Tooltip>
-                    <div className="header-logo-info">
-                      <div className="header-logo">
-                        {workspace?.photo ? (
-                          <img src={workspace.photo} alt="AI" />
-                        ) : workspace?.id ? (
-                          <Logo />
-                        ) : (
-                          <Skeleton width={40} height={40} />
-                        )}
-                      </div>
-                      <span className="header-title">
-                        {workspace?.organizationName || workspace?.name || (
-                          <Skeleton width={100} height={20} />
-                        )}
-                      </span>
-                    </div>
-                  </>
-                )}
-              </div>
-              <div className="header-center">
-                <ViewTabs />
-              </div>
-              <div className="header-right">
-                {isNotGoalsStep && isChatView && isGoal && (
-                  <Tooltip text="Restart goal" placement="bottom">
-                    <button
-                      className={classNames("header-action-btn", {
-                        disabled: !hasGroups,
-                      })}
-                      onClick={handleCreateGoalThread}
-                      disabled={!hasGroups}
-                    >
-                      <Restart />
-                    </button>
-                  </Tooltip>
-                )}
-                {isNotGoalsStep && (isChatView || isAgentView) && (
-                  <Tooltip text="New chat" placement="bottom">
-                    <button
-                      className={classNames("header-action-btn", {
-                        disabled: isChatView && !hasGroups,
-                      })}
-                      onClick={() => {
-                        if (isAgentView) {
-                          setShowAgentChatHistory(false);
-                          setCurrentInformation({
-                            agentThreadId: undefined,
-                            agentThreadName: undefined,
-                          });
-                        } else {
-                          handleCreateNewChat();
-                        }
-                      }}
-                      disabled={isChatView && !hasGroups}
-                    >
-                      <AddChatBox />
-                    </button>
-                  </Tooltip>
-                )}
-                {!isInline && (
-                  <Tooltip text="Close" placement="bottom">
-                    <button
-                      className="header-action-btn"
-                      onClick={() => handleIsOpen(false)}
-                    >
-                      <Close />
-                    </button>
-                  </Tooltip>
-                )}
-              </div>
-            </div>
-          </div>
+          <WebControlHeader
+            workspace={workspace}
+            isInline={isInline}
+            isChatView={isChatView}
+            isAgentView={isAgentView}
+            isNotGoalsStep={isNotGoalsStep}
+            isGoal={isGoal}
+            hasGroups={Boolean(hasGroups)}
+            onToggleThreads={handleToggleThreads}
+            onRestartGoal={handleCreateGoalThread}
+            onNewChat={handleHeaderNewChat}
+            onClose={() => handleIsOpen(false)}
+          />
 
           <div className="web-control-content">
             {currentView === constants.CHAT_VIEW && (
@@ -711,7 +555,7 @@ const WebControlInner = (props: WebControlProps) => {
         <PDFPreview
           url={pdfPreview.url}
           open={pdfPreview.open}
-          onClose={() => setPdfPreview((prev) => ({ ...prev, open: false }))}
+          onClose={closePdfPreview}
           fileName={pdfPreview.fileName}
           initialPage={pdfPreview.pageNumber}
         />

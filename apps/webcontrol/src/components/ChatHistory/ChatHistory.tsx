@@ -331,7 +331,7 @@ export const ChatHistory = (props: ChatHistoryProps) => {
     if (!chats) return [];
     const grouped = chats?.reduce(
       (acc: Record<string, IGroupConversation[]>, chat) => {
-        const dateKey = new Date(chat?.lastMessageAt!).toLocaleDateString(
+        const dateKey = new Date(chat.lastMessageAt!).toLocaleDateString(
           "us-US",
         );
         acc[dateKey] = acc[dateKey] || [];

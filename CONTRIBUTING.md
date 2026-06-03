@@ -6,7 +6,7 @@ Thanks for your interest in Sharely WebControl. This guide covers how to develop
 
 - **Node.js** ≥ 18
 - **pnpm** ≥ 8 (this repo pins `packageManager: "pnpm@9.0.0"` — Corepack will pick it up automatically)
-- A Sharely-compatible API and a Supabase project for env vars (see [Environment](#environment))
+- A Sharely-compatible API for env vars (see [Environment](#environment))
 
 ## Local development
 
@@ -18,7 +18,7 @@ pnpm install
 
 # Configure environment
 cp .env.example .env
-# Edit .env with your API URL, Supabase credentials, etc.
+# Edit .env with your API URL and workspace ID
 
 # Start the demo app (recommended starting point)
 pnpm dev
@@ -59,9 +59,6 @@ Copy `.env.example` to `.env` and fill in:
 |---|---|
 | `VITE_API_DEFAULT_URL` | API endpoint that powers the widget (your Sharely-compatible backend) |
 | `VITE_WORKSPACE_ID` | Workspace identifier issued by your backend |
-| `VITE_PUBLIC_SUPABASE_URL` | Supabase project URL |
-| `VITE_PUBLIC_SUPABASE_ANON_KEY` | Supabase anon/publishable key |
-| `VITE_REDIRECT_URL` | OAuth/redirect URL — typically your deployed app URL |
 
 ## Project layout
 

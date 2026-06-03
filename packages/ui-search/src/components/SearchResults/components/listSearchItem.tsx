@@ -1,3 +1,24 @@
+/**
+ * Search variant of the result list item.
+ *
+ * A near-twin of `ui-browse`'s
+ * `ContentView/components/listSearchItem.tsx` (~88% identical). They are kept
+ * as separate components on purpose — they diverge on several functional axes,
+ * so merging into one parameterized component would add more conditional
+ * complexity (and behavior-change risk) than the duplication costs:
+ *
+ *   | Axis              | this (search)                         | browse                                  |
+ *   | ----------------- | ------------------------------------- | --------------------------------------- |
+ *   | analytics event   | SPACE_EVENT_CLICKED_SEARCH_RESULT     | SPACE_EVENT_CLICKED_RESOURCE_IN_CATEGORY|
+ *   | customConfig path | views.search.results.listItem         | views.browse.results.listItem           |
+ *   | labels / i18n     | localized via useLanguage().langText  | static "File" / "Content" / "Page"      |
+ *   | icon resolution   | chunk→star + type-based lookups       | iconType + default only                 |
+ *   | isPdf / chunk     | blobType === application/pdf          | also true when chunkType is present     |
+ *   | description layout| showPageAsPill branch, score-after-page | score-then-page, no pill branch       |
+ *
+ * If you change shared structure here, check whether the browse twin needs the
+ * same change.
+ */
 import { useState } from "react";
 import styled, { css } from "styled-components";
 

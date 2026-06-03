@@ -10,9 +10,9 @@ export const DragBar = () => {
       <path
         d="M2 2H34"
         stroke="#101828"
-        stroke-opacity="0.24"
-        stroke-width="4"
-        stroke-linecap="round"
+        strokeOpacity="0.24"
+        strokeWidth="4"
+        strokeLinecap="round"
       />
     </svg>
   );
