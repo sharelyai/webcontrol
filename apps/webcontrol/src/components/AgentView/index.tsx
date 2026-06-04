@@ -20,11 +20,7 @@ import {
   Logo,
 } from "@sharelyai/ui-shared";
 import { MessageBubble } from "@sharelyai/ui-chat";
-import {
-  ThinkingIndicator,
-  ToolCallCard,
-  SourcesList,
-} from "@sharelyai/ui-agent-chat";
+import { ThinkingIndicator, SourcesList } from "@sharelyai/ui-agent-chat";
 
 interface AgentViewProps {
   spaceId: string;
@@ -73,17 +69,12 @@ function StreamingMessage({
           </div>
         )}
 
-        {hasThinking && (
+        {(hasThinking || hasToolCalls) && (
           <div className="sharelyai-webcontroller-streaming-thinking">
-            <ThinkingIndicator steps={thinkingSteps} />
-          </div>
-        )}
-
-        {hasToolCalls && (
-          <div className="sharelyai-webcontroller-streaming-tools">
-            {activeToolCalls.map((tc) => (
-              <ToolCallCard key={tc.id} toolCall={tc} />
-            ))}
+            <ThinkingIndicator
+              steps={thinkingSteps}
+              toolCalls={activeToolCalls}
+            />
           </div>
         )}
 
@@ -335,18 +326,12 @@ export const AgentView = ({
                     footer={
                       hasThinking || hasToolCalls || hasSources ? (
                         <div className="sharelyai-webcontroller-agent-content">
-                          {hasThinking && (
+                          {(hasThinking || hasToolCalls) && (
                             <ThinkingIndicator
-                              steps={msg.thinkingSteps}
+                              steps={msg.thinkingSteps || []}
+                              toolCalls={msg.toolCalls}
                               collapsed={true}
                             />
-                          )}
-                          {hasToolCalls && (
-                            <div className="sharelyai-webcontroller-agent-tools">
-                              {msg.toolCalls.map((tc: ToolCall) => (
-                                <ToolCallCard key={tc.id} toolCall={tc} />
-                              ))}
-                            </div>
                           )}
                           {hasSources && (
                             <SourcesList
