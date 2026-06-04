@@ -108,8 +108,9 @@ export const InitialCategories = () => {
       <div className="initial-categories">
         <div className="items">
           {isLoading &&
-            Array.from({ length: 6 }).map(() => (
+            Array.from({ length: 6 }).map((_, index) => (
               <Skeleton
+                key={index}
                 width="100%"
                 height={60}
                 borderRadius="10px"

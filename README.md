@@ -7,6 +7,12 @@ as a set of layered `@sharelyai/*` packages you can consume individually in a Re
 app. This README is the source of truth for how the repo is organized and how to
 work in it.
 
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/sharelyai/webcontrol&env=VITE_API_DEFAULT_URL,VITE_WORKSPACE_ID&envDescription=Backend%20API%20URL%20and%20workspace%20ID%20the%20widget%20talks%20to&envLink=https://github.com/sharelyai/webcontrol#environment)
+
+Deploys `apps/webcontrol` (the embeddable bundle) — the default Vercel target. See
+[Distribution](#distribution) for what gets built and [Environment](#environment)
+for the variables it prompts for.
+
 ## Contents
 
 - [Prerequisites](#prerequisites)
@@ -276,3 +282,13 @@ pnpm changeset            # Create a changeset
 pnpm version-packages     # Apply version bumps
 pnpm release              # Build and publish
 ```
+
+## License
+
+Sharely WebControl is licensed under the [Apache License 2.0](LICENSE) — © 2026
+Sharely.ai, Inc. You are free to use, modify, and deploy your own fork under its
+terms.
+
+While the source is open, the published `@sharelyai/*` npm packages remain
+publish-restricted — only Sharely AI maintainers can publish to that scope (see
+[For maintainers](#for-maintainers)).

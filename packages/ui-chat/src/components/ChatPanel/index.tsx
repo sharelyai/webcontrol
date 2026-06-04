@@ -128,7 +128,7 @@ export const ChatPanel = ({
       const customerRoleId = userData?.metadata?.customerRoleId;
       const langKnowledge = config?.langKnowledge;
 
-      let queryKey = [
+      const queryKey = [
         "spaces-messages",
         spaceId,
         groupId,
@@ -209,7 +209,7 @@ export const ChatPanel = ({
       const customerRoleId = userData?.metadata?.customerRoleId;
       const langKnowledge = config?.langKnowledge;
 
-      let queryKey = [
+      const queryKey = [
         "spaces-messages",
         spaceId,
         groupId,

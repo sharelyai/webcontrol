@@ -7,7 +7,7 @@ export interface IReplaceMessageValueProps {
 }
 
 export const replaceMessageValue = (props: IReplaceMessageValueProps) => {
-  let { message } = props;
+  const { message } = props;
   const originalMessage = message;
 
   // Clean the message first
