@@ -1,11 +1,41 @@
 # Sharely WebControl
 
-Embeddable AI-powered web control widget, built as a **pnpm + Turborepo** monorepo.
+**Sharely WebControl is the embeddable end-user surface of the Sharely.ai
+platform — the fastest way to give your organization's users a role-governed,
+agentic AI experience inside an application they already use.**
 
-The widget ships as a single `<script>`-ready bundle you can drop on any page, and
-as a set of layered `@sharelyai/*` packages you can consume individually in a React
-app. This README is the source of truth for how the repo is organized and how to
-work in it.
+You embed a single, authenticated web component into your portal or web app, and
+your end users get AI-powered search, chat, and agent interactions that are
+scoped to who they are. WebControl is a thin, API-driven client; the intelligence
+and governance live in the three Sharely.ai services behind it:
+
+- **Sharely.ai Knowledge** — structures an organization's content into
+  role-scoped taxonomies, so every answer is grounded in the documents a given
+  user is actually permitted to see.
+- **Sharely.ai Agents** — designs, evaluates, and operationalizes governed
+  agentic workflows (tool use, retrieval, multi-step reasoning) that WebControl
+  renders with streaming responses, thinking steps, tool-call cards, and
+  citations.
+- **Sharely.ai Backend** — provides authentication, workspace isolation, and the
+  role-based access control (RBAC) that enforces what each user can retrieve and
+  do, on every request.
+
+The result is an end-to-end stack where governance is enforced at the source, not
+bolted onto the UI: WebControl streams only role-filtered knowledge and agent
+output (over SSE), so the same embedded widget safely serves an admin, a sales
+rep, and an external partner — each seeing only what their role allows.
+
+Drop it onto a page with two `<script>` tags, point it at your workspace, and
+your end users have a governed agentic experience — without you building chat,
+retrieval, RBAC, or streaming yourself. WebControl talks to any
+Sharely-compatible backend.
+
+---
+
+Built as a **pnpm + Turborepo** monorepo. The widget ships as a single
+`<script>`-ready bundle you can drop on any page, and as a set of layered
+`@sharelyai/*` packages you can consume individually in a React app. This README
+is the source of truth for how the repo is organized and how to work in it.
 
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/sharelyai/webcontrol&env=VITE_API_DEFAULT_URL,VITE_WORKSPACE_ID&envDescription=Backend%20API%20URL%20and%20workspace%20ID%20the%20widget%20talks%20to&envLink=https://github.com/sharelyai/webcontrol#environment)
 
