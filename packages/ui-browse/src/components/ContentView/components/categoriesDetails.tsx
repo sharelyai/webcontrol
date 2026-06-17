@@ -40,7 +40,7 @@ const Wrapper: any = styled.div`
         align-items: center;
         gap: 6px;
 
-        & > button {
+        button {
           background: none;
           border: none;
           display: flex;
@@ -64,7 +64,7 @@ const Wrapper: any = styled.div`
           }
         }
 
-        & > .arrow {
+        .arrow {
           display: flex;
           align-items: center;
           svg { width: 16px; height: 16px; fill: ${theme.colors.fiord}; }
@@ -267,6 +267,10 @@ export const CategoriesDetails = () => {
                   metadata={{
                     ...item?.coreKnowledge,
                     ...item?.metadata,
+                    blobType:
+                      item?.metadata?.blobType ||
+                      item?.coreKnowledge?.blobType ||
+                      item?.blobType,
                     title: item?.metadata?.title || item.title,
                   }}
                   showDropdown={false}

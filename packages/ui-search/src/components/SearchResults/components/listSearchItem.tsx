@@ -399,7 +399,14 @@ export const ListSearchItem = (props: ComponentProps) => {
   const showPill = customConfig?.showPill ?? true;
   const showOpenInFullView = customConfig?.showOpenInFullView ?? true;
   const isChunk = item?.metadata?.["chunkType"] === "CHUNK";
-  const isPdf = blobType === "application/pdf";
+  const isPdf =
+    blobType === "application/pdf" ||
+    /\.pdf$/i.test(
+      item?.metadata?.["filename"] ||
+        item?.metadata?.["title"] ||
+        item?.metadata?.["elasticSearch.url.raw"] ||
+        "",
+    );
   const sourceUrl = item?.metadata?.["sourceUrl"];
   const hasSourceUrl = Boolean(sourceUrl);
   const isDownloadable =
@@ -468,7 +475,7 @@ export const ListSearchItem = (props: ComponentProps) => {
   const handleOpenInFullView = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
 
-    if (hasSourceUrl) {
+    if (hasSourceUrl && !isPdf) {
       const newWindow = window.open("about:blank", "_blank");
       if (newWindow) newWindow.location.href = sourceUrl;
       return;
@@ -487,21 +494,32 @@ export const ListSearchItem = (props: ComponentProps) => {
     apiClient.knowledge.downloadFile(item.metadata?.["knowledgeId"] ?? item?.id)
     .then((responseDownload) => {
       if (responseDownload?.url) {
-        const cleanUrl = responseDownload?.url
-          ?.replace(regex.GET_DOWNLOAD_WORD, "")
-          ?.replace(regex.GET_PAGE_WORD, page ? `page=.${page}` : "");
+        const rawUrl = responseDownload.url;
+        // Remove the `download` param so the file is served inline (preview)
+        // instead of as an attachment, and detect PDFs from the URL path as a
+        // fallback when blobType metadata is missing.
+        let previewUrl = rawUrl;
+        let urlIsPdf = false;
+        try {
+          const parsedUrl = new URL(rawUrl);
+          parsedUrl.searchParams.delete("download");
+          previewUrl = parsedUrl.toString();
+          urlIsPdf = /\.pdf$/i.test(parsedUrl.pathname);
+        } catch {
+          previewUrl = rawUrl.replace(regex.GET_DOWNLOAD_WORD, "");
+        }
 
-        if (cleanUrl.includes("pdf")) {
+        if (isPdf || urlIsPdf) {
           // Trigger PDF preview modal via custom event
           customEvents.publish(constants.CUSTOM_EVENTS.OPEN_PDF_PREVIEW, {
-            url: cleanUrl,
+            url: previewUrl,
             fileName: sourceName || title || "Document",
             pageNumber: page || 1,
           });
         } else {
           // For non-PDF files, open in new window
           const newWindow = window.open("about:blank", "_blank");
-          if(newWindow) newWindow.location.href = cleanUrl;
+          if(newWindow) newWindow.location.href = previewUrl;
         }
       }
     });
