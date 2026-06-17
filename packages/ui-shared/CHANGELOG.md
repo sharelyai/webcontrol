@@ -1,5 +1,13 @@
 # @sharelyai/ui-shared
 
+## 0.0.32
+
+### Patch Changes
+
+- fix: preview mode
+- Updated dependencies
+  - @sharelyai/services@0.0.32
+
 ## 0.0.30
 
 ### Patch Changes

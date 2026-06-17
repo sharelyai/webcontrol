@@ -1,5 +1,29 @@
 # @sharelyai/ui-browse
 
+## 0.0.33
+
+### Patch Changes
+
+- Fix PDF preview and breadcrumb styling in browse and search views
+
+  - Detect PDFs reliably via filename/URL extension (not just `blobType` metadata), so browse/search result clicks open the in-app preview modal instead of downloading the file.
+  - Strip the `download` query param from signed storage URLs using the URL API so files are served inline (previewable) while preserving the signed token.
+  - Propagate the top-level `blobType` into the browse result card metadata so the correct file icon and preview behavior apply.
+  - Fix breadcrumb styles in the browse view by using descendant selectors so the current (nested) breadcrumb item is styled correctly instead of falling back to the default button look.
+
+- Updated dependencies
+  - @sharelyai/ui-search@0.0.33
+
+## 0.0.32
+
+### Patch Changes
+
+- fix: preview mode
+- Updated dependencies
+  - @sharelyai/services@0.0.32
+  - @sharelyai/ui-search@0.0.32
+  - @sharelyai/ui-shared@0.0.32
+
 ## 0.0.30
 
 ### Patch Changes

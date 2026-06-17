@@ -1,5 +1,14 @@
 # @sharelyai/ui-agent-chat
 
+## 0.0.32
+
+### Patch Changes
+
+- fix: preview mode
+- Updated dependencies
+  - @sharelyai/services@0.0.32
+  - @sharelyai/ui-shared@0.0.32
+
 ## 0.0.31
 
 ### Patch Changes

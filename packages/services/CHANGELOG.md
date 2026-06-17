@@ -1,5 +1,11 @@
 # @sharelyai/services
 
+## 0.0.32
+
+### Patch Changes
+
+- fix: preview mode
+
 ## 0.0.30
 
 ### Patch Changes
