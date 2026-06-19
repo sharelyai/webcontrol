@@ -1,23 +1,11 @@
 /**
- * Search variant of the result list item.
+ * Search-view result list item.
  *
- * A near-twin of `ui-browse`'s
- * `ContentView/components/listSearchItem.tsx` (~88% identical). They are kept
- * as separate components on purpose — they diverge on several functional axes,
- * so merging into one parameterized component would add more conditional
- * complexity (and behavior-change risk) than the duplication costs:
- *
- *   | Axis              | this (search)                         | browse                                  |
- *   | ----------------- | ------------------------------------- | --------------------------------------- |
- *   | analytics event   | SPACE_EVENT_CLICKED_SEARCH_RESULT     | SPACE_EVENT_CLICKED_RESOURCE_IN_CATEGORY|
- *   | customConfig path | views.search.results.listItem         | views.browse.results.listItem           |
- *   | labels / i18n     | localized via useLanguage().langText  | static "File" / "Content" / "Page"      |
- *   | icon resolution   | chunk→star + type-based lookups       | iconType + default only                 |
- *   | isPdf / chunk     | blobType === application/pdf          | also true when chunkType is present     |
- *   | description layout| showPageAsPill branch, score-after-page | score-then-page, no pill branch       |
- *
- * If you change shared structure here, check whether the browse twin needs the
- * same change.
+ * Shares all of its logic (type/icon/pdf resolution, derived flags, and the
+ * click/download/preview handlers) with the browse view's `SearchResultCard`
+ * via the `useResourceListItem` hook + the `ResourceIcon` component. This file
+ * owns only the search-view styling and JSX layout (it adds the "View more"
+ * dropdown and the `showPageAsPill`/trailing-page description variants).
  */
 import { useState } from "react";
 import styled, { css } from "styled-components";
@@ -25,28 +13,15 @@ import styled, { css } from "styled-components";
 import {
   Divider,
   Tooltip,
-  Archive,
   ArrowDown,
-  AudioFile,
-  Description,
   Download,
-  Excel,
-  Language,
   Launch,
-  PictureAsPdf,
-  VideoFile,
-  Word,
-  Image,
-  Link,
+  ResourceIcon,
 } from "@sharelyai/ui-shared";
 import {
-  constants,
-  customEvents,
-  regex,
-  useGlobalStore,
-  useSharelyContext,
+  useResourceListItem,
   useLanguage,
-  classNames
+  classNames,
 } from "@sharelyai/services";
 
 const Container: any = styled.div`
@@ -339,33 +314,7 @@ type ComponentProps = {
   score?: number;
   metadata: any;
   showDropdown?: boolean;
-  type?: "search" | "category";
 };
-
-// map blob type with text to icon
-const MAP_BLOB_TYPE_TO_ICON: { [key: string]: React.ElementType } = {
-  [constants.MIMETYPE_APPLICATION_PDF]: PictureAsPdf,
-  [constants.MIMETYPE_TEXT]: Description,
-  [constants.MIMETYPE_APPLICATION_VND_OPENXMLFORMATS_OFFICEDOCUMENT_WORDPROCESSINGML_DOCUMENT]:
-    Word,
-  [constants.MIMETYPE_APPLICATION_VND_OPENXMLFORMATS_OFFICEDOCUMENT_SPREADSHEETML_SHEET]:
-    Excel,
-  [constants.MIMETYPE_APPLICATION_VND_MS_EXCEL]: Excel,
-  [constants.MIMETYPE_APPLICATION_MSWORD]: Word,
-  https: Language,
-  [constants.MIMETYPE_APPLICATION_VND_OPENXMLFORMATS_OFFICEDOCUMENT_PRESENTATIONML_PRESENTATION]:
-    Archive,
-  [constants.MIMETYPE_APPLICATION_ZIP]: Archive,
-  [constants.MIMETYPE_APPLICATION_RAR]: Archive,
-  [constants.MIMETYPE_AUDIO_MP3]: AudioFile,
-  [constants.MIMETYPE_VIDEO_MP4]: VideoFile,
-  [constants.MIMETYPE_IMAGE_PNG]: Image,
-  [constants.MIMETYPE_IMAGE_JPEG]: Image,
-  [constants.MIMETYPE_IMAGE_GIF]: Image,
-  [constants.MIMETYPE_IMAGE_WEBP]: Image,
-};
-
-const MAP_BLOB_TYPE_TO_ICON_FILES: { [key: string]: React.ElementType } = { LINK: Link };
 
 const RelevantScore = ({ score }: { score: number }) => {
   const percent = (score * 100).toLocaleString(undefined, {
@@ -376,176 +325,33 @@ const RelevantScore = ({ score }: { score: number }) => {
 };
 
 export const ListSearchItem = (props: ComponentProps) => {
-  const { showDropdown = false, type = "search", ...item } = props;
+  const { showDropdown = false, ...item } = props;
 
   const [showMore, setShowMore] = useState(false);
 
-  const { config, token, workspace, currentInformation } = useGlobalStore();
   const { langText } = useLanguage();
-  const { apiClient } = useSharelyContext();
 
-  const blobType =
-    item?.metadata?.["blobType"] ||
-    item?.metadata?.["mimeType"] ||
-    item?.metadata?.["mimetype"] ||
-    item?.metadata?.["type"] ||
-    item?.metadata?.["elasticSearch.url_scheme.raw"];
-  const iconType = blobType ?? "text/plain";
-  const customIcons = workspace?.spaceStyling?.icons;
-  const hasCustomIcon = Boolean(customIcons);
-  const customConfig =
-    workspace?.spaceStyling?.customConfig?.views?.search?.results?.listItem;
-  const showDescription = customConfig?.showDescription ?? true;
-  const showPill = customConfig?.showPill ?? true;
-  const showOpenInFullView = customConfig?.showOpenInFullView ?? true;
-  const isChunk = item?.metadata?.["chunkType"] === "CHUNK";
-  const isPdf =
-    blobType === "application/pdf" ||
-    /\.pdf$/i.test(
-      item?.metadata?.["filename"] ||
-        item?.metadata?.["title"] ||
-        item?.metadata?.["elasticSearch.url.raw"] ||
-        "",
-    );
-  const sourceUrl = item?.metadata?.["sourceUrl"];
-  const hasSourceUrl = Boolean(sourceUrl);
-  const isDownloadable =
-    Object.keys(MAP_BLOB_TYPE_TO_ICON).includes(blobType) ||
-    (isChunk && blobType !== "LINK");
-  const hasToShowOpenInFullView =
-    isPdf || blobType === "LINK" || hasSourceUrl;
-  const title =
-    item?.metadata?.["title"] ??
-    item?.metadata?.["text"] ??
-    item?.metadata?.["filename"] ??
-    item.metadata?.["elasticSearch.title.raw"] ??
-    "";
-  const description =
-    item?.["description"] ??
-    item.metadata?.["elasticSearch.meta_description.raw"] ??
-    "";
-  const sourceName =
-    item?.metadata?.["filename"] ??
-    item?.metadata?.["elasticSearch.url.raw"] ??
-    item?.metadata?.["link"] ??
-    item?.metadata?.["source"] ??
-    item?.metadata?.["uploadFileMetadata"]?.["filename"];
-  const page = item?.metadata?.["loc.pageNumber"];
-
-  const IconComponent = () => {
-    const customIconSvg =
-      customIcons?.[isChunk ? "star" : undefined] ||
-      customIcons?.[constants.MIMETYPE_TO_EXTENSION?.[item?.["type"]]] ||
-      customIcons?.[constants.MIMETYPE_TO_EXTENSION?.[iconType]] ||
-      customIcons?.["default"];
-    if (customIconSvg) {
-      // Convert SVG string to React component
-      return (
-        <span
-          dangerouslySetInnerHTML={{ __html: customIconSvg }}
-          style={{ display: "inline-flex", alignItems: "center" }}
-        />
-      );
-    }
-    const Icon =
-      MAP_BLOB_TYPE_TO_ICON[iconType] ||
-      MAP_BLOB_TYPE_TO_ICON_FILES[iconType] ||
-      Description;
-    return <Icon />;
-  };
-
-  const handleDownload = async (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.stopPropagation();
-    const responseDownload = await apiClient.knowledge.downloadFile(item.metadata?.["knowledgeId"] ?? item?.id);
-    if (responseDownload?.url) {
-      const url = responseDownload.url;
-      const parsedUrl = new URL(url);
-      const downloadValue = parsedUrl.searchParams.get("download");
-
-      const anchor = document.createElement("a");
-      anchor.href = url;
-      anchor.download = downloadValue || "download.pdf";
-
-      document.body.appendChild(anchor);
-      anchor.click();
-      document.body.removeChild(anchor);
-    }
-  };
-
-  const handleOpenInFullView = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.stopPropagation();
-
-    if (hasSourceUrl && !isPdf) {
-      const newWindow = window.open("about:blank", "_blank");
-      if (newWindow) newWindow.location.href = sourceUrl;
-      return;
-    }
-
-    if (item?.metadata?.["type"] === "LINK") {
-      const newWindow = window.open("about:blank", "_blank");
-      if(newWindow) newWindow.location.href =
-        item?.["content"] ||
-        item?.metadata?.["content"] ||
-        item?.metadata?.["link"] ||
-        "";
-      return;
-    }
-    // Continue asynchronously
-    apiClient.knowledge.downloadFile(item.metadata?.["knowledgeId"] ?? item?.id)
-    .then((responseDownload) => {
-      if (responseDownload?.url) {
-        const rawUrl = responseDownload.url;
-        // Remove the `download` param so the file is served inline (preview)
-        // instead of as an attachment, and detect PDFs from the URL path as a
-        // fallback when blobType metadata is missing.
-        let previewUrl = rawUrl;
-        let urlIsPdf = false;
-        try {
-          const parsedUrl = new URL(rawUrl);
-          parsedUrl.searchParams.delete("download");
-          previewUrl = parsedUrl.toString();
-          urlIsPdf = /\.pdf$/i.test(parsedUrl.pathname);
-        } catch {
-          previewUrl = rawUrl.replace(regex.GET_DOWNLOAD_WORD, "");
-        }
-
-        if (isPdf || urlIsPdf) {
-          // Trigger PDF preview modal via custom event
-          customEvents.publish(constants.CUSTOM_EVENTS.OPEN_PDF_PREVIEW, {
-            url: previewUrl,
-            fileName: sourceName || title || "Document",
-            pageNumber: page || 1,
-          });
-        } else {
-          // For non-PDF files, open in new window
-          const newWindow = window.open("about:blank", "_blank");
-          if(newWindow) newWindow.location.href = previewUrl;
-        }
-      }
-    });
-  };
-
-  const handleContainerClick = (event: React.MouseEvent<HTMLDivElement>) => {
-    apiClient.spaces.sendEvent(
-      currentInformation.spaceId,
-      constants.SPACE_EVENTS.SPACE_EVENT_CLICKED_SEARCH_RESULT,
-      {
-        term: title,
-        resultId: item.id,
-        resultTitle: title,
-        blobType,
-        description,
-        isChunk,
-        sourceName,
-        page,
-      }
-    );
-    if (hasToShowOpenInFullView) {
-      handleOpenInFullView(event as any);
-      return;
-    }
-    handleDownload(event as any);
-  };
+  const {
+    iconType,
+    iconExtension,
+    isChunk,
+    isDownloadable,
+    hasToShowOpenInFullView,
+    title,
+    description,
+    sourceName,
+    page,
+    customIcons,
+    hasCustomIcon,
+    customConfig,
+    showDescription,
+    showPill,
+    showOpenInFullView,
+    showPageAsPill,
+    handleDownload,
+    handleOpenInFullView,
+    handleContainerClick,
+  } = useResourceListItem(item);
 
   return (
     <Container
@@ -556,11 +362,15 @@ export const ListSearchItem = (props: ComponentProps) => {
         <div className="title">
           <div
             className={classNames("icon", {
-              [constants.MIMETYPE_TO_EXTENSION[iconType]]: !hasCustomIcon,
+              [iconExtension ?? ""]: !hasCustomIcon && Boolean(iconExtension),
               customIcon: hasCustomIcon,
             })}
           >
-            <IconComponent />
+            <ResourceIcon
+              iconType={iconType}
+              isChunk={isChunk}
+              customIcons={customIcons}
+            />
           </div>
           <div className="content">
             <div className="wrapper-title">
@@ -578,19 +388,19 @@ export const ListSearchItem = (props: ComponentProps) => {
               )}
             </div>
             <span className="description">
-              {customConfig?.showPageAsPill && page && (
+              {showPageAsPill && page && (
                 <span className="item pill">
                   {langText.PageText} {page}{" "}
                 </span>
               )}
               {sourceName && <span className="item">{sourceName}</span>}
-              {item?.score > 0 && (
+              {item?.score != null && item.score > 0 && (
                 <>
                   <Divider type="dot" />
                   <RelevantScore score={item.score} />
                 </>
               )}
-              {page && !customConfig?.showPageAsPill && (
+              {page && !showPageAsPill && (
                 <>
                   <Divider type="dot" />
                   <span className="item">
@@ -632,19 +442,6 @@ export const ListSearchItem = (props: ComponentProps) => {
         </div>
       </div>
       {showDescription && <div className="description">{description}</div>}
-      {false && (
-        <div className={classNames("tags", { show: showMore })}>
-          {Array(0)
-            .fill(0)
-            .map((_, index) => {
-              return (
-                <button className="tag" key={index}>
-                  Test tag
-                </button>
-              );
-            })}
-        </div>
-      )}
     </Container>
   );
 };

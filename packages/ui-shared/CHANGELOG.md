@@ -1,5 +1,18 @@
 # @sharelyai/ui-shared
 
+## 0.0.34
+
+### Patch Changes
+
+- Fix PDF icons and preview in the browse and search resource lists, and share the list-item logic across both views.
+
+  - Resolve a resource's type from its file extension when `blobType` metadata is missing, so PDFs (and other files) show the correct icon/styling and open the PDF preview in both the browse and search views.
+  - Extract the shared list-item logic into the `useResourceListItem` hook and the `ResourceIcon` component; `SearchResultCard` and the search list item now keep only their own styles/layout.
+  - Remove the unused browse `listSearchItem` component.
+
+- Updated dependencies
+  - @sharelyai/services@0.0.34
+
 ## 0.0.32
 
 ### Patch Changes

@@ -14,6 +14,7 @@ export * from './useMutationQueue';
 export * from './useSendGoalMessage';
 export * from './useWorkflows';
 export * from './useKnowledgeResources';
+export * from './useResourceListItem';
 export * from './useSpace';
 export * from './useAgentChat';
 export * from './useAgentThreads';
