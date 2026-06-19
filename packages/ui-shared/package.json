@@ -1,6 +1,6 @@
 {
   "name": "@sharelyai/ui-shared",
-  "version": "0.0.32",
+  "version": "0.0.34",
   "author": "Sharely AI",
   "publishConfig": {
     "access": "restricted"
