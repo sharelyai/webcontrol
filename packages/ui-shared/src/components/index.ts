@@ -16,3 +16,4 @@ export * from './EmptyState';
 export * from './MultiSelect';
 export * from './UserMenu';
 export * from './Tooltip';
+export * from './ResourceIcon';
