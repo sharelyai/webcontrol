@@ -120,6 +120,23 @@ export const Wrapper: any = styled.div`
             color: ${theme.colors.paleSky};
             font-weight: 500;
           }
+
+          /* Looks like inline note text but is a real, focusable button so the
+             host can wire it to an "About" modal via onVersionClick. */
+          .sharelyai-webcontroller-note-version {
+            font: inherit;
+            color: inherit;
+            background: none;
+            border: none;
+            padding: 0;
+            margin: 0;
+            cursor: pointer;
+            white-space: nowrap;
+
+            &:hover {
+              text-decoration: underline;
+            }
+          }
         }
       }
     }

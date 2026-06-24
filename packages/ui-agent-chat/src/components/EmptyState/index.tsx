@@ -9,12 +9,15 @@ import {
   EmptyStateSendButton,
   EmptyStateNote,
 } from "./styles";
+import { VersionButton } from "../styles";
 import { SendIcon } from "../icons";
 
 interface EmptyStateProps {
   title?: string;
   description?: string;
   disclaimer?: string;
+  version?: string;
+  onVersionClick?: () => void;
   placeholder?: string;
   inputValue?: string;
   onInputChange?: (value: string) => void;
@@ -25,6 +28,8 @@ export function EmptyState({
   title = "Chat",
   description,
   disclaimer,
+  version,
+  onVersionClick,
   placeholder = "Ask a question...",
   inputValue = "",
   onInputChange,
@@ -70,7 +75,17 @@ export function EmptyState({
       )}
       {disclaimer && (
         <EmptyStateNote>
-          <span>{disclaimer}</span>
+          <span>
+            {disclaimer}
+            {version && (
+              <>
+                {" "}
+                <VersionButton type="button" onClick={onVersionClick}>
+                  (v{version})
+                </VersionButton>
+              </>
+            )}
+          </span>
         </EmptyStateNote>
       )}
     </EmptyStateWrapper>

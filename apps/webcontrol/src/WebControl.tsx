@@ -528,6 +528,7 @@ const WebControlInner = (props: WebControlProps) => {
                 status={status}
                 isLoading={status === "pending"}
                 setStatus={setStatus}
+                version="2.0.1"
               />
             )}
             {currentView === constants.AGENT_VIEW && (

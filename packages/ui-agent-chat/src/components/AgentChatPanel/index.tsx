@@ -32,6 +32,7 @@ import {
   InputField,
   SendButton,
   DisclaimerText,
+  VersionButton,
   ThinkingSpinner,
 } from "../styles";
 import { IconButton } from "../IconButton";
@@ -45,6 +46,8 @@ interface AgentChatPanelProps {
   botName?: string;
   placeholder?: string;
   disclaimer?: string;
+  version?: string;
+  onVersionClick?: () => void;
   emptyTitle?: string;
   emptyDescription?: string;
   onThreadChange?: (threadId: string | null) => void;
@@ -62,6 +65,8 @@ export function AgentChatPanel({
   botName,
   placeholder = "Ask a question...",
   disclaimer = "AI-generated — always verify with original materials.",
+  version,
+  onVersionClick,
   emptyTitle,
   emptyDescription,
   onThreadChange,
@@ -245,6 +250,8 @@ export function AgentChatPanel({
             title={emptyTitle}
             description={emptyDescription}
             disclaimer={disclaimer}
+            version={version}
+            onVersionClick={onVersionClick}
             placeholder={placeholder}
             inputValue={inputValue}
             onInputChange={setInputValue}
@@ -398,7 +405,17 @@ export function AgentChatPanel({
               </SendButton>
             )}
           </InputRow>
-          <DisclaimerText>{disclaimer}</DisclaimerText>
+          <DisclaimerText>
+            {disclaimer}
+            {version && (
+              <>
+                {" "}
+                <VersionButton type="button" onClick={onVersionClick}>
+                  (v{version})
+                </VersionButton>
+              </>
+            )}
+          </DisclaimerText>
         </InputArea>
       )}
     </ChatWrapper>

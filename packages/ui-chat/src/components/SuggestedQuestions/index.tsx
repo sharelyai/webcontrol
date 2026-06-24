@@ -27,10 +27,20 @@ export interface SuggestedQuestionsProps {
   goals: IGoalProps[];
   handleView: (view: string, thread: object) => void;
   renderInputSection?: () => React.ReactNode;
+  version?: string;
+  onVersionClick?: () => void;
 }
 
 export const SuggestedQuestions = (props: SuggestedQuestionsProps) => {
-  const { greeting, goals, imageAI, handleView, renderInputSection } = props;
+  const {
+    greeting,
+    goals,
+    imageAI,
+    handleView,
+    renderInputSection,
+    version,
+    onVersionClick,
+  } = props;
   const { isDesktop } = useResponsive();
   const { workspace } = useGlobalStore();
   const { langText } = useLanguage();
@@ -59,7 +69,21 @@ export const SuggestedQuestions = (props: SuggestedQuestionsProps) => {
         <div className="sharelyai-webcontroller-body">
           {hasCustomConfig && goals?.length === 0 && (
             <div className="sharelyai-webcontroller-note">
-              <span>{langText.NoteChatPoweredByAIBSFText}</span>
+              <span>
+                {langText.NoteChatPoweredByAIBSFText}
+                {version && (
+                  <>
+                    {" "}
+                    <button
+                      type="button"
+                      className="sharelyai-webcontroller-note-version"
+                      onClick={onVersionClick}
+                    >
+                      (v{version})
+                    </button>
+                  </>
+                )}
+              </span>
             </div>
           )}
           {goals?.length > 0 && (

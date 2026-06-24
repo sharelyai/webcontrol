@@ -1,5 +1,11 @@
 # @sharelyai/services
 
+## 0.0.35
+
+### Patch Changes
+
+- Keep the linked `@sharelyai` packages on the same version so consumers don't hit a version mismatch between packages published in this release.
+
 ## 0.0.34
 
 ### Patch Changes

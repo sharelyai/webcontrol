@@ -843,6 +843,23 @@ export const DisclaimerText = styled.div`
   `}
 `;
 
+// Looks like inline text but is a real, focusable button. Inherits the
+// surrounding disclaimer typography so it blends into the note.
+export const VersionButton = styled.button`
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  white-space: nowrap;
+
+  &:hover {
+    text-decoration: underline;
+  }
+`;
+
 // ─── Error Components ───────────────────────────────────────────────────────────
 
 export const ErrorCard = styled.div`

@@ -32,6 +32,8 @@ export interface ChatPanelProps {
   isLoading: boolean;
   setStatus: (status: string) => void;
   className?: string;
+  version?: string;
+  onVersionClick?: () => void;
 }
 
 export const ChatPanel = ({
@@ -40,6 +42,8 @@ export const ChatPanel = ({
   isLoading,
   setStatus,
   className,
+  version,
+  onVersionClick,
 }: ChatPanelProps) => {
   const [message, setMessage] = useState("");
   const {
@@ -401,6 +405,8 @@ export const ChatPanel = ({
               greeting={(spaceGreeting as any)?.content}
               goals={startGoals ? (spaceGreeting as any)?.goals : []}
               handleView={handleView}
+              version={version}
+              onVersionClick={onVersionClick}
               renderInputSection={
                 showFirstChatViewInMiddle ? renderInputSection : undefined
               }

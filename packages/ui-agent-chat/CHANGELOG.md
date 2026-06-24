@@ -1,5 +1,15 @@
 # @sharelyai/ui-agent-chat
 
+## 0.0.35
+
+### Patch Changes
+
+- Add an optional version indicator to `AgentChatPanel`. Pass `version` to render a `(vX.Y.Z)` control next to the disclaimer (in both the empty state and the active chat) that looks like plain text but is a real button; use `onVersionClick` to open an "About" modal from the host app.
+- Fix broken `exports` map for external consumers. The packages declared a `"development"` condition pointing at `./src/index.ts` (used for in-repo HMR), but only ship `dist`, so installers like Vite hit the `development` condition in serve mode and failed with "Failed to resolve entry". The `development` condition is now stripped from the published package via `publishConfig.exports` (the source package.json keeps it so workspace HMR still works), so external apps resolve to `dist` with no `resolve.alias` workaround.
+- Updated dependencies
+  - @sharelyai/services@0.0.35
+  - @sharelyai/ui-shared@0.0.35
+
 ## 0.0.34
 
 ### Patch Changes
