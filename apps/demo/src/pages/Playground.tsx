@@ -84,6 +84,26 @@ const DEFAULTS: State = {
   themeSecondary: defaultTheme.colors.secondary,
 };
 
+// localStorage key for a saved playground config.
+const STORAGE_KEY = 'sharely-playground-config';
+
+// Read a saved config from localStorage, tolerating older / partial shapes by
+// merging onto DEFAULTS. Returns null when nothing is stored or parsing fails.
+function loadStored(): State | null {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as Partial<State>;
+    return {
+      ...DEFAULTS,
+      ...parsed,
+      views: { ...DEFAULTS.views, ...(parsed.views ?? {}) },
+    };
+  } catch {
+    return null;
+  }
+}
+
 const PRESETS: { label: string; state: State }[] = [
   {
     label: 'Floating chat',
@@ -193,8 +213,14 @@ function CodeBlock({ title, code, onCopy, copied }: { title: string; code: strin
 // Playground
 // ---------------------------------------------------------------------------
 export default function Playground() {
-  const [s, setS] = useState<State>(DEFAULTS);
+  // `s` is the DRAFT being edited in the form. `applied` is the config that
+  // actually powers the live preview + output snippets. They start in sync
+  // (seeded from a saved config in localStorage if present, else DEFAULTS) and
+  // diverge as the form is edited until the user clicks "Load config".
+  const [s, setS] = useState<State>(() => loadStored() ?? DEFAULTS);
+  const [applied, setApplied] = useState<State>(() => loadStored() ?? DEFAULTS);
   const [copied, setCopied] = useState<string | null>(null);
+  const [status, setStatus] = useState<string | null>(null);
 
   // workspaceId / baseUrl are owned as local state here (initialised from env).
   // We deliberately do NOT read them back from the global store: WebControl's
@@ -214,67 +240,102 @@ export default function Playground() {
     setTimeout(() => setCopied(null), 1500);
   };
 
-  const isInline = s.mode === 'placed-inline';
+  // Transient status message shown next to the action buttons.
+  const flash = (msg: string) => {
+    setStatus(msg);
+    setTimeout(() => setStatus(null), 1500);
+  };
 
-  // displayMode passed to the widget
+  // Push the current draft into the preview/output.
+  const loadConfig = () => {
+    setApplied(s);
+    flash('Config loaded');
+  };
+
+  // Persist the current draft to localStorage.
+  const saveConfig = () => {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(s));
+      flash('Saved to localStorage');
+    } catch {
+      flash('Save failed');
+    }
+  };
+
+  // Remove the saved config from localStorage.
+  const removeConfig = () => {
+    try {
+      localStorage.removeItem(STORAGE_KEY);
+      flash('Removed from localStorage');
+    } catch {
+      flash('Remove failed');
+    }
+  };
+
+  // True when the form has edits not yet pushed to the preview.
+  const dirty = JSON.stringify(s) !== JSON.stringify(applied);
+
+  const isInline = applied.mode === 'placed-inline';
+
+  // displayMode passed to the widget (derived from the APPLIED config)
   const displayMode = useMemo(
     () => ({
-      OPEN_BY_DEFAULT: s.openByDefault,
-      MODE: s.privacy,
-      ...(s.width ? { WIDTH: s.width } : {}),
-      ...(s.height ? { HEIGHT: s.height } : {}),
-      ...(s.zIndex ? { Z_INDEX: s.zIndex } : {}),
+      OPEN_BY_DEFAULT: applied.openByDefault,
+      MODE: applied.privacy,
+      ...(applied.width ? { WIDTH: applied.width } : {}),
+      ...(applied.height ? { HEIGHT: applied.height } : {}),
+      ...(applied.zIndex ? { Z_INDEX: applied.zIndex } : {}),
       VIEWS: {
-        CHAT: { SHOW: s.views.chat },
-        SEARCH: { SHOW: s.views.search, SHOW_TAGS: s.views.searchTags },
-        BROWSE: { SHOW: s.views.browse },
-        AGENT: { SHOW: s.views.agent },
+        CHAT: { SHOW: applied.views.chat },
+        SEARCH: { SHOW: applied.views.search, SHOW_TAGS: applied.views.searchTags },
+        BROWSE: { SHOW: applied.views.browse },
+        AGENT: { SHOW: applied.views.agent },
       },
     }),
-    [s.openByDefault, s.privacy, s.width, s.height, s.zIndex, s.views],
+    [applied.openByDefault, applied.privacy, applied.width, applied.height, applied.zIndex, applied.views],
   );
 
-  // theme override built off defaultTheme
+  // theme override built off defaultTheme (derived from the APPLIED config)
   const theme = useMemo(
     () => ({
       ...defaultTheme,
-      colors: { ...defaultTheme.colors, primary: s.themePrimary, secondary: s.themeSecondary },
+      colors: { ...defaultTheme.colors, primary: applied.themePrimary, secondary: applied.themeSecondary },
     }),
-    [s.themePrimary, s.themeSecondary],
+    [applied.themePrimary, applied.themeSecondary],
   );
 
   // Remount the preview only when structural config changes (not on every
   // keystroke / color drag) so the widget doesn't reset constantly.
   const previewKey = JSON.stringify({
-    workspaceId: s.workspaceId,
-    baseUrl: s.baseUrl,
-    mode: s.mode,
-    avatar: s.avatar,
-    justChat: s.justChat,
-    openByDefault: s.openByDefault,
-    privacy: s.privacy,
-    views: s.views,
-    width: s.width,
-    height: s.height,
-    zIndex: s.zIndex,
-    lang: s.lang,
+    workspaceId: applied.workspaceId,
+    baseUrl: applied.baseUrl,
+    mode: applied.mode,
+    avatar: applied.avatar,
+    justChat: applied.justChat,
+    openByDefault: applied.openByDefault,
+    privacy: applied.privacy,
+    views: applied.views,
+    width: applied.width,
+    height: applied.height,
+    zIndex: applied.zIndex,
+    lang: applied.lang,
   });
 
   // Exported config (SharelyConfig shape used by the embed API)
   const exportConfig = useMemo(() => {
     const cfg: Record<string, unknown> = {
-      workspaceId: s.workspaceId || 'YOUR_WORKSPACE_ID',
-      baseUrl: s.baseUrl,
-      mode: s.mode,
-      avatarmodeDesktop: s.avatar,
-      avatarmodeMobile: s.avatar,
-      lang: s.lang,
+      workspaceId: applied.workspaceId || 'YOUR_WORKSPACE_ID',
+      baseUrl: applied.baseUrl,
+      mode: applied.mode,
+      avatarmodeDesktop: applied.avatar,
+      avatarmodeMobile: applied.avatar,
+      lang: applied.lang,
       displayMode,
     };
-    if (s.justChat) cfg.justChat = true;
-    if (s.closedText) cfg.closedText = s.closedText;
+    if (applied.justChat) cfg.justChat = true;
+    if (applied.closedText) cfg.closedText = applied.closedText;
     return cfg;
-  }, [s.workspaceId, s.baseUrl, s.mode, s.avatar, s.lang, s.justChat, s.closedText, displayMode]);
+  }, [applied.workspaceId, applied.baseUrl, applied.mode, applied.avatar, applied.lang, applied.justChat, applied.closedText, displayMode]);
 
   const configJson = JSON.stringify(exportConfig, null, 2);
 
@@ -286,15 +347,16 @@ export default function Playground() {
   window.sharelyai.render();
 </script>`;
 
-  const themeChanged = s.themePrimary !== defaultTheme.colors.primary || s.themeSecondary !== defaultTheme.colors.secondary;
+  const themeChanged =
+    applied.themePrimary !== defaultTheme.colors.primary || applied.themeSecondary !== defaultTheme.colors.secondary;
   const reactSnippet = `<WebControl
-  mode="${s.mode}"
-  avatarmodeDesktop="${s.avatar}"
-  avatarmodeMobile="${s.avatar}"
-  lang="${s.lang}"${s.justChat ? '\n  justChat' : ''}${s.closedText ? `\n  closedText="${s.closedText}"` : ''}
+  mode="${applied.mode}"
+  avatarmodeDesktop="${applied.avatar}"
+  avatarmodeMobile="${applied.avatar}"
+  lang="${applied.lang}"${applied.justChat ? '\n  justChat' : ''}${applied.closedText ? `\n  closedText="${applied.closedText}"` : ''}
   displayMode={${indent(JSON.stringify(displayMode, null, 2), 2)}}${
     themeChanged
-      ? `\n  theme={{ colors: { primary: '${s.themePrimary}', secondary: '${s.themeSecondary}' } }}`
+      ? `\n  theme={{ colors: { primary: '${applied.themePrimary}', secondary: '${applied.themeSecondary}' } }}`
       : ''
   }
 />`;
@@ -344,6 +406,56 @@ export default function Playground() {
         >
           Reset
         </button>
+      </div>
+
+      {/* Config actions — load the draft into the preview, or persist it. */}
+      <div
+        style={{
+          ...card,
+          display: 'flex',
+          gap: 8,
+          flexWrap: 'wrap',
+          alignItems: 'center',
+          padding: '12px 14px',
+          margin: '16px 0',
+          background: '#f9fafb',
+        }}
+      >
+        <button
+          onClick={loadConfig}
+          disabled={!dirty}
+          title="Apply the current settings to the live preview"
+          style={{
+            ...inputStyle,
+            width: 'auto',
+            padding: '8px 14px',
+            cursor: dirty ? 'pointer' : 'default',
+            fontWeight: 600,
+            color: dirty ? '#fff' : '#98a2b3',
+            background: dirty ? '#1570ef' : '#f2f4f7',
+            borderColor: dirty ? '#1570ef' : '#d0d5dd',
+          }}
+        >
+          {dirty ? 'Load config →' : 'Config loaded ✓'}
+        </button>
+        <button
+          onClick={saveConfig}
+          title="Save the current settings to localStorage"
+          style={{ ...inputStyle, width: 'auto', padding: '8px 14px', cursor: 'pointer', fontWeight: 600 }}
+        >
+          Save to localStorage
+        </button>
+        <button
+          onClick={removeConfig}
+          title="Remove the saved config from localStorage"
+          style={{ ...inputStyle, width: 'auto', padding: '8px 14px', cursor: 'pointer', color: '#b42318' }}
+        >
+          Remove saved
+        </button>
+        {dirty && (
+          <span style={{ fontSize: 12, color: '#b54708' }}>Unloaded changes — click “Load config” to preview.</span>
+        )}
+        {status && <span style={{ fontSize: 12, fontWeight: 600, color: '#067647' }}>{status}</span>}
       </div>
 
       {/* Main grid */}
@@ -477,14 +589,14 @@ export default function Playground() {
               <div style={{ height: '100%', padding: 16, boxSizing: 'border-box' }}>
                 <WebControl
                   key={previewKey}
-                  workspaceId={s.workspaceId || undefined}
-                  baseUrl={s.baseUrl || undefined}
-                  mode={s.mode}
-                  avatarmodeDesktop={s.avatar}
-                  avatarmodeMobile={s.avatar}
-                  justChat={s.justChat}
-                  closedText={s.closedText || undefined}
-                  lang={s.lang}
+                  workspaceId={applied.workspaceId || undefined}
+                  baseUrl={applied.baseUrl || undefined}
+                  mode={applied.mode}
+                  avatarmodeDesktop={applied.avatar}
+                  avatarmodeMobile={applied.avatar}
+                  justChat={applied.justChat}
+                  closedText={applied.closedText || undefined}
+                  lang={applied.lang}
                   displayMode={displayMode}
                   theme={theme}
                 />
@@ -492,14 +604,14 @@ export default function Playground() {
             ) : (
               <WebControl
                 key={previewKey}
-                workspaceId={s.workspaceId || undefined}
-                baseUrl={s.baseUrl || undefined}
-                mode={s.mode}
-                avatarmodeDesktop={s.avatar}
-                avatarmodeMobile={s.avatar}
-                justChat={s.justChat}
-                closedText={s.closedText || undefined}
-                lang={s.lang}
+                workspaceId={applied.workspaceId || undefined}
+                baseUrl={applied.baseUrl || undefined}
+                mode={applied.mode}
+                avatarmodeDesktop={applied.avatar}
+                avatarmodeMobile={applied.avatar}
+                justChat={applied.justChat}
+                closedText={applied.closedText || undefined}
+                lang={applied.lang}
                 displayMode={displayMode}
                 theme={theme}
               />
