@@ -38,11 +38,17 @@ export const useResourceListItem = (
   const { workspace, currentInformation } = useGlobalStore();
   const { apiClient } = useSharelyContext();
 
+  const rawUploadFileMeta =
+    item?.metadata?.["uploadFileMetadata"] ?? item?.["uploadFileMetadata"];
+  const uploadFileMeta = Array.isArray(rawUploadFileMeta)
+    ? rawUploadFileMeta[0]
+    : rawUploadFileMeta;
+
   const blobType =
     item?.metadata?.["blobType"] ||
     item?.metadata?.["mimeType"] ||
     item?.metadata?.["mimetype"] ||
-    item?.metadata?.["uploadFileMetadata"]?.["mimetype"] ||
+    uploadFileMeta?.["mimetype"] ||
     item?.metadata?.["type"] ||
     item?.metadata?.["elasticSearch.url_scheme.raw"];
 
@@ -54,7 +60,7 @@ export const useResourceListItem = (
     item?.metadata?.["elasticSearch.url.raw"] ||
     item?.metadata?.["source"] ||
     item?.metadata?.["link"] ||
-    item?.metadata?.["uploadFileMetadata"]?.["filename"] ||
+    uploadFileMeta?.["filename"] ||
     "";
   const fileExtension =
     resolvedFileName.split(/[?#]/)[0].split(".").pop()?.toLowerCase() ?? "";
@@ -108,7 +114,7 @@ export const useResourceListItem = (
     item?.metadata?.["elasticSearch.url.raw"] ??
     item?.metadata?.["link"] ??
     item?.metadata?.["source"] ??
-    item?.metadata?.["uploadFileMetadata"]?.["filename"];
+    uploadFileMeta?.["filename"];
   const page = item?.metadata?.["loc.pageNumber"];
 
   const downloadFile = () =>

@@ -34,12 +34,18 @@ export const useSpaceMessages = ({
   const { data, refetch, ...options } = useQuery({
     queryKey,
     queryFn: async (options) => {
-      const prevData = options.client.getQueryData(queryKey) as { messages: Message[] } | undefined;
+      const prevData = options.client.getQueryData(queryKey) as
+        | { messages: Message[] }
+        | undefined;
 
-      if (!groupId) return prevData;
+      if (!groupId) return prevData ?? { messages: [] };
 
-      const response = await apiClient.spaces.getMessages(spaceId, groupId, langKnowledge);
-      
+      const response = await apiClient.spaces.getMessages(
+        spaceId,
+        groupId,
+        langKnowledge,
+      );
+
       const prevMessages = prevData?.messages || [];
       const responseMessagesArr = response?.messages || [];
 
@@ -49,7 +55,7 @@ export const useSpaceMessages = ({
 
       // Build a map of response messages by id for quick lookup
       const responseMap = new Map(
-        responseMessagesArr.map((msg) => [msg.id, msg])
+        responseMessagesArr.map((msg) => [msg.id, msg]),
       );
 
       // Create a map to track merged messages by id to avoid duplicates
@@ -71,7 +77,7 @@ export const useSpaceMessages = ({
           const beforeMsg = prevMessages[index - 1];
           if (beforeMsg?.type === "AI" && beforeMsg?.id) {
             const indexOfBeforeMsg = responseMessagesArr.findIndex(
-              (m) => m.id === beforeMsg.id
+              (m) => m.id === beforeMsg.id,
             );
             const messageToMerge = responseMessagesArr[indexOfBeforeMsg + 1];
             if (messageToMerge) {

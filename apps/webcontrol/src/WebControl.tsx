@@ -123,10 +123,14 @@ const WebControlInner = (props: WebControlProps) => {
     workspace,
     token,
     externalToken,
+    sessionInvalid,
     setCurrentInformation,
     setStepActive,
     setCurrentView,
     setToken,
+    setTemporalToken,
+    setExternalToken,
+    setSessionInvalid,
   } = useGlobalStore();
 
   const { isMobile } = useResponsive();
@@ -317,6 +321,8 @@ const WebControlInner = (props: WebControlProps) => {
       return spaceResponse;
     } catch (e) {
       console.error(e);
+      setSessionInvalid(true);
+      return { invalid: true } as any;
     }
   };
 
@@ -342,6 +348,8 @@ const WebControlInner = (props: WebControlProps) => {
 
       if (res?.id) {
         setToken(res.token);
+        // Fresh token minted — the session is valid again, clear the banner.
+        setSessionInvalid(false);
         setCurrentInformation({
           spaceId: res.id,
           temporalUserId: res.temporalUserId,
@@ -353,6 +361,16 @@ const WebControlInner = (props: WebControlProps) => {
     } catch (e) {
       console.error(e);
     }
+  };
+
+  // Banner action: the persisted token was rejected. Drop every stored token
+  // first so the new-space request goes out clean (re-sending the rejected
+  // token would 500/401 the recovery too), then mint a fresh anonymous space.
+  const handleStartNewSpace = async () => {
+    setToken(undefined);
+    setTemporalToken(undefined);
+    setExternalToken(undefined);
+    await handleCreateNewSpace();
   };
 
   const initializeSpace = async () => {
@@ -384,6 +402,12 @@ const WebControlInner = (props: WebControlProps) => {
           setStatus("resolved");
           return;
         }
+        // Stored token was rejected — stop here and let the banner prompt a
+        // fresh start instead of re-sending the bad token to create a space.
+        if (validation?.invalid) {
+          setStatus("rejected");
+          return;
+        }
       }
 
       if (!currentInformation?.spaceId) {
@@ -393,6 +417,13 @@ const WebControlInner = (props: WebControlProps) => {
     } catch (error) {
       console.error(error);
       setStatus("rejected");
+      // We had a stored session token but still couldn't initialize a space —
+      // the token is outdated/invalid. Surface the banner so the user can start
+      // a new space. (The backend may answer an expired token with 500, not just
+      // 401/403, so we can't rely on the provider's status-based hook alone.)
+      if (token && config?.workspaceId) {
+        setSessionInvalid(true);
+      }
     }
   };
 
@@ -503,54 +534,102 @@ const WebControlInner = (props: WebControlProps) => {
 
       {isLoadingWorkspace && isWidgetOpen && <AppLoader />}
 
-      {!isLoadingWorkspace && isWidgetOpen && isRbacBlocked && <RbacBlocker />}
-
-      {!isLoadingWorkspace && isWidgetOpen && !isRbacBlocked && (
+      {/* Invalid/outdated session takes precedence over everything else: a
+          stale token fails to decode (so RBAC would falsely block) and poisons
+          every request. Show a clear notice + a way to start a fresh space. */}
+      {!isLoadingWorkspace && isWidgetOpen && sessionInvalid && (
         <div className="web-control-container sharelyai-webcontroller-container">
-          <WebControlHeader
-            workspace={workspace}
-            isInline={isInline}
-            isChatView={isChatView}
-            isAgentView={isAgentView}
-            isNotGoalsStep={isNotGoalsStep}
-            isGoal={isGoal}
-            hasGroups={Boolean(hasGroups)}
-            onToggleThreads={handleToggleThreads}
-            onRestartGoal={handleCreateGoalThread}
-            onNewChat={handleHeaderNewChat}
-            onClose={() => handleIsOpen(false)}
-          />
-
-          <div className="web-control-content">
-            {currentView === constants.CHAT_VIEW && (
-              <ChatPanel
-                spaceId={currentInformation?.spaceId || ""}
-                status={status}
-                isLoading={status === "pending"}
-                setStatus={setStatus}
-                version="2.0.1"
-              />
-            )}
-            {currentView === constants.AGENT_VIEW && (
-              <AgentView
-                spaceId={currentInformation?.spaceId || ""}
-                showChatHistory={showAgentChatHistory}
-                onCloseChatHistory={() => setShowAgentChatHistory(false)}
-                onCreateNewChat={() => setShowAgentChatHistory(false)}
-              />
-            )}
-            {currentView === constants.SEARCH_VIEW && <SearchPanel />}
-            {currentView === constants.BROWSE_VIEW && <BrowsePanel />}
+          <div
+            className="sharelyai-webcontroller-session-banner"
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: 16,
+              height: "100%",
+              padding: 24,
+              boxSizing: "border-box",
+              textAlign: "center",
+            }}
+          >
+            <span style={{ fontSize: 14, color: "#475467" }}>
+              {t("SessionExpiredText")}
+            </span>
+            <button
+              type="button"
+              onClick={handleStartNewSpace}
+              style={{
+                padding: "10px 18px",
+                border: "none",
+                borderRadius: 8,
+                background: "#b54708",
+                color: "#fff",
+                fontSize: 14,
+                fontWeight: 600,
+                cursor: "pointer",
+              }}
+            >
+              {t("StartNewSpaceText")}
+            </button>
           </div>
-
-          {showChatHistory && isChatView && (
-            <ChatHistory
-              onClose={() => setShowChatHistory(false)}
-              handleCreateNewChat={handleCreateNewChat}
-            />
-          )}
         </div>
       )}
+
+      {!isLoadingWorkspace &&
+        isWidgetOpen &&
+        !sessionInvalid &&
+        isRbacBlocked && <RbacBlocker />}
+
+      {!isLoadingWorkspace &&
+        isWidgetOpen &&
+        !sessionInvalid &&
+        !isRbacBlocked && (
+          <div className="web-control-container sharelyai-webcontroller-container">
+            <WebControlHeader
+              workspace={workspace}
+              isInline={isInline}
+              isChatView={isChatView}
+              isAgentView={isAgentView}
+              isNotGoalsStep={isNotGoalsStep}
+              isGoal={isGoal}
+              hasGroups={Boolean(hasGroups)}
+              onToggleThreads={handleToggleThreads}
+              onRestartGoal={handleCreateGoalThread}
+              onNewChat={handleHeaderNewChat}
+              onClose={() => handleIsOpen(false)}
+            />
+
+            <div className="web-control-content">
+              {currentView === constants.CHAT_VIEW && (
+                <ChatPanel
+                  spaceId={currentInformation?.spaceId || ""}
+                  status={status}
+                  isLoading={status === "pending"}
+                  setStatus={setStatus}
+                  version="2.0.1"
+                />
+              )}
+              {currentView === constants.AGENT_VIEW && (
+                <AgentView
+                  spaceId={currentInformation?.spaceId || ""}
+                  showChatHistory={showAgentChatHistory}
+                  onCloseChatHistory={() => setShowAgentChatHistory(false)}
+                  onCreateNewChat={() => setShowAgentChatHistory(false)}
+                />
+              )}
+              {currentView === constants.SEARCH_VIEW && <SearchPanel />}
+              {currentView === constants.BROWSE_VIEW && <BrowsePanel />}
+            </div>
+
+            {showChatHistory && isChatView && (
+              <ChatHistory
+                onClose={() => setShowChatHistory(false)}
+                handleCreateNewChat={handleCreateNewChat}
+              />
+            )}
+          </div>
+        )}
 
       {pdfPreview.open && (
         <PDFPreview

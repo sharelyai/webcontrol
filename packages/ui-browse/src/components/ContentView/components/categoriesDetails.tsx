@@ -1,13 +1,13 @@
 import styled, { css } from "styled-components";
 import { SearchResultCard as ListSearchItem } from "@sharelyai/ui-search";
-import { 
+import {
   ScrollBar,
-  ArrowBackIos, 
-  ArrowForward, 
-  ChatNotStarted, 
-  Loader, 
+  ArrowBackIos,
+  ArrowForward,
+  ChatNotStarted,
+  Loader,
   EmptyState,
-  useResponsive 
+  useResponsive,
 } from "@sharelyai/ui-shared";
 import {
   useGlobalStore,
@@ -15,7 +15,7 @@ import {
   useKnowledgeCategories,
   useKnowledgeResources,
   constants,
-  useSharelyContext
+  useSharelyContext,
 } from "@sharelyai/services";
 import { useBrowseStorage } from "../../../stores/browseStore";
 
@@ -67,7 +67,11 @@ const Wrapper: any = styled.div`
         .arrow {
           display: flex;
           align-items: center;
-          svg { width: 16px; height: 16px; fill: ${theme.colors.fiord}; }
+          svg {
+            width: 16px;
+            height: 16px;
+            fill: ${theme.colors.fiord};
+          }
         }
       }
     }
@@ -96,7 +100,9 @@ const Wrapper: any = styled.div`
       & > .list {
         flex: 1;
         padding: 0 100px;
-        @media (max-width: ${theme.screens.md}) { padding: 0; }
+        @media (max-width: ${theme.screens.md}) {
+          padding: 0;
+        }
       }
     }
 
@@ -144,18 +150,20 @@ export const CategoriesDetails = () => {
     setTreeCategoriesLevelData,
     setBreadcrumb,
   } = useBrowseStorage();
-  
-  const { treeCategories, isLoading: isLoadingCategories } = useKnowledgeCategories({
-    categoryId: treeCategoriesLevelData?.id,
-  });
-  
-  const { knowledgeResources, isLoading: isLoadingResources } = useKnowledgeResources({
-    categoryIds: [
-      ...((treeCategories as any[])?.map((cat) => cat?.id) || []),
-      treeCategoriesLevelData?.id,
-    ].filter(Boolean),
-    enabled: !isLoadingCategories,
-  });
+
+  const { treeCategories, isLoading: isLoadingCategories } =
+    useKnowledgeCategories({
+      categoryId: treeCategoriesLevelData?.id,
+    });
+
+  const { knowledgeResources, isLoading: isLoadingResources } =
+    useKnowledgeResources({
+      categoryIds: [
+        ...((treeCategories as any[])?.map((cat) => cat?.id) || []),
+        treeCategoriesLevelData?.id,
+      ].filter(Boolean),
+      enabled: !isLoadingCategories,
+    });
 
   const { isMobile } = useResponsive();
   const { workspace, currentInformation } = useGlobalStore();
@@ -163,17 +171,23 @@ export const CategoriesDetails = () => {
   const { apiClient } = useSharelyContext();
 
   const isLoading = isLoadingCategories || isLoadingResources;
-  const hasKnowledge = knowledgeResources && knowledgeResources.length > 0 && !isLoading;
-  const customParentConfig = workspace?.spaceStyling?.customConfig?.views?.browse;
+  const hasKnowledge =
+    knowledgeResources && knowledgeResources.length > 0 && !isLoading;
+  const customParentConfig =
+    workspace?.spaceStyling?.customConfig?.views?.browse;
   const customConfig = customParentConfig?.results;
 
   const setTreeCategoriesLevel = (category: any) => {
     setTreeCategoriesLevelData(category);
-    apiClient.spaces.sendEvent(currentInformation.spaceId, constants.SPACE_EVENTS.SPACE_EVENT_CLICKED_CATEGORY_IN_BROWSE, {
-      categoryId: category?.id,
-      categoryName: category?.name,
-      categoryNavigationCount: category?.categoryNavigationCount,
-    });
+    apiClient.spaces.sendEvent(
+      currentInformation.spaceId,
+      constants.SPACE_EVENTS.SPACE_EVENT_CLICKED_CATEGORY_IN_BROWSE,
+      {
+        categoryId: category?.id,
+        categoryName: category?.name,
+        categoryNavigationCount: category?.categoryNavigationCount,
+      },
+    );
   };
 
   return (
@@ -186,14 +200,21 @@ export const CategoriesDetails = () => {
               setBreadcrumb([]);
             }}
           >
-            {isMobile ? <ArrowBackIos /> : t('BrowseTabText')}
+            {isMobile ? <ArrowBackIos /> : t("BrowseTabText")}
           </button>
-          {!isMobile && <span className="arrow"><ArrowForward /></span>}
+          {!isMobile && (
+            <span className="arrow">
+              <ArrowForward />
+            </span>
+          )}
           {!isMobile &&
             breadcrumb.map((item: any) => {
               const isCurrent = item?.id === treeCategoriesLevelData?.id;
               return (
-                <div key={item?.id} style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <div
+                  key={item?.id}
+                  style={{ display: "flex", alignItems: "center", gap: "6px" }}
+                >
                   <button
                     onClick={() => {
                       setTreeCategoriesLevel(item);
@@ -205,7 +226,11 @@ export const CategoriesDetails = () => {
                   >
                     {item.name}
                   </button>
-                  {!isCurrent && <span className="arrow"><ArrowForward /></span>}
+                  {!isCurrent && (
+                    <span className="arrow">
+                      <ArrowForward />
+                    </span>
+                  )}
                 </div>
               );
             })}
@@ -244,21 +269,22 @@ export const CategoriesDetails = () => {
       <div className="results">
         <span className="resume">
           {isLoading && <Loader type="circular-loader" />}
-          {knowledgeResources?.length} {t('DocumentsAndResourcesText')}
+          {knowledgeResources?.length} {t("DocumentsAndResourcesText")}
         </span>
         <div className="list">
           <ScrollBar options={{ suppressScrollX: true }}>
             {isLoading && (
-              <Loader type="card-loading" text={t('LoadingKnowledgeText')} />
+              <Loader type="card-loading" text={t("LoadingKnowledgeText")} />
             )}
             {!hasKnowledge && !isLoading && (
               <EmptyState
-                text={t('NoResultsFoundText')}
-                description={t('BroadenSearchText')}
+                text={t("NoResultsFoundText")}
+                description={t("BroadenSearchText")}
                 icon={<ChatNotStarted />}
               />
             )}
-            {hasKnowledge && !isLoading && 
+            {hasKnowledge &&
+              !isLoading &&
               (knowledgeResources as any[]).map((item) => (
                 <ListSearchItem
                   key={item?.coreKnowledge?.id || item.id}
@@ -267,16 +293,20 @@ export const CategoriesDetails = () => {
                   metadata={{
                     ...item?.coreKnowledge,
                     ...item?.metadata,
+                    ...item?.uploadFileMetadata?.[0],
                     blobType:
                       item?.metadata?.blobType ||
                       item?.coreKnowledge?.blobType ||
                       item?.blobType,
                     title: item?.metadata?.title || item.title,
+                    uploadFileMetadata:
+                      item?.metadata?.uploadFileMetadata ??
+                      item?.uploadFileMetadata ??
+                      item?.coreKnowledge?.uploadFileMetadata,
                   }}
                   showDropdown={false}
                 />
-              ))
-            }
+              ))}
           </ScrollBar>
         </div>
       </div>

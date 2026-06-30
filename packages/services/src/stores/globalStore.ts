@@ -24,6 +24,9 @@ export interface GlobalState {
   setTemporalToken: (token: string | undefined) => void;
   setExternalToken: (token: string | undefined) => void;
 
+  sessionInvalid: boolean;
+  setSessionInvalid: (value: boolean) => void;
+
   // User
   userData: any;
   setUserData: (user: any) => void;
@@ -85,6 +88,9 @@ export const useGlobalStore = create<GlobalState>()(
       setTemporalToken: (temporalToken) => set({ temporalToken }),
       setExternalToken: (externalToken) => set({ externalToken }),
 
+      sessionInvalid: false,
+      setSessionInvalid: (sessionInvalid) => set({ sessionInvalid }),
+
       userData: undefined,
       setUserData: (userData) => set({ userData }),
 
@@ -122,6 +128,7 @@ export const useGlobalStore = create<GlobalState>()(
           userData: undefined,
           currentInformation: undefined,
           prevStepActive: [],
+          sessionInvalid: false,
         }),
     }),
     {

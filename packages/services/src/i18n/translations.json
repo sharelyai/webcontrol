@@ -1,5 +1,7 @@
 {
   "en": {
+    "SessionExpiredText": "Your session has expired.",
+    "StartNewSpaceText": "Start a new space",
     "NoteChatPoweredByAIBSFText": "Note: Chat is powered by AI and can make mistakes. Use Reference BSF materials for definitive answers.",
     "EnterKeywordsToExploreText": "Enter keywords to explore",
     "SearchAndFindResourcesText": "Find resources by name or content. Be specific for better results.",
@@ -59,6 +61,8 @@
     "ComingSoon": "Coming soon"
   },
   "es": {
+    "SessionExpiredText": "Tu sesión ha expirado.",
+    "StartNewSpaceText": "Iniciar un nuevo espacio",
     "NoteChatPoweredByAIBSFText": "Nota: El chat funciona con IA y puede cometer errores. Utiliza los materiales de referencia de BSF para respuestas definitivas.",
     "EnterKeywordsToExploreText": "Ingresa palabras clave para explorar",
     "SearchAndFindResourcesText": "Encuentra recursos por nombre o contenido. Sé específico para mejores resultados.",
@@ -118,6 +122,8 @@
     "ComingSoon": "Próximamente"
   },
   "pt": {
+    "SessionExpiredText": "A sua sessão expirou.",
+    "StartNewSpaceText": "Iniciar um novo espaço",
     "NoteChatPoweredByAIBSFText": "Nota: O chat é alimentado por IA e pode cometer erros. Use materiais de referência BSF para respostas definitivas.",
     "EnterKeywordsToExploreText": "Digite palavras-chave para explorar",
     "SearchAndFindResourcesText": "Encontre recursos por nome ou conteúdo. Seja específico para melhores resultados.",
@@ -177,6 +183,8 @@
     "ComingSoon": "Em breve"
   },
   "zh": {
+    "SessionExpiredText": "您的会话已过期。",
+    "StartNewSpaceText": "开始新的空间",
     "NoteChatPoweredByAIBSFText": "注意：聊天由AI驱动，可能会出错。请使用BSF参考资料获取权威答案。",
     "EnterKeywordsToExploreText": "输入关键词以探索",
     "SearchAndFindResourcesText": "按名称或内容查找资源。请具体说明以获得更好结果。",
@@ -236,6 +244,8 @@
     "AgentTabText": "智能聊天"
   },
   "zh-hans": {
+    "SessionExpiredText": "您的会话已过期。",
+    "StartNewSpaceText": "开始新的空间",
     "NoteChatPoweredByAIBSFText": "注意：聊天由AI驱动，可能会出错。请使用BSF参考资料获取权威答案。",
     "EnterKeywordsToExploreText": "输入关键词以探索",
     "SearchAndFindResourcesText": "按名称或内容查找资源。请具体说明以获得更好结果。",
@@ -295,6 +305,8 @@
     "AgentTabText": "智能聊天"
   },
   "zh-hant": {
+    "SessionExpiredText": "您的工作階段已過期。",
+    "StartNewSpaceText": "開始新的空間",
     "NoteChatPoweredByAIBSFText": "注意：聊天由AI驅動，可能會出錯。請使用BSF參考資料獲取權威答案。",
     "EnterKeywordsToExploreText": "輸入關鍵詞以探索",
     "SearchAndFindResourcesText": "按名稱或內容查找資源。請具體說明以獲得更好結果。",
@@ -354,6 +366,8 @@
     "AgentTabText": "智能聊天"
   },
   "zh-yue": {
+    "SessionExpiredText": "您的工作階段已過期。",
+    "StartNewSpaceText": "開始新的空間",
     "NoteChatPoweredByAIBSFText": "注意：傾偈由AI驅動，可能會有錯。請用BSF參考資料搵最終答案。",
     "EnterKeywordsToExploreText": "輸入關鍵字去探索",
     "SearchAndFindResourcesText": "用名稱或內容搵資源。講得清楚啲會有更好結果。",
@@ -413,6 +427,8 @@
     "AgentTabText": "智能傾偈"
   },
   "cmn": {
+    "SessionExpiredText": "您的会话已过期。",
+    "StartNewSpaceText": "开始新的空间",
     "NoteChatPoweredByAIBSFText": "注意：聊天由AI驱动，可能会出错。请使用BSF参考资料获取权威答案。",
     "EnterKeywordsToExploreText": "输入关键词以探索",
     "SearchAndFindResourcesText": "按名称或内容查找资源。请具体说明以获得更好结果。",
@@ -472,6 +488,8 @@
     "AgentTabText": "智能聊天"
   },
   "yue": {
+    "SessionExpiredText": "您的工作階段已過期。",
+    "StartNewSpaceText": "開始新的空間",
     "NoteChatPoweredByAIBSFText": "注意：傾偈由AI驅動，可能會有錯。請用BSF參考資料搵最終答案。",
     "EnterKeywordsToExploreText": "輸入關鍵字去探索",
     "SearchAndFindResourcesText": "用名稱或內容搵資源。講得清楚啲會有更好結果。",
@@ -531,6 +549,8 @@
     "AgentTabText": "智能傾偈"
   },
   "pt-br": {
+    "SessionExpiredText": "Sua sessão expirou.",
+    "StartNewSpaceText": "Iniciar um novo espaço",
     "NoteChatPoweredByAIBSFText": "Nota: O chat é alimentado por IA e pode cometer erros. Use materiais de referência BSF para respostas definitivas.",
     "EnterKeywordsToExploreText": "Digite palavras-chave para explorar",
     "SearchAndFindResourcesText": "Encontre recursos por nome ou conteúdo. Seja específico para melhores resultados.",
@@ -590,6 +610,8 @@
     "ComingSoon": "Em breve"
   },
   "de": {
+    "SessionExpiredText": "Deine Sitzung ist abgelaufen.",
+    "StartNewSpaceText": "Neuen Space starten",
     "NoteChatPoweredByAIBSFText": "Hinweis: Der Chat wird von KI betrieben und kann Fehler machen. Verwenden Sie BSF-Referenzmaterialien für verbindliche Antworten.",
     "EnterKeywordsToExploreText": "Suchbegriffe eingeben",
     "SearchAndFindResourcesText": "Ressourcen nach Name oder Inhalt finden. Seien Sie spezifisch für bessere Ergebnisse.",
@@ -649,6 +671,8 @@
     "ComingSoon": "Demnächst"
   },
   "pl": {
+    "SessionExpiredText": "Twoja sesja wygasła.",
+    "StartNewSpaceText": "Rozpocznij nową przestrzeń",
     "NoteChatPoweredByAIBSFText": "Uwaga: Czat jest obsługiwany przez AI i może popełniać błędy. Korzystaj z materiałów referencyjnych BSF, aby uzyskać ostateczne odpowiedzi.",
     "EnterKeywordsToExploreText": "Wpisz słowa kluczowe, aby eksplorować",
     "SearchAndFindResourcesText": "Znajdź zasoby po nazwie lub treści. Bądź konkretny, aby uzyskać lepsze wyniki.",
