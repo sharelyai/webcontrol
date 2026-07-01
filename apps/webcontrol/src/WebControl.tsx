@@ -654,8 +654,6 @@ const WebControlInner = (props: WebControlProps) => {
         versionInfo={{
           chatType: isAgentView ? "Agent" : "Regular",
           agentId: (config as any)?.agentId || (workspace as any)?.agentId,
-          uiLanguage: config?.lang,
-          knowledgeLanguage: config?.langKnowledge,
         }}
       />
 

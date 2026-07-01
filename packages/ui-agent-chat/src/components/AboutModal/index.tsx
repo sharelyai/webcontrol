@@ -1,12 +1,11 @@
 import { createPortal } from "react-dom";
+import { useGlobalStore } from "@sharelyai/services";
 import { IconButton } from "../IconButton";
 import { CloseIcon } from "../icons";
 import { Overlay, Container, Header, InfoList, InfoRow } from "./styles";
 
 export interface VersionInfo {
-  /** "Agent" or "Regular"; defaults to "Agent" */
   chatType?: string;
-  /** Custom agent id, or falls back to "Default" */
   agentId?: string;
   uiLanguage?: string;
   knowledgeLanguage?: string;
@@ -25,17 +24,19 @@ export function AboutModal({
   version,
   versionInfo,
 }: AboutModalProps) {
+  const config = useGlobalStore((s) => s.config);
+  const uiLanguage = versionInfo?.uiLanguage || config?.lang;
+  const knowledgeLanguage =
+    versionInfo?.knowledgeLanguage || config?.langKnowledge;
+
   if (!open || typeof document === "undefined") return null;
 
   const rows = [
     { label: "Web Control Version", value: version || "unknown" },
     { label: "Chat", value: versionInfo?.chatType || "Agent" },
     { label: "Agent ID", value: versionInfo?.agentId || "Default" },
-    { label: "UI Language", value: versionInfo?.uiLanguage || "—" },
-    {
-      label: "Knowledge Language",
-      value: versionInfo?.knowledgeLanguage || "—",
-    },
+    { label: "UI Language", value: uiLanguage || "—" },
+    { label: "Knowledge Language", value: knowledgeLanguage || "—" },
   ];
 
   return createPortal(

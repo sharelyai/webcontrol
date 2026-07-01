@@ -1,5 +1,19 @@
 # @sharelyai/ui-shared
 
+## 0.0.37
+
+### Patch Changes
+
+- Fix blank UI/Knowledge language in the "Web Control Info" modal. `AboutModal`
+  now reads the languages from the shared `@sharelyai/services` config store
+  (`versionInfo` remains an optional override), so they display even when the host
+  doesn't thread them through `versionInfo`. Also removes the "BSF" mention from
+  the chat disclaimer text across all locales, and consolidates i18n to a single
+  source (`locales/*.json` via `translations.ts`, dropping the duplicated
+  `translations.json`).
+- Updated dependencies
+  - @sharelyai/services@0.0.37
+
 ## 0.0.36
 
 ### Patch Changes
