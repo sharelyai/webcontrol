@@ -1,5 +1,5 @@
 {
-  "NoteChatPoweredByAIBSFText": "Hinweis: Der Chat wird von KI betrieben und kann Fehler machen. Verwenden Sie BSF-Referenzmaterialien für verbindliche Antworten.",
+  "NoteChatPoweredByAIBSFText": "Hinweis: Der Chat wird von KI betrieben und kann Fehler machen. Verwenden Sie Referenzmaterialien für verbindliche Antworten.",
   "EnterKeywordsToExploreText": "Suchbegriffe eingeben",
   "SearchAndFindResourcesText": "Ressourcen nach Name oder Inhalt finden. Seien Sie spezifisch für bessere Ergebnisse.",
   "MoreCategoriesText": "Mehr Kategorien",
@@ -55,5 +55,7 @@
   "ViewThread": "Zusammenfassung anzeigen",
   "Answer": "Antworten",
   "MarkdownDescription": "Informationen aus dem Ziel-Chat extrahiert",
-  "ComingSoon": "Demnächst"
+  "ComingSoon": "Demnächst",
+  "StartNewSpaceText": "Neuen Space starten",
+  "SessionExpiredText": "Deine Sitzung ist abgelaufen."
 }

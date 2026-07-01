@@ -30,7 +30,7 @@ import { BrowsePanel } from "@sharelyai/ui-browse";
 import { Wrapper } from "./styles";
 import { ChatHistory } from "./components/ChatHistory";
 import { AgentView } from "./components/AgentView";
-import { AboutModal } from "./components/AboutModal";
+import { AboutModal } from "@sharelyai/ui-agent-chat";
 import { RbacBlocker } from "./components/RbacBlocker";
 import { Launcher } from "./components/Launcher";
 import { WebControlHeader } from "./components/WebControlHeader";
@@ -651,10 +651,12 @@ const WebControlInner = (props: WebControlProps) => {
         open={showAboutModal}
         onClose={() => setShowAboutModal(false)}
         version={SHARELY_VERSION}
-        chatType={isAgentView ? "Agent" : "Regular"}
-        agentId={(config as any)?.agentId || (workspace as any)?.agentId}
-        uiLanguage={config?.lang}
-        knowledgeLanguage={config?.langKnowledge}
+        versionInfo={{
+          chatType: isAgentView ? "Agent" : "Regular",
+          agentId: (config as any)?.agentId || (workspace as any)?.agentId,
+          uiLanguage: config?.lang,
+          knowledgeLanguage: config?.langKnowledge,
+        }}
       />
 
       {/* Portal mount point for modals, chat history, etc. */}

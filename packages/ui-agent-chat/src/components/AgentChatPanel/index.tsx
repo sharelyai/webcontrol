@@ -17,6 +17,7 @@ import { StreamingContent } from "../StreamingContent";
 import { ThinkingIndicator } from "../ThinkingIndicator";
 import { SourcesList } from "../SourcesList";
 import { EmptyState } from "../EmptyState";
+import { AboutModal, type VersionInfo } from "../AboutModal";
 import { HistoryModal } from "../HistoryModal";
 import { AllSourcesModal } from "../AllSourcesModal";
 import {
@@ -48,6 +49,7 @@ interface AgentChatPanelProps {
   disclaimer?: string;
   version?: string;
   onVersionClick?: () => void;
+  versionInfo?: VersionInfo;
   emptyTitle?: string;
   emptyDescription?: string;
   onThreadChange?: (threadId: string | null) => void;
@@ -67,6 +69,7 @@ export function AgentChatPanel({
   disclaimer = "AI-generated — always verify with original materials.",
   version,
   onVersionClick,
+  versionInfo,
   emptyTitle,
   emptyDescription,
   onThreadChange,
@@ -92,6 +95,10 @@ export function AgentChatPanel({
     suggestedFollowups,
     retryLastMessage,
   } = agentChat;
+
+  // If the host doesn't take over the version click, open the built-in modal.
+  const [showAbout, setShowAbout] = useState(false);
+  const handleVersionClick = onVersionClick ?? (() => setShowAbout(true));
 
   const { threads, fetchThreads, updateThread } = useAgentThreads({ spaceId });
 
@@ -225,6 +232,14 @@ export function AgentChatPanel({
         </ChatHeader>
       )}
 
+      {/* Web Control Info Modal (opens from the version control) */}
+      <AboutModal
+        open={showAbout}
+        onClose={() => setShowAbout(false)}
+        version={version}
+        versionInfo={versionInfo}
+      />
+
       {/* History Modal */}
       <HistoryModal
         open={historyOpen}
@@ -251,7 +266,7 @@ export function AgentChatPanel({
             description={emptyDescription}
             disclaimer={disclaimer}
             version={version}
-            onVersionClick={onVersionClick}
+            onVersionClick={handleVersionClick}
             placeholder={placeholder}
             inputValue={inputValue}
             onInputChange={setInputValue}
@@ -410,7 +425,7 @@ export function AgentChatPanel({
             {version && (
               <>
                 {" "}
-                <VersionButton type="button" onClick={onVersionClick}>
+                <VersionButton type="button" onClick={handleVersionClick}>
                   (v{version})
                 </VersionButton>
               </>

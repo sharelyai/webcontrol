@@ -1,5 +1,5 @@
 {
-  "NoteChatPoweredByAIBSFText": "注意：傾偈由AI驅動，可能會有錯。請用BSF參考資料搵最終答案。",
+  "NoteChatPoweredByAIBSFText": "注意：傾偈由AI驅動，可能會有錯。請用參考資料搵最終答案。",
   "EnterKeywordsToExploreText": "輸入關鍵字去探索",
   "SearchAndFindResourcesText": "用名稱或內容搵資源。講得清楚啲會有更好結果。",
   "MoreCategoriesText": "更多分類",
@@ -55,5 +55,7 @@
   "ViewThread": "睇摘要",
   "Answer": "答案",
   "MarkdownDescription": "由目標傾偈中提取嘅資訊",
-  "ComingSoon": "即將推出"
+  "ComingSoon": "即將推出",
+  "StartNewSpaceText": "開始新的空間",
+  "SessionExpiredText": "您的工作階段已過期。"
 }

@@ -1,5 +1,5 @@
 {
-  "NoteChatPoweredByAIBSFText": "Nota: El chat funciona con IA y puede cometer errores. Utiliza los materiales de referencia de BSF para respuestas definitivas.",
+  "NoteChatPoweredByAIBSFText": "Nota: El chat funciona con IA y puede cometer errores. Utiliza los materiales de referencia para respuestas definitivas.",
   "EnterKeywordsToExploreText": "Ingresa palabras clave para explorar",
   "SearchAndFindResourcesText": "Encuentra recursos por nombre o contenido. Sé específico para mejores resultados.",
   "MoreCategoriesText": "Más categorías",
@@ -55,5 +55,7 @@
   "ViewThread": "Ver resumen",
   "Answer": "Respuestas",
   "MarkdownDescription": "Información extraída del chat de objetivos",
-  "ComingSoon": "Próximamente"
+  "ComingSoon": "Próximamente",
+  "StartNewSpaceText": "Iniciar un nuevo espacio",
+  "SessionExpiredText": "Tu sesión ha expirado."
 }

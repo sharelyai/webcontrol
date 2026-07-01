@@ -1,5 +1,5 @@
 import { useGlobalStore } from '../stores/globalStore';
-import translations from './translations.json';
+import { translations } from './translations';
 
 export const useLanguage = () => {
   const { config } = useGlobalStore();

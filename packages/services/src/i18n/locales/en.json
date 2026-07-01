@@ -1,5 +1,5 @@
 {
-  "NoteChatPoweredByAIBSFText": "Note: Chat is powered by AI and can make mistakes. Use Reference BSF materials for definitive answers.",
+  "NoteChatPoweredByAIBSFText": "Note: Chat is powered by AI and can make mistakes. Use reference materials for definitive answers.",
   "EnterKeywordsToExploreText": "Enter keywords to explore",
   "SearchAndFindResourcesText": "Find resources by name or content. Be specific for better results.",
   "MoreCategoriesText": "More categories",
@@ -55,5 +55,7 @@
   "ViewThread": "View summary",
   "Answer": "Answers",
   "MarkdownDescription": "Information extracted from goal chat",
-  "ComingSoon": "Coming soon"
+  "ComingSoon": "Coming soon",
+  "StartNewSpaceText": "Start a new space",
+  "SessionExpiredText": "Your session has expired."
 }

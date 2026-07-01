@@ -23,7 +23,7 @@ export const Container = styled.div`
     padding: 24px;
     background: ${theme.colors.white};
     border-radius: 20px;
-    box-shadow: ${theme.shadows.medium};
+    box-shadow: ${theme.shadows?.medium || "0 8px 32px rgba(0, 0, 0, 0.16)"};
   `}
 `;
 
@@ -41,24 +41,6 @@ export const Header = styled.div`
       font-size: ${theme.fonts.lg};
       font-weight: 600;
       line-height: 24px;
-    }
-
-    .about-close {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 24px;
-      height: 24px;
-      padding: 0;
-      background: none;
-      border: none;
-      cursor: pointer;
-
-      & > svg {
-        width: 20px;
-        height: 20px;
-        fill: ${theme.colors.gullGray};
-      }
     }
   `}
 `;

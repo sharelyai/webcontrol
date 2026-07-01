@@ -9,6 +9,7 @@ export { CitationRenderer, createCitationTextComponent, getCitationMarkdownCompo
 export { FeedbackPanel } from './components/FeedbackPanel';
 export { SuggestedFollowups } from './components/SuggestedFollowups';
 export { EmptyState } from './components/EmptyState';
+export { AboutModal, type VersionInfo } from './components/AboutModal';
 export { ErrorMessage } from './components/ErrorMessage';
 export { HistoryModal } from './components/HistoryModal';
 export { AllSourcesModal } from './components/AllSourcesModal';

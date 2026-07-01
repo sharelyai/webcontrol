@@ -1,36 +1,41 @@
 import { createPortal } from "react-dom";
-import { Close } from "@sharelyai/ui-shared";
+import { IconButton } from "../IconButton";
+import { CloseIcon } from "../icons";
 import { Overlay, Container, Header, InfoList, InfoRow } from "./styles";
 
-interface AboutModalProps {
-  open: boolean;
-  onClose: () => void;
-  version?: string;
-  /** "Agent" or "Regular" */
-  chatType: string;
+export interface VersionInfo {
+  /** "Agent" or "Regular"; defaults to "Agent" */
+  chatType?: string;
   /** Custom agent id, or falls back to "Default" */
   agentId?: string;
   uiLanguage?: string;
   knowledgeLanguage?: string;
 }
 
-export const AboutModal = ({
+interface AboutModalProps {
+  open: boolean;
+  onClose: () => void;
+  version?: string;
+  versionInfo?: VersionInfo;
+}
+
+export function AboutModal({
   open,
   onClose,
   version,
-  chatType,
-  agentId,
-  uiLanguage,
-  knowledgeLanguage,
-}: AboutModalProps) => {
+  versionInfo,
+}: AboutModalProps) {
   if (!open || typeof document === "undefined") return null;
 
   const rows = [
     { label: "Web Control Version", value: version || "unknown" },
-    { label: "Chat", value: chatType },
-    { label: "Agent ID", value: agentId || "Default" },
-    { label: "UI Language", value: uiLanguage || "—" },
-    { label: "Knowledge Language", value: knowledgeLanguage || "—" },
+    { label: "Chat", value: versionInfo?.chatType || "Agent" },
+    { label: "Agent ID", value: versionInfo?.agentId || "Default" },
+    { label: "UI Language", value: versionInfo?.uiLanguage || "—" },
+    {
+      label: "Knowledge Language",
+      value: versionInfo?.knowledgeLanguage || "—",
+    },
   ];
 
   return createPortal(
@@ -38,9 +43,11 @@ export const AboutModal = ({
       <Container onClick={(e) => e.stopPropagation()}>
         <Header>
           <span className="about-title">Web Control Info</span>
-          <button className="about-close" onClick={onClose} aria-label="Close">
-            <Close />
-          </button>
+          <IconButton
+            icon={<CloseIcon size={20} />}
+            ariaLabel="Close"
+            onClick={onClose}
+          />
         </Header>
         <InfoList>
           {rows.map((row) => (
@@ -54,4 +61,4 @@ export const AboutModal = ({
     </Overlay>,
     document.body,
   );
-};
+}

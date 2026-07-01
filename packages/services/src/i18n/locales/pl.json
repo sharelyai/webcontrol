@@ -1,5 +1,5 @@
 {
-  "NoteChatPoweredByAIBSFText": "Uwaga: Czat jest obsługiwany przez AI i może popełniać błędy. Korzystaj z materiałów referencyjnych BSF, aby uzyskać ostateczne odpowiedzi.",
+  "NoteChatPoweredByAIBSFText": "Uwaga: Czat jest obsługiwany przez AI i może popełniać błędy. Korzystaj z materiałów referencyjnych, aby uzyskać ostateczne odpowiedzi.",
   "EnterKeywordsToExploreText": "Wpisz słowa kluczowe, aby eksplorować",
   "SearchAndFindResourcesText": "Znajdź zasoby po nazwie lub treści. Bądź konkretny, aby uzyskać lepsze wyniki.",
   "MoreCategoriesText": "Więcej kategorii",
@@ -55,5 +55,7 @@
   "ViewThread": "Zobacz podsumowanie",
   "Answer": "Odpowiedzi",
   "MarkdownDescription": "Informacje wyodrębnione z czatu celów",
-  "ComingSoon": "Wkrótce"
+  "ComingSoon": "Wkrótce",
+  "StartNewSpaceText": "Rozpocznij nową przestrzeń",
+  "SessionExpiredText": "Twoja sesja wygasła."
 }

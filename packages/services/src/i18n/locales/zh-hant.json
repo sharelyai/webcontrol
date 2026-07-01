@@ -1,5 +1,5 @@
 {
-  "NoteChatPoweredByAIBSFText": "注意：聊天由AI驅動，可能會出錯。請使用BSF參考資料獲取權威答案。",
+  "NoteChatPoweredByAIBSFText": "注意：聊天由AI驅動，可能會出錯。請使用參考資料獲取權威答案。",
   "EnterKeywordsToExploreText": "輸入關鍵詞以探索",
   "SearchAndFindResourcesText": "按名稱或內容查找資源。請具體說明以獲得更好結果。",
   "MoreCategoriesText": "更多類別",
@@ -55,5 +55,7 @@
   "ViewThread": "查看摘要",
   "Answer": "答案",
   "MarkdownDescription": "從目標聊天中提取的信息",
-  "ComingSoon": "即將推出"
+  "ComingSoon": "即將推出",
+  "StartNewSpaceText": "開始新的空間",
+  "SessionExpiredText": "您的工作階段已過期。"
 }
