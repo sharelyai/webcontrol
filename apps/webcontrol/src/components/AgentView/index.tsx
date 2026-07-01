@@ -27,6 +27,8 @@ interface AgentViewProps {
   showChatHistory?: boolean;
   onCloseChatHistory?: () => void;
   onCreateNewChat?: () => void;
+  version?: string;
+  onVersionClick?: () => void;
 }
 
 // Inline streaming message component
@@ -100,6 +102,8 @@ export const AgentView = ({
   showChatHistory = false,
   onCloseChatHistory,
   onCreateNewChat,
+  version,
+  onVersionClick,
 }: AgentViewProps) => {
   const [message, setMessage] = useState("");
 
@@ -350,17 +354,28 @@ export const AgentView = ({
           {/* Initial greeting state */}
           {hasJustGreeting && (
             <GreetingWrapper>
-              <div className="sharelyai-webcontroller-greeting-logo">
-                {workspace?.photo ? (
-                  <img src={workspace.photo} alt="logo" />
-                ) : (
-                  <Logo />
-                )}
+              <div className="sharelyai-webcontroller-greeting-heading">
+                <p className="sharelyai-webcontroller-greeting-text">
+                  {t("AgentTabText")}
+                </p>
+                <p className="sharelyai-webcontroller-greeting-description">
+                  {t("BSFInDepthAnswersText")}
+                </p>
               </div>
-              <p className="sharelyai-webcontroller-greeting-text">
-                How can I help you today?
-              </p>
               {renderInputSection()}
+              <div className="sharelyai-webcontroller-greeting-note">
+                <span>
+                  {t("NoteChatPoweredByAIBSFText")}
+                  {version && (
+                    <>
+                      {" "}
+                      <button type="button" onClick={onVersionClick}>
+                        (v{version})
+                      </button>
+                    </>
+                  )}
+                </span>
+              </div>
             </GreetingWrapper>
           )}
         </div>

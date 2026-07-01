@@ -1,9 +1,10 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import { useGlobalStore } from '@sharelyai/services';
-import { constants, setGlobalEnv, getGlobalEnv } from '@sharelyai/services';
-import type { SharelyConfig } from '@sharelyai/services';
-import { WebControl } from '../WebControl';
+import React from "react";
+import ReactDOM from "react-dom/client";
+import { useGlobalStore } from "@sharelyai/services";
+import { constants, setGlobalEnv, getGlobalEnv } from "@sharelyai/services";
+import type { SharelyConfig } from "@sharelyai/services";
+import { WebControl } from "../WebControl";
+import { SHARELY_VERSION } from "../version";
 
 declare global {
   interface Window {
@@ -13,8 +14,10 @@ declare global {
 }
 
 export const sharelyai = {
+  version: SHARELY_VERSION,
+
   initialize(
-    config: SharelyConfig & { externalToken?: string; spaceId?: string }
+    config: SharelyConfig & { externalToken?: string; spaceId?: string },
   ) {
     // Destroy any previous instance before initializing
     sharelyai.destroy();
@@ -32,7 +35,11 @@ export const sharelyai = {
     if (userConfig?.mode) {
       if (!constants.POSITIONS.includes(userConfig.mode)) {
         throw new Error(
-          `The mode ${userConfig.mode} is not valid. The valid modes are: ${constants.POSITIONS.join(', ')}`
+          `The mode ${
+            userConfig.mode
+          } is not valid. The valid modes are: ${constants.POSITIONS.join(
+            ", ",
+          )}`,
         );
       }
     }
@@ -60,9 +67,9 @@ export const sharelyai = {
   },
 
   render() {
-    const rootElement = document.getElementById('sharelyai-webcontroller-id');
+    const rootElement = document.getElementById("sharelyai-webcontroller-id");
     if (rootElement) {
-      rootElement.style.height = 'auto';
+      rootElement.style.height = "auto";
 
       if (!window.__sharelyaiRoot) {
         window.__sharelyaiRoot = ReactDOM.createRoot(rootElement);
@@ -76,7 +83,7 @@ export const sharelyai = {
           React.StrictMode,
           null,
           React.createElement(WebControl, {
-            workspaceId: config?.workspaceId || '',
+            workspaceId: config?.workspaceId || "",
             baseUrl: config?.baseUrl,
             externalUserId: config?.externalUserId,
             lang: config?.lang,
@@ -88,7 +95,7 @@ export const sharelyai = {
             avatarmodeDesktop: config?.avatarmodeDesktop,
             avatarmodeMobile: config?.avatarmodeMobile,
           }),
-        )
+        ),
       );
     }
   },
@@ -98,9 +105,9 @@ export const sharelyai = {
       window.__sharelyaiRoot.unmount();
       window.__sharelyaiRoot = undefined;
     } else {
-      const rootElement = document.getElementById('sharelyai-webcontroller-id');
+      const rootElement = document.getElementById("sharelyai-webcontroller-id");
       if (rootElement) {
-        rootElement.innerHTML = '';
+        rootElement.innerHTML = "";
       }
     }
   },
@@ -134,6 +141,6 @@ export const sharelyai = {
 };
 
 // Expose on window
-if (typeof window !== 'undefined') {
+if (typeof window !== "undefined") {
   window.sharelyai = sharelyai;
 }

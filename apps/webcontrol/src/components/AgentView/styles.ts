@@ -322,31 +322,47 @@ export const GreetingWrapper = styled.div`
   ${({ theme }) => css`
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 16px;
-    padding: 40px 20px;
+    align-items: stretch;
+    justify-content: flex-start;
+    gap: 24px;
+    padding: 44px 24px 24px;
     flex: 1;
 
-    .sharelyai-webcontroller-greeting-logo {
-      width: 60px;
-      height: 60px;
-      border-radius: 50%;
-      border: 1px solid ${theme.colors.whiteLilac};
-      overflow: hidden;
-
-      & > img {
-        width: 100%;
-        height: 100%;
-        border-radius: 100%;
-      }
+    .sharelyai-webcontroller-greeting-heading {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
     }
 
     .sharelyai-webcontroller-greeting-text {
-      font-size: ${theme.fonts.lg};
+      margin: 0px;
+      font-size: ${theme.fonts.xl};
       font-weight: 600;
-      color: ${theme.colors.ebony};
+      color: ${theme.colors.shark};
+      text-align: left;
+    }
+
+    .sharelyai-webcontroller-greeting-description {
+      margin: 0px;
+      font-size: ${theme.fonts.base};
+      color: ${theme.colors.gullGray};
+      text-align: left;
+    }
+
+    .sharelyai-webcontroller-greeting-note {
+      font-size: ${theme.fonts.sm};
+      font-style: italic;
+      color: ${theme.colors.gullGray};
       text-align: center;
+
+      button {
+        background: none;
+        border: none;
+        padding: 0;
+        font: inherit;
+        color: inherit;
+        cursor: pointer;
+      }
     }
   `}
 `;

@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import { SHARELY_VERSION } from "./version";
 import {
   SharelyProvider,
   useGlobalStore,
@@ -29,6 +30,7 @@ import { BrowsePanel } from "@sharelyai/ui-browse";
 import { Wrapper } from "./styles";
 import { ChatHistory } from "./components/ChatHistory";
 import { AgentView } from "./components/AgentView";
+import { AboutModal } from "./components/AboutModal";
 import { RbacBlocker } from "./components/RbacBlocker";
 import { Launcher } from "./components/Launcher";
 import { WebControlHeader } from "./components/WebControlHeader";
@@ -113,6 +115,7 @@ const WebControlInner = (props: WebControlProps) => {
   const { pdfPreview, closePdfPreview } = usePdfPreview();
   const [showChatHistory, setShowChatHistory] = useState(false);
   const [showAgentChatHistory, setShowAgentChatHistory] = useState(false);
+  const [showAboutModal, setShowAboutModal] = useState(false);
 
   const ref = useRef<HTMLDivElement>(null);
 
@@ -607,7 +610,8 @@ const WebControlInner = (props: WebControlProps) => {
                   status={status}
                   isLoading={status === "pending"}
                   setStatus={setStatus}
-                  version="2.0.1"
+                  version={SHARELY_VERSION}
+                  onVersionClick={() => setShowAboutModal(true)}
                 />
               )}
               {currentView === constants.AGENT_VIEW && (
@@ -616,6 +620,8 @@ const WebControlInner = (props: WebControlProps) => {
                   showChatHistory={showAgentChatHistory}
                   onCloseChatHistory={() => setShowAgentChatHistory(false)}
                   onCreateNewChat={() => setShowAgentChatHistory(false)}
+                  version={SHARELY_VERSION}
+                  onVersionClick={() => setShowAboutModal(true)}
                 />
               )}
               {currentView === constants.SEARCH_VIEW && <SearchPanel />}
@@ -640,6 +646,16 @@ const WebControlInner = (props: WebControlProps) => {
           initialPage={pdfPreview.pageNumber}
         />
       )}
+
+      <AboutModal
+        open={showAboutModal}
+        onClose={() => setShowAboutModal(false)}
+        version={SHARELY_VERSION}
+        chatType={isAgentView ? "Agent" : "Regular"}
+        agentId={(config as any)?.agentId || (workspace as any)?.agentId}
+        uiLanguage={config?.lang}
+        knowledgeLanguage={config?.langKnowledge}
+      />
 
       {/* Portal mount point for modals, chat history, etc. */}
       <div id="modal"></div>
