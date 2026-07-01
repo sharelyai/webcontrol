@@ -1,5 +1,11 @@
 # @sharelyai/services
 
+## 0.0.36
+
+### Patch Changes
+
+- 902b8cb: Add a shared "Web Control Info" modal to `AgentChatPanel`. The version control now opens a built-in `AboutModal` (also exported), populated via the new `versionInfo` prop (`{ chatType, agentId, uiLanguage, knowledgeLanguage }`). Hosts can still override behavior with `onVersionClick`.
+
 ## 0.0.35
 
 ### Patch Changes
